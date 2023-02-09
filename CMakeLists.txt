@@ -8,6 +8,10 @@ FIND_PACKAGE(FLEX 2.6.4 REQUIRED)
 FIND_PACKAGE(BISON 3.8.2 REQUIRED)
 FIND_PACKAGE(nlohmann_json 3.2.0 REQUIRED)
 
+if (UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif(UNIX AND NOT APPLE)
+
 IF (BISON_FOUND AND FLEX_FOUND)
     MESSAGE(STATUS "[OK] Bison and Flex were found. Parser will be built shortly!")
 ELSE (BISON_FOUND AND FLEX_FOUND)
@@ -31,4 +35,8 @@ add_executable(planner
     ${BISON_thtnParser_OUTPUTS}
     ${FLEX_thtnScanner_OUTPUTS}
     )
-target_link_libraries(planner ${FLEX_LIBRARIES} nlohmann_json::nlohmann_json)
+if (LINUX)
+    target_link_libraries(planner ${FLEX_LIBRARIES} nlohmann_json::nlohmann_json)
+else(NOT LINUX)
+    target_link_libraries(planner nlohmann_json::nlohmann_json)
+endif()
