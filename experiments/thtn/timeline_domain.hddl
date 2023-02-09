@@ -1,0 +1,189 @@
+(define (domain pick_place_coordination)
+    
+    (:requirements :typing :hierarchie)
+
+    (:types
+        state - object
+        location - object
+        rail_block - discrete_reusable_resource
+        item {?loc - location} - discrete_reusable_resource
+        map {?vertices - [rail_block] ?edges - [[rail_block]]} - object
+        request {?release_time - object ?due_date - object ?demand - object} - object
+        robot {?block - rail_block ?st - state ?grasp - item} - discrete_reusable_resource
+    )
+
+    (:constants 
+        empty - item
+        grasped - location
+        home random - state
+    )
+    
+    (:predicates
+        (safe_state ?s - state)
+        (unsafe_state ?s - state)
+        (reachable ?b - rail_block ?l - location)
+    )
+
+    (:f-predicates
+        (clear ?from ?to - rail_block)
+    )
+
+    (:task clear_and_move
+        :parameters (?blocked_r - robot ?blocked_to - rail_block)
+    )
+    
+    (:task reachable_location
+        :parameters (?r - robot ?l - location)
+    )
+
+    (:task pick_item
+         :parameters (?r - robot ?i - item)
+    )
+
+    (:task drop_item
+         :parameters (?r - robot ?i - item ?drop_loc - location)
+    )
+
+    (:task move_item
+        :parameters (?i - item ?drop_loc - location)
+    )
+
+    (:method m_pick_item
+        :parameters (?r - robot ?i - item)
+        :task (pick_item ?r ?i)
+        :precondition (and 
+            (at start (safe_state ?r.st))
+            (at start (not (= ?r.grasp ?i)))
+            (at start (reachable ?r.block ?i.loc)) 
+        )
+        :effect (and 
+            (at end (= ?r.grasp ?i))
+            (at end (= ?i.loc grasped))
+        )
+        :ordered-subtasks (and
+            (task0 (grasp ?r ?i))
+            (task1 (move_to_home_state ?r))
+        )
+        :sync-constraints (and
+            (task0 meets task1)
+        )
+    )
+    
+    (:method m_drop_item
+        :parameters (?r - robot ?i - item ?drop_loc - location)
+        :task (drop_item ?r ?i ?drop_loc)
+        :precondition (and
+            (at start (= ?r.grasp ?i))
+            (at start (safe_state ?r.st))
+            (at start (reachable ?r.block ?drop_loc))
+        )
+        :effect (and
+            (at end (= ?r.grasp empty))
+            (at end (= ?i.loc ?drop_loc))
+        )
+        :ordered-subtasks (and
+            (task0 (release ?r ?i ?drop_loc))
+            (task1 (move_to_home_state ?r))
+        )
+        :sync-constraints (and
+            (task0 meets task1)
+        )
+    )
+
+    (:method m_move_item
+        :parameters (?r - robot ?i - item ?drop_loc - location)
+        :task (move_item ?i ?drop_loc)
+        :precondition (and
+            (at start (safe_state ?r.st))
+            (at start (not (= ?r.grasp ?i)))
+        )
+        :effect (and
+            (at end (= ?i.loc ?drop_loc))
+        )
+        :ordered-subtasks (and
+            (task0 (pick_item ?r ?i))
+            (task1 (drop_item ?r ?i ?drop_loc))
+        )
+        :sync-constraints (and
+            (task0 before {0 +inf} task1)
+        )
+    )
+    
+    (:f-method m_clear_and_move
+        :parameters (?blocked_r - robot ?blocked_to - rail_block)
+        :task (clear_and_move ?blocked_r ?blocked_to)
+        :precondition (and
+            (at start (not (clear ?blocked_r.block ?blocked_to)))
+        )
+        :effect (and 
+            (at end (clear ?blocked_r.block ?blocked_to))
+        )
+    )
+
+    (:f-method m_reachable_location
+        :parameters (?r - robot ?l - location ?dest - rail_block)
+        :task (reachable_location ?r ?l)
+        :precondition (and
+            (at start (reachable ?dest ?l))
+            (at start (not (reachable ?r.block ?l)))
+        )
+        :effect (and
+            (at end (reachable ?r.block ?l))
+            (at end (= ?r.block ?dest))
+        )
+    )
+    
+    (:action move_to_home_state
+        :parameters (?r - robot)
+        :duration (= ?duration 10)
+        :precondition (and
+            (at start (unsafe_state ?r.st))
+        )
+        :effect (and
+            (at end (= ?r.st home))
+        )
+    )
+
+    (:action rail_move
+        :parameters (?r - robot ?to - rail_block)
+        :duration (= ?duration 20)
+        :precondition (and
+            (at start (clear ?r.block ?to))
+            (at start (safe_state ?r.st))
+        )
+        :effect (and
+            (at end (= ?r.block ?to))
+        )
+    )
+
+    (:action grasp
+        :parameters (?r - robot ?i - item)
+        :duration (= ?duration 30)
+        :precondition (and
+            (at start (safe_state ?r.st))
+            (at start (reachable ?r.block ?i.loc))
+            (at start (not (= ?r.grasp ?i)))
+        )
+        :effect (and
+            (at end (= ?r.grasp ?i))
+            (at end (= ?r.st random))
+            (at end (= ?i.loc grasped))
+        )
+    )
+
+    (:action release
+        :parameters (?r - robot ?i - item ?drop_loc - location)
+        :duration (= ?duration 30)
+        :precondition (and
+            (at start (= ?r.grasp ?i))
+            (at start (= ?i.loc grasped))
+            (at start (safe_state ?r.st))
+            (at start (reachable ?r.block ?drop_loc))
+        )
+        :effect (and
+            (at end (= ?r.st random))
+            (at end (= ?i.loc ?drop_loc))
+            (at end (= ?r.grasp empty))
+        )
+    )
+)

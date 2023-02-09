@@ -1,0 +1,54 @@
+(define (problem pick_place_coordination_problem)
+        (:domain pick_place_coordination)
+        (:objects
+            network - map
+            ur5A ur5B - robot
+    		box1 box2 box3 box4 box5 - item
+			box1_pick_loc box1_drop_loc - location
+			box2_pick_loc box2_drop_loc - location
+			box3_pick_loc box3_drop_loc - location
+			box4_pick_loc box4_drop_loc - location
+			box5_pick_loc box5_drop_loc - location
+			requestA requestB requestC requestD requestE - request
+			blockA blockB blockC blockD blockE blockF blockG blockH blockI blockJ blockK blockL blockM blockN blockO - rail_block
+		)
+        (:object-instants
+            ur5A {block = blockA, st = home, grasp = empty}
+    		ur5B {block = blockO, st = home, grasp = empty}
+			box1 {loc = box1_pick_loc}
+			box2 {loc = box2_pick_loc}
+			box3 {loc = box3_pick_loc}
+			box4 {loc = box4_pick_loc}
+			box5 {loc = box5_pick_loc}
+			requestA {release_time = 0, due_date = 10000, demand = [move_item box1 box1_drop_loc]}
+			requestB {release_time = 0, due_date = 10000, demand = [move_item box2 box2_drop_loc]}
+			requestC {release_time = 0, due_date = 10000, demand = [move_item box3 box3_drop_loc]}
+			requestD {release_time = 0, due_date = 10000, demand = [move_item box4 box4_drop_loc]}
+			requestE {release_time = 0, due_date = 10000, demand = [move_item box5 box5_drop_loc]}
+			network {vertices = [blockA blockB blockC blockD blockE blockF blockG blockH blockI blockJ blockK blockL blockM blockN blockO], edges = [(blockA blockB) (blockB blockA) (blockB blockC) (blockC blockB) (blockC blockD) (blockD blockC) (blockD blockE) (blockE blockD) (blockE blockF) (blockF blockE) (blockF blockG) (blockG blockF) (blockG blockH) (blockH blockG) (blockH blockI) (blockI blockH) (blockI blockJ) (blockJ blockI) (blockJ blockK) (blockK blockJ) (blockK blockL) (blockL blockK) (blockL blockM) (blockM blockL) (blockM blockN) (blockN blockM) (blockN blockO) (blockO blockN) 
+            ]}
+        )
+        (:htn
+            :requests (and
+				(requestA)
+				(requestB)
+				(requestC)
+				(requestD)
+				(requestE)
+            )
+        )
+        (:init
+            (over all (safe_state home))
+            (over all (unsafe_state random))
+			(over all (reachable blockB box1_pick_loc))
+			(over all (reachable blockH box1_drop_loc))
+			(over all (reachable blockC box2_pick_loc))
+			(over all (reachable blockM box2_drop_loc))
+			(over all (reachable blockD box3_pick_loc))
+			(over all (reachable blockB box3_drop_loc))
+			(over all (reachable blockC box4_pick_loc))
+			(over all (reachable blockF box4_drop_loc))
+			(over all (reachable blockB box5_pick_loc))
+			(over all (reachable blockD box5_drop_loc))
+		)
+)

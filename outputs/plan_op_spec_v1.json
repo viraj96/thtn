@@ -1,0 +1,395 @@
+{
+    "relations": [
+        "cz [0.00, 300.00] robot_move_item-m_move_item_end35",
+        "cz [0.00, inf] robot_move_item-m_move_item_start34",
+        "item_box_drop_loc_released_end75 contains [0.00, 0.00] robot_release_end45",
+        "item_box_drop_loc_released_end75 sequencing [0.00, inf] item_tail_start24",
+        "item_box_drop_loc_released_start74 duration [30.00, 30.00] item_box_drop_loc_released_end75",
+        "item_head_end23 sequencing [0.00, inf] item_ur5A_grasped_start48",
+        "item_head_start22 duration [0.00, 0.00] item_head_end23",
+        "item_tail_start24 duration [0.00, 0.00] item_tail_end25",
+        "item_ur5A_grasped_end49 contains [0.00, 0.00] robot_grasp_end39",
+        "item_ur5A_grasped_end49 sequencing [0.00, inf] item_box_drop_loc_released_start74",
+        "item_ur5A_grasped_start48 duration [30.00, 30.00] item_ur5A_grasped_end49",
+        "rail_block_head_end11 sequencing [0.00, inf] rail_block_ur5A_occupied_start62",
+        "rail_block_head_end15 sequencing [0.00, inf] rail_block_ur5B_occupied_start70",
+        "rail_block_head_end19 sequencing [0.00, inf] rail_block_ur5B_occupied_start72",
+        "rail_block_head_end3 sequencing [0.00, inf] rail_block_ur5A_occupied_start58",
+        "rail_block_head_end7 sequencing [0.00, inf] rail_block_ur5A_occupied_start60",
+        "rail_block_head_start10 duration [0.00, 0.00] rail_block_head_end11",
+        "rail_block_head_start14 duration [0.00, 0.00] rail_block_head_end15",
+        "rail_block_head_start18 duration [0.00, 0.00] rail_block_head_end19",
+        "rail_block_head_start2 duration [0.00, 0.00] rail_block_head_end3",
+        "rail_block_head_start6 duration [0.00, 0.00] rail_block_head_end7",
+        "rail_block_tail_start12 duration [0.00, 0.00] rail_block_tail_end13",
+        "rail_block_tail_start16 duration [0.00, 0.00] rail_block_tail_end17",
+        "rail_block_tail_start20 duration [0.00, 0.00] rail_block_tail_end21",
+        "rail_block_tail_start4 duration [0.00, 0.00] rail_block_tail_end5",
+        "rail_block_tail_start8 duration [0.00, 0.00] rail_block_tail_end9",
+        "rail_block_ur5A_occupied_end59 contains [0.00, 0.00] robot_rail_move_end51",
+        "rail_block_ur5A_occupied_end59 sequencing [0.00, inf] rail_block_ur5A_occupied_start90",
+        "rail_block_ur5A_occupied_end61 contains [0.00, 0.00] robot_rail_move_end53",
+        "rail_block_ur5A_occupied_end61 sequencing [0.00, inf] rail_block_ur5A_occupied_start88",
+        "rail_block_ur5A_occupied_end63 contains [0.00, 0.00] robot_rail_move_end55",
+        "rail_block_ur5A_occupied_end63 sequencing [0.00, inf] rail_block_ur5A_occupied_start86",
+        "rail_block_ur5A_occupied_end65 contains [0.00, 0.00] robot_rail_move_end57",
+        "rail_block_ur5A_occupied_end65 sequencing [0.00, inf] rail_block_ur5A_occupied_start84",
+        "rail_block_ur5A_occupied_end85 contains [0.00, 0.00] robot_rail_move_end77",
+        "rail_block_ur5A_occupied_end85 sequencing [0.00, inf] rail_block_tail_start16",
+        "rail_block_ur5A_occupied_end87 contains [0.00, 0.00] robot_rail_move_end79",
+        "rail_block_ur5A_occupied_end87 sequencing [0.00, inf] rail_block_tail_start12",
+        "rail_block_ur5A_occupied_end89 contains [0.00, 0.00] robot_rail_move_end81",
+        "rail_block_ur5A_occupied_end89 sequencing [0.00, inf] rail_block_tail_start8",
+        "rail_block_ur5A_occupied_end91 contains [0.00, 0.00] robot_rail_move_end83",
+        "rail_block_ur5A_occupied_end91 sequencing [0.00, inf] rail_block_tail_start4",
+        "rail_block_ur5A_occupied_start58 duration [20.00, 20.00] rail_block_ur5A_occupied_end59",
+        "rail_block_ur5A_occupied_start60 duration [20.00, 20.00] rail_block_ur5A_occupied_end61",
+        "rail_block_ur5A_occupied_start62 duration [20.00, 20.00] rail_block_ur5A_occupied_end63",
+        "rail_block_ur5A_occupied_start64 duration [20.00, 20.00] rail_block_ur5A_occupied_end65",
+        "rail_block_ur5A_occupied_start84 duration [20.00, 20.00] rail_block_ur5A_occupied_end85",
+        "rail_block_ur5A_occupied_start86 duration [20.00, 20.00] rail_block_ur5A_occupied_end87",
+        "rail_block_ur5A_occupied_start88 duration [20.00, 20.00] rail_block_ur5A_occupied_end89",
+        "rail_block_ur5A_occupied_start90 duration [20.00, 20.00] rail_block_ur5A_occupied_end91",
+        "rail_block_ur5B_occupied_end71 contains [0.00, 0.00] robot_rail_move_end67",
+        "rail_block_ur5B_occupied_end71 sequencing [0.00, inf] rail_block_ur5A_occupied_start64",
+        "rail_block_ur5B_occupied_end73 contains [0.00, 0.00] robot_rail_move_end69",
+        "rail_block_ur5B_occupied_end73 sequencing [0.00, inf] rail_block_tail_start20",
+        "rail_block_ur5B_occupied_start70 duration [20.00, 20.00] rail_block_ur5B_occupied_end71",
+        "rail_block_ur5B_occupied_start72 duration [20.00, 20.00] rail_block_ur5B_occupied_end73",
+        "robot_drop_item-m_drop_item_end43 contains [0.00, inf] robot_move_item-m_move_item_end35",
+        "robot_drop_item-m_drop_item_start42 contains [0.00, inf] robot_release_start44",
+        "robot_drop_item-m_drop_item_start42 duration [0.00, inf] robot_drop_item-m_drop_item_end43",
+        "robot_grasp_end39 meets [0.00, 0.00] robot_move_to_home_state_start40",
+        "robot_grasp_end39 sequencing [0.00, inf] robot_move_to_home_state_start40",
+        "robot_grasp_start38 contains [0.00, 0.00] item_ur5A_grasped_start48",
+        "robot_grasp_start38 duration [30.00, 30.00] robot_grasp_end39",
+        "robot_head_end27 sequencing [0.00, inf] robot_rail_move_start50",
+        "robot_head_end31 sequencing [0.00, inf] robot_rail_move_start66",
+        "robot_head_start26 duration [0.00, 0.00] robot_head_end27",
+        "robot_head_start30 duration [0.00, 0.00] robot_head_end31",
+        "robot_move_item-m_move_item_start34 contains [0.00, inf] robot_pick_item-m_pick_item_start36",
+        "robot_move_item-m_move_item_start34 duration [0.00, inf] robot_move_item-m_move_item_end35",
+        "robot_move_to_home_state_end41 contains [0.00, inf] robot_pick_item-m_pick_item_end37",
+        "robot_move_to_home_state_end41 sequencing [0.00, inf] robot_rail_move_start76",
+        "robot_move_to_home_state_end47 contains [0.00, inf] robot_drop_item-m_drop_item_end43",
+        "robot_move_to_home_state_end47 sequencing [0.00, inf] robot_tail_start28",
+        "robot_move_to_home_state_start40 duration [10.00, 10.00] robot_move_to_home_state_end41",
+        "robot_move_to_home_state_start46 duration [10.00, 10.00] robot_move_to_home_state_end47",
+        "robot_pick_item-m_pick_item_end37 before [0.00, inf] robot_drop_item-m_drop_item_start42",
+        "robot_pick_item-m_pick_item_start36 contains [0.00, inf] robot_grasp_start38",
+        "robot_pick_item-m_pick_item_start36 duration [0.00, inf] robot_pick_item-m_pick_item_end37",
+        "robot_rail_move_end51 sequencing [0.00, inf] robot_rail_move_start52",
+        "robot_rail_move_end53 sequencing [0.00, inf] robot_rail_move_start54",
+        "robot_rail_move_end55 sequencing [0.00, inf] robot_rail_move_start56",
+        "robot_rail_move_end57 sequencing [0.00, inf] robot_grasp_start38",
+        "robot_rail_move_end67 sequencing [0.00, inf] robot_rail_move_start68",
+        "robot_rail_move_end69 sequencing [0.00, inf] robot_tail_start32",
+        "robot_rail_move_end77 sequencing [0.00, inf] robot_rail_move_start78",
+        "robot_rail_move_end79 sequencing [0.00, inf] robot_rail_move_start80",
+        "robot_rail_move_end81 sequencing [0.00, inf] robot_rail_move_start82",
+        "robot_rail_move_end83 sequencing [0.00, inf] robot_release_start44",
+        "robot_rail_move_start50 contains [0.00, 0.00] rail_block_ur5A_occupied_start58",
+        "robot_rail_move_start50 duration [20.00, 20.00] robot_rail_move_end51",
+        "robot_rail_move_start52 contains [0.00, 0.00] rail_block_ur5A_occupied_start60",
+        "robot_rail_move_start52 duration [20.00, 20.00] robot_rail_move_end53",
+        "robot_rail_move_start54 contains [0.00, 0.00] rail_block_ur5A_occupied_start62",
+        "robot_rail_move_start54 duration [20.00, 20.00] robot_rail_move_end55",
+        "robot_rail_move_start56 contains [0.00, 0.00] rail_block_ur5A_occupied_start64",
+        "robot_rail_move_start56 duration [20.00, 20.00] robot_rail_move_end57",
+        "robot_rail_move_start66 contains [0.00, 0.00] rail_block_ur5B_occupied_start70",
+        "robot_rail_move_start66 duration [20.00, 20.00] robot_rail_move_end67",
+        "robot_rail_move_start68 contains [0.00, 0.00] rail_block_ur5B_occupied_start72",
+        "robot_rail_move_start68 duration [20.00, 20.00] robot_rail_move_end69",
+        "robot_rail_move_start76 contains [0.00, 0.00] rail_block_ur5A_occupied_start84",
+        "robot_rail_move_start76 duration [20.00, 20.00] robot_rail_move_end77",
+        "robot_rail_move_start78 contains [0.00, 0.00] rail_block_ur5A_occupied_start86",
+        "robot_rail_move_start78 duration [20.00, 20.00] robot_rail_move_end79",
+        "robot_rail_move_start80 contains [0.00, 0.00] rail_block_ur5A_occupied_start88",
+        "robot_rail_move_start80 duration [20.00, 20.00] robot_rail_move_end81",
+        "robot_rail_move_start82 contains [0.00, 0.00] rail_block_ur5A_occupied_start90",
+        "robot_rail_move_start82 duration [20.00, 20.00] robot_rail_move_end83",
+        "robot_release_end45 meets [0.00, 0.00] robot_move_to_home_state_start46",
+        "robot_release_end45 sequencing [0.00, inf] robot_move_to_home_state_start46",
+        "robot_release_start44 contains [0.00, 0.00] item_box_drop_loc_released_start74",
+        "robot_release_start44 duration [30.00, 30.00] robot_release_end45",
+        "robot_tail_start28 duration [0.00, 0.00] robot_tail_end29",
+        "robot_tail_start32 duration [0.00, 0.00] robot_tail_end33"
+    ],
+    "initial_state" : {
+
+    },
+    "timelines": {
+        "blockA": [
+            {
+                "head": [
+                    "rail_block_head_start2: [0.00, 60.00]",
+                    "rail_block_head_end3: [0.00, 60.00]"
+                ]
+            },
+            {
+                "ur5A_occupied": [
+                    "rail_block_ur5A_occupied_start58: [0.00, 60.00]",
+                    "rail_block_ur5A_occupied_end59: [20.00, 80.00]"
+                ]
+            },
+            {
+                "ur5A_occupied": [
+                    "rail_block_ur5A_occupied_start90: [180.00, 240.00]",
+                    "rail_block_ur5A_occupied_end91: [200.00, 260.00]"
+                ]
+            },
+            {
+                "tail": [
+                    "rail_block_tail_start4: [200.00, inf]",
+                    "rail_block_tail_end5: [200.00, inf]"
+                ]
+            }
+        ],
+        "blockB": [
+            {
+                "head": [
+                    "rail_block_head_start6: [0.00, 80.00]",
+                    "rail_block_head_end7: [0.00, 80.00]"
+                ]
+            },
+            {
+                "ur5A_occupied": [
+                    "rail_block_ur5A_occupied_start60: [20.00, 80.00]",
+                    "rail_block_ur5A_occupied_end61: [40.00, 100.00]"
+                ]
+            },
+            {
+                "ur5A_occupied": [
+                    "rail_block_ur5A_occupied_start88: [160.00, 220.00]",
+                    "rail_block_ur5A_occupied_end89: [180.00, 240.00]"
+                ]
+            },
+            {
+                "tail": [
+                    "rail_block_tail_start8: [180.00, inf]",
+                    "rail_block_tail_end9: [180.00, inf]"
+                ]
+            }
+        ],
+        "blockC": [
+            {
+                "head": [
+                    "rail_block_head_start10: [0.00, 100.00]",
+                    "rail_block_head_end11: [0.00, 100.00]"
+                ]
+            },
+            {
+                "ur5A_occupied": [
+                    "rail_block_ur5A_occupied_start62: [40.00, 100.00]",
+                    "rail_block_ur5A_occupied_end63: [60.00, 120.00]"
+                ]
+            },
+            {
+                "ur5A_occupied": [
+                    "rail_block_ur5A_occupied_start86: [140.00, 200.00]",
+                    "rail_block_ur5A_occupied_end87: [160.00, 220.00]"
+                ]
+            },
+            {
+                "tail": [
+                    "rail_block_tail_start12: [160.00, inf]",
+                    "rail_block_tail_end13: [160.00, inf]"
+                ]
+            }
+        ],
+        "blockD": [
+            {
+                "head": [
+                    "rail_block_head_start14: [0.00, 100.00]",
+                    "rail_block_head_end15: [0.00, 100.00]"
+                ]
+            },
+            {
+                "ur5B_occupied": [
+                    "rail_block_ur5B_occupied_start70: [0.00, 100.00]",
+                    "rail_block_ur5B_occupied_end71: [20.00, 120.00]"
+                ]
+            },
+            {
+                "ur5A_occupied": [
+                    "rail_block_ur5A_occupied_start64: [60.00, 120.00]",
+                    "rail_block_ur5A_occupied_end65: [80.00, 140.00]"
+                ]
+            },
+            {
+                "ur5A_occupied": [
+                    "rail_block_ur5A_occupied_start84: [120.00, 180.00]",
+                    "rail_block_ur5A_occupied_end85: [140.00, 200.00]"
+                ]
+            },
+            {
+                "tail": [
+                    "rail_block_tail_start16: [140.00, inf]",
+                    "rail_block_tail_end17: [140.00, inf]"
+                ]
+            }
+        ],
+        "blockE": [
+            {
+                "head": [
+                    "rail_block_head_start18: [0.00, inf]",
+                    "rail_block_head_end19: [0.00, inf]"
+                ]
+            },
+            {
+                "ur5B_occupied": [
+                    "rail_block_ur5B_occupied_start72: [20.00, inf]",
+                    "rail_block_ur5B_occupied_end73: [40.00, inf]"
+                ]
+            },
+            {
+                "tail": [
+                    "rail_block_tail_start20: [40.00, inf]",
+                    "rail_block_tail_end21: [40.00, inf]"
+                ]
+            }
+        ],
+        "box": [
+            {
+                "head": [
+                    "item_head_start22: [0.00, 140.00]",
+                    "item_head_end23: [0.00, 140.00]"
+                ]
+            },
+            {
+                "ur5A_grasped": [
+                    "item_ur5A_grasped_start48: [80.00, 140.00]",
+                    "item_ur5A_grasped_end49: [110.00, 170.00]"
+                ]
+            },
+            {
+                "box_drop_loc_released": [
+                    "item_box_drop_loc_released_start74: [200.00, 260.00]",
+                    "item_box_drop_loc_released_end75: [230.00, 290.00]"
+                ]
+            },
+            {
+                "tail": [
+                    "item_tail_start24: [230.00, inf]",
+                    "item_tail_end25: [230.00, inf]"
+                ]
+            }
+        ],
+        "ur5A": [
+            {
+                "head": [
+                    "robot_head_start26: [0.00, 60.00]",
+                    "robot_head_end27: [0.00, 60.00]"
+                ]
+            },
+            {
+                "rail_move ur5A blockA": [
+                    "robot_rail_move_start50: [0.00, 60.00]",
+                    "robot_rail_move_end51: [20.00, 80.00]"
+                ]
+                "preconditions"
+                "effects"
+            },
+            {
+                "rail_move ur5A blockB": [
+                    "robot_rail_move_start52: [20.00, 80.00]",
+                    "robot_rail_move_end53: [40.00, 100.00]"
+                ]
+            },
+            {
+                "rail_move ur5A blockC": [
+                    "robot_rail_move_start54: [40.00, 100.00]",
+                    "robot_rail_move_end55: [60.00, 120.00]"
+                ]
+            },
+            {
+                "rail_move ur5A blockD": [
+                    "robot_rail_move_start56: [60.00, 120.00]",
+                    "robot_rail_move_end57: [80.00, 140.00]"
+                ]
+            },
+            {
+                "grasp ur5A box": [
+                    "robot_grasp_start38: [80.00, 140.00]",
+                    "robot_grasp_end39: [110.00, 170.00]"
+                ]
+            },
+            {
+                "move_to_home_state ur5A": [
+                    "robot_move_to_home_state_start40: [110.00, 170.00]",
+                    "robot_move_to_home_state_end41: [120.00, 180.00]"
+                ]
+            },
+            {
+                "rail_move ur5A blockD": [
+                    "robot_rail_move_start76: [120.00, 180.00]",
+                    "robot_rail_move_end77: [140.00, 200.00]"
+                ]
+            },
+            {
+                "rail_move ur5A blockC": [
+                    "robot_rail_move_start78: [140.00, 200.00]",
+                    "robot_rail_move_end79: [160.00, 220.00]"
+                ]
+            },
+            {
+                "rail_move ur5A blockB": [
+                    "robot_rail_move_start80: [160.00, 220.00]",
+                    "robot_rail_move_end81: [180.00, 240.00]"
+                ]
+            },
+            {
+                "rail_move ur5A blockA": [
+                    "robot_rail_move_start82: [180.00, 240.00]",
+                    "robot_rail_move_end83: [200.00, 260.00]"
+                ]
+            },
+            {
+                "release ur5A box box_drop_loc": [
+                    "robot_release_start44: [200.00, 260.00]",
+                    "robot_release_end45: [230.00, 290.00]"
+                ]
+            },
+            {
+                "move_to_home_state ur5A": [
+                    "robot_move_to_home_state_start46: [230.00, 290.00]",
+                    "robot_move_to_home_state_end47: [240.00, 300.00]"
+                ]
+            },
+            {
+                "tail": [
+                    "robot_tail_start28: [240.00, inf]",
+                    "robot_tail_end29: [240.00, inf]"
+                ]
+            }
+        ],
+        "ur5B": [
+            {
+                "head": [
+                    "robot_head_start30: [0.00, 100.00]",
+                    "robot_head_end31: [0.00, 100.00]"
+                ]
+            },
+            {
+                "rail_move ur5B blockD": [
+                    "robot_rail_move_start66: [0.00, 100.00]",
+                    "robot_rail_move_end67: [20.00, 120.00]"
+                ]
+            },
+            {
+                "rail_move ur5B blockE": [
+                    "robot_rail_move_start68: [20.00, inf]",
+                    "robot_rail_move_end69: [40.00, inf]"
+                ]
+            },
+            {
+                "tail": [
+                    "robot_tail_start32: [40.00, inf]",
+                    "robot_tail_end33: [40.00, inf]"
+                ]
+            }
+        ]
+    }
+    predicates for each attribute assignment
+    eg: (attribute object_instant value)
+}

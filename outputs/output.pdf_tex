@@ -1,0 +1,657 @@
+%% Creator: Inkscape inkscape 0.92.3, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'output.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{3843.82652539bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.48675455)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{output.pdf}}%
+    \put(0.60674912,0.48006852){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}cz\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{output.pdf}}%
+    \put(0.53338469,0.45743482){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_item-m_move_item_start38\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{output.pdf}}%
+    \put(0.58203416,0.46875167){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{output.pdf}}%
+    \put(0.53338469,0.43480113){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_item-m_move_item_end39\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{output.pdf}}%
+    \put(0.59907447,0.45743482){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 300.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{output.pdf}}%
+    \put(0.62313904,0.32163264){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_item-m_move_item_start96\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=7]{output.pdf}}%
+    \put(0.63224455,0.40085058){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[300.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=8]{output.pdf}}%
+    \put(0.70066595,0.29899895){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_item-m_move_item_end97\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=9]{output.pdf}}%
+    \put(0.6997554,0.38953373){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 600.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=10]{output.pdf}}%
+    \put(0.03570354,0.43480113){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_start2\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=11]{output.pdf}}%
+    \put(0.03570354,0.41216743){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_end3\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=12]{output.pdf}}%
+    \put(0.04415866,0.42348428){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=13]{output.pdf}}%
+    \put(0.03570354,0.38953373){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start62\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=14]{output.pdf}}%
+    \put(0.04298795,0.40085058){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=15]{output.pdf}}%
+    \put(0.33280331,0.11792936){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_start4\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=16]{output.pdf}}%
+    \put(0.33280331,0.09529566){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_end5\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=17]{output.pdf}}%
+    \put(0.34125843,0.10661251){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=18]{output.pdf}}%
+    \put(0.39576141,0.09529566){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end123\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=19]{output.pdf}}%
+    \put(0.37546913,0.10661251){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=20]{output.pdf}}%
+    \put(0.5921803,0.38953373){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_start6\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=21]{output.pdf}}%
+    \put(0.59244046,0.36690004){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_end7\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=22]{output.pdf}}%
+    \put(0.60063542,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=23]{output.pdf}}%
+    \put(0.29169844,0.34426634){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start64\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=24]{output.pdf}}%
+    \put(0.33306347,0.35558319){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=25]{output.pdf}}%
+    \put(0.60206629,0.11792936){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_start8\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=26]{output.pdf}}%
+    \put(0.6025866,0.09529566){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_end9\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=27]{output.pdf}}%
+    \put(0.61078156,0.10661251){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=28]{output.pdf}}%
+    \put(0.54118945,0.09529566){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end125\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=29]{output.pdf}}%
+    \put(0.58255448,0.10661251){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=30]{output.pdf}}%
+    \put(0.43426471,0.34426634){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_start10\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=31]{output.pdf}}%
+    \put(0.41969589,0.32163264){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_end11\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=32]{output.pdf}}%
+    \put(0.43647605,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=33]{output.pdf}}%
+    \put(0.17462761,0.29899895){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start66\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=34]{output.pdf}}%
+    \put(0.35881906,0.3103158){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=35]{output.pdf}}%
+    \put(0.34060804,0.07266197){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_start12\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=36]{output.pdf}}%
+    \put(0.34060804,0.05002827){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_end13\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=37]{output.pdf}}%
+    \put(0.34906315,0.06134512){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=38]{output.pdf}}%
+    \put(0.40460676,0.05002827){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end127\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=39]{output.pdf}}%
+    \put(0.38379417,0.06134512){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=40]{output.pdf}}%
+    \put(0.84843537,0.29899895){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_start14\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=41]{output.pdf}}%
+    \put(0.84843537,0.27636525){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_end15\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=42]{output.pdf}}%
+    \put(0.85689049,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=43]{output.pdf}}%
+    \put(0.84843537,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5B_occupied_start74\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=44]{output.pdf}}%
+    \put(0.85571978,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=45]{output.pdf}}%
+    \put(0.37390819,0.02739458){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_start16\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=46]{output.pdf}}%
+    \put(0.37390819,0.00476088){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_end17\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=47]{output.pdf}}%
+    \put(0.3823633,0.01607773){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=48]{output.pdf}}%
+    \put(0.43790691,0.00476088){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end129\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=49]{output.pdf}}%
+    \put(0.41709432,0.01607773){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=50]{output.pdf}}%
+    \put(0.966807,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_start18\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=51]{output.pdf}}%
+    \put(0.966807,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_head_end19\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=52]{output.pdf}}%
+    \put(0.97526212,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=53]{output.pdf}}%
+    \put(0.96446559,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5B_occupied_start76\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=54]{output.pdf}}%
+    \put(0.97305078,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=55]{output.pdf}}%
+    \put(0.84427285,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_start20\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=56]{output.pdf}}%
+    \put(0.84297207,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_tail_end21\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=57]{output.pdf}}%
+    \put(0.8519475,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=58]{output.pdf}}%
+    \put(0.90436922,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5B_occupied_end77\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=59]{output.pdf}}%
+    \put(0.88511757,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=60]{output.pdf}}%
+    \put(0.33098221,0.43480113){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_head_start22\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=61]{output.pdf}}%
+    \put(0.33072205,0.41216743){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_head_end23\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=62]{output.pdf}}%
+    \put(0.33943733,0.42348428){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=63]{output.pdf}}%
+    \put(0.32031576,0.38953373){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_ur5A_grasped_start52\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=64]{output.pdf}}%
+    \put(0.33358378,0.40085058){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=65]{output.pdf}}%
+    \put(0.2339435,0.34426634){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_tail_start24\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=66]{output.pdf}}%
+    \put(0.29612111,0.32163264){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_tail_end25\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=67]{output.pdf}}%
+    \put(0.25696744,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=68]{output.pdf}}%
+    \put(0.35465654,0.32163264){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_box_drop_loc_released_end79\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=69]{output.pdf}}%
+    \put(0.27764994,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=70]{output.pdf}}%
+    \put(0.55419732,0.29899895){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_head_start26\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=71]{output.pdf}}%
+    \put(0.55289653,0.27636525){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_head_end27\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=72]{output.pdf}}%
+    \put(0.56213212,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=73]{output.pdf}}%
+    \put(0.54925433,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_ur5A_grasped_start110\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=74]{output.pdf}}%
+    \put(0.55861999,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=75]{output.pdf}}%
+    \put(0.53182375,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_tail_start28\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=76]{output.pdf}}%
+    \put(0.53078312,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_tail_end29\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=77]{output.pdf}}%
+    \put(0.54001874,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=78]{output.pdf}}%
+    \put(0.5903592,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_can_drop_loc_released_end113\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=79]{output.pdf}}%
+    \put(0.57188802,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=80]{output.pdf}}%
+    \put(0.09189754,0.45743482){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_head_start30\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=81]{output.pdf}}%
+    \put(0.09189754,0.43480113){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_head_end31\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=82]{output.pdf}}%
+    \put(0.10035266,0.44611797){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=83]{output.pdf}}%
+    \put(0.09189754,0.41216743){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start54\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=84]{output.pdf}}%
+    \put(0.09918195,0.42348428){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=85]{output.pdf}}%
+    \put(0.66086186,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_tail_start32\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=86]{output.pdf}}%
+    \put(0.66086186,0.16319675){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_tail_end33\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=87]{output.pdf}}%
+    \put(0.66931698,0.1745136){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=88]{output.pdf}}%
+    \put(0.7217387,0.16319675){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_to_home_state_end109\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=89]{output.pdf}}%
+    \put(0.7022269,0.1745136){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=90]{output.pdf}}%
+    \put(0.90749111,0.32163264){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_head_start34\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=91]{output.pdf}}%
+    \put(0.90749111,0.29899895){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_head_end35\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=92]{output.pdf}}%
+    \put(0.91594623,0.3103158){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=93]{output.pdf}}%
+    \put(0.90749111,0.27636525){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start70\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=94]{output.pdf}}%
+    \put(0.91477552,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=95]{output.pdf}}%
+    \put(0.79094058,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_tail_start36\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=96]{output.pdf}}%
+    \put(0.79172105,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_tail_end37\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=97]{output.pdf}}%
+    \put(0.79965585,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=98]{output.pdf}}%
+    \put(0.90046686,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end73\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=99]{output.pdf}}%
+    \put(0.86040261,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=100]{output.pdf}}%
+    \put(0.54066913,0.44611797){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=101]{output.pdf}}%
+    \put(0.26802411,0.43480113){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_pick_item-m_pick_item_start40\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=102]{output.pdf}}%
+    \put(0.40876928,0.44611797){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=103]{output.pdf}}%
+    \put(0.52610028,0.36690004){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_drop_item-m_drop_item_end47\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=104]{output.pdf}}%
+    \put(0.53728708,0.40085058){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=105]{output.pdf}}%
+    \put(0.26854443,0.41216743){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_pick_item-m_pick_item_end41\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=106]{output.pdf}}%
+    \put(0.27582884,0.42348428){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=107]{output.pdf}}%
+    \put(0.20480587,0.41216743){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_grasp_start42\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=108]{output.pdf}}%
+    \put(0.24773185,0.42348428){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=109]{output.pdf}}%
+    \put(0.17540808,0.34426634){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_to_home_state_end45\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=110]{output.pdf}}%
+    \put(0.2443498,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=111]{output.pdf}}%
+    \put(0.46054061,0.38953373){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_drop_item-m_drop_item_start46\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=112]{output.pdf}}%
+    \put(0.38353401,0.40085058){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=113]{output.pdf}}%
+    \put(0.20480587,0.38953373){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_grasp_end43\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=114]{output.pdf}}%
+    \put(0.21508209,0.40085058){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[30.00, 30.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=115]{output.pdf}}%
+    \put(0.27960112,0.40085058){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=116]{output.pdf}}%
+    \put(0.10022258,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end61\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=117]{output.pdf}}%
+    \put(0.14002667,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=118]{output.pdf}}%
+    \put(0.18425344,0.36690004){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_to_home_state_start44\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=119]{output.pdf}}%
+    \put(0.191798,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=120]{output.pdf}}%
+    \put(0.20701721,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=121]{output.pdf}}%
+    \put(0.32031576,0.36690004){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_ur5A_grasped_end53\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=122]{output.pdf}}%
+    \put(0.28818631,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=123]{output.pdf}}%
+    \put(0.19088745,0.35558319){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[10.00, 10.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=124]{output.pdf}}%
+    \put(0.17540808,0.32163264){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start80\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=125]{output.pdf}}%
+    \put(0.18269249,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=126]{output.pdf}}%
+    \put(0.50476737,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=127]{output.pdf}}%
+    \put(0.46054061,0.36690004){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_release_start48\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=128]{output.pdf}}%
+    \put(0.46782502,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=129]{output.pdf}}%
+    \put(0.49436108,0.29899895){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_to_home_state_end51\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=130]{output.pdf}}%
+    \put(0.54379102,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=131]{output.pdf}}%
+    \put(0.49566186,0.34426634){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_release_end49\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=132]{output.pdf}}%
+    \put(0.49058879,0.35558319){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[30.00, 30.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=133]{output.pdf}}%
+    \put(0.36792457,0.34426634){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_box_drop_loc_released_start78\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=134]{output.pdf}}%
+    \put(0.42841117,0.35558319){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=135]{output.pdf}}%
+    \put(0.38743637,0.16319675){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end87\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=136]{output.pdf}}%
+    \put(0.44753274,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=137]{output.pdf}}%
+    \put(0.49436108,0.32163264){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_to_home_state_start50\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=138]{output.pdf}}%
+    \put(0.49227982,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=139]{output.pdf}}%
+    \put(0.50541777,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=140]{output.pdf}}%
+    \put(0.41670408,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=141]{output.pdf}}%
+    \put(0.5046373,0.3103158){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[10.00, 10.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=142]{output.pdf}}%
+    \put(0.50294627,0.27636525){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_grasp_start100\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=143]{output.pdf}}%
+    \put(0.50658848,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=144]{output.pdf}}%
+    \put(0.33059197,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[30.00, 30.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=145]{output.pdf}}%
+    \put(0.35439638,0.35558319){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=146]{output.pdf}}%
+    \put(0.09996242,0.38953373){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end55\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=147]{output.pdf}}%
+    \put(0.10685659,0.40085058){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=148]{output.pdf}}%
+    \put(0.0756377,0.40085058){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=149]{output.pdf}}%
+    \put(0.09996242,0.36690004){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start56\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=150]{output.pdf}}%
+    \put(0.10724683,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=151]{output.pdf}}%
+    \put(0.03570354,0.36690004){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end63\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=152]{output.pdf}}%
+    \put(0.08032053,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=153]{output.pdf}}%
+    \put(0.09996242,0.34426634){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end57\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=154]{output.pdf}}%
+    \put(0.11023864,0.35558319){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=155]{output.pdf}}%
+    \put(0.1698147,0.35558319){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=156]{output.pdf}}%
+    \put(0.09996242,0.32163264){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start58\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=157]{output.pdf}}%
+    \put(0.10724683,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=158]{output.pdf}}%
+    \put(0.23966697,0.32163264){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end65\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=159]{output.pdf}}%
+    \put(0.21586256,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=160]{output.pdf}}%
+    \put(0.09996242,0.29899895){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end59\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=161]{output.pdf}}%
+    \put(0.09592998,0.3103158){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=162]{output.pdf}}%
+    \put(0.15030289,0.3103158){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=163]{output.pdf}}%
+    \put(0.09996242,0.27636525){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start60\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=164]{output.pdf}}%
+    \put(0.10724683,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=165]{output.pdf}}%
+    \put(0.17462761,0.27636525){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end67\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=166]{output.pdf}}%
+    \put(0.15030289,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=167]{output.pdf}}%
+    \put(0.1104988,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=168]{output.pdf}}%
+    \put(0.16448147,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start68\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=169]{output.pdf}}%
+    \put(0.14457943,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=170]{output.pdf}}%
+    \put(0.16448147,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end69\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=171]{output.pdf}}%
+    \put(0.14483958,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=172]{output.pdf}}%
+    \put(0.04597976,0.37821689){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=173]{output.pdf}}%
+    \put(0.32239702,0.16319675){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start94\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=174]{output.pdf}}%
+    \put(0.07420683,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=175]{output.pdf}}%
+    \put(0.29937308,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=176]{output.pdf}}%
+    \put(0.3866559,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start92\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=177]{output.pdf}}%
+    \put(0.39394031,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=178]{output.pdf}}%
+    \put(0.18490383,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=179]{output.pdf}}%
+    \put(0.24825216,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start90\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=180]{output.pdf}}%
+    \put(0.24174823,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=181]{output.pdf}}%
+    \put(0.17475769,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=182]{output.pdf}}%
+    \put(0.84843537,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5B_occupied_end75\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=183]{output.pdf}}%
+    \put(0.57370913,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=184]{output.pdf}}%
+    \put(0.20636682,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start88\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=185]{output.pdf}}%
+    \put(0.19544021,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=186]{output.pdf}}%
+    \put(0.9124341,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end71\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=187]{output.pdf}}%
+    \put(0.9203689,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=188]{output.pdf}}%
+    \put(0.88993048,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=189]{output.pdf}}%
+    \put(0.9124341,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start72\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=190]{output.pdf}}%
+    \put(0.91971851,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=191]{output.pdf}}%
+    \put(0.89253206,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=192]{output.pdf}}%
+    \put(0.91724701,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=193]{output.pdf}}%
+    \put(0.94976669,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=194]{output.pdf}}%
+    \put(0.91100323,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=195]{output.pdf}}%
+    \put(0.85871159,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=196]{output.pdf}}%
+    \put(0.94820575,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=197]{output.pdf}}%
+    \put(0.37247732,0.33294949){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[30.00, 30.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=198]{output.pdf}}%
+    \put(0.29013749,0.29899895){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end81\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=199]{output.pdf}}%
+    \put(0.24994319,0.3103158){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=200]{output.pdf}}%
+    \put(0.21742351,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=201]{output.pdf}}%
+    \put(0.32291733,0.27636525){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start82\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=202]{output.pdf}}%
+    \put(0.31589308,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=203]{output.pdf}}%
+    \put(0.2339435,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end89\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=204]{output.pdf}}%
+    \put(0.29234883,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=205]{output.pdf}}%
+    \put(0.32291733,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end83\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=206]{output.pdf}}%
+    \put(0.33319355,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=207]{output.pdf}}%
+    \put(0.29859261,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=208]{output.pdf}}%
+    \put(0.35387606,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start84\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=209]{output.pdf}}%
+    \put(0.34763229,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=210]{output.pdf}}%
+    \put(0.28961718,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end91\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=211]{output.pdf}}%
+    \put(0.31784426,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=212]{output.pdf}}%
+    \put(0.32239702,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end85\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=213]{output.pdf}}%
+    \put(0.34386,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=214]{output.pdf}}%
+    \put(0.37455858,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=215]{output.pdf}}%
+    \put(0.32239702,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start86\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=216]{output.pdf}}%
+    \put(0.32968142,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=217]{output.pdf}}%
+    \put(0.3866559,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end93\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=218]{output.pdf}}%
+    \put(0.36701401,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=219]{output.pdf}}%
+    \put(0.36909527,0.1745136){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=220]{output.pdf}}%
+    \put(0.33085213,0.1745136){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=221]{output.pdf}}%
+    \put(0.38743637,0.14056306){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_end95\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=222]{output.pdf}}%
+    \put(0.39589149,0.1518799){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=223]{output.pdf}}%
+    \put(0.23225248,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=224]{output.pdf}}%
+    \put(0.43790691,0.02739458){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start128\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=225]{output.pdf}}%
+    \put(0.25267484,0.10661251){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=226]{output.pdf}}%
+    \put(0.27023545,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=227]{output.pdf}}%
+    \put(0.40460676,0.07266197){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start126\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=228]{output.pdf}}%
+    \put(0.28259293,0.1518799){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=229]{output.pdf}}%
+    \put(0.39693212,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=230]{output.pdf}}%
+    \put(0.48213368,0.11792936){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start124\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=231]{output.pdf}}%
+    \put(0.45976014,0.1518799){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=232]{output.pdf}}%
+    \put(0.36909527,0.1518799){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=233]{output.pdf}}%
+    \put(0.39576141,0.11792936){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}rail_block_ur5A_occupied_start122\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=234]{output.pdf}}%
+    \put(0.39940361,0.12924621){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=235]{output.pdf}}%
+    \put(0.67360958,0.3103158){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=236]{output.pdf}}%
+    \put(0.61715542,0.29899895){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_pick_item-m_pick_item_start98\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=237]{output.pdf}}%
+    \put(0.62756171,0.3103158){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=238]{output.pdf}}%
+    \put(0.70352768,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_drop_item-m_drop_item_end105\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=239]{output.pdf}}%
+    \put(0.70925115,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=240]{output.pdf}}%
+    \put(0.61715542,0.27636525){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_pick_item-m_pick_item_end99\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=241]{output.pdf}}%
+    \put(0.62443982,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=242]{output.pdf}}%
+    \put(0.54535197,0.2876821){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=243]{output.pdf}}%
+    \put(0.4722477,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_to_home_state_end103\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=244]{output.pdf}}%
+    \put(0.59296078,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=245]{output.pdf}}%
+    \put(0.63588675,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_drop_item-m_drop_item_start104\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=246]{output.pdf}}%
+    \put(0.63484612,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=247]{output.pdf}}%
+    \put(0.49332045,0.25373154){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_grasp_end101\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=248]{output.pdf}}%
+    \put(0.50905997,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[30.00, 30.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=249]{output.pdf}}%
+    \put(0.53741716,0.26504839){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=250]{output.pdf}}%
+    \put(0.47276801,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_to_home_state_start102\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=251]{output.pdf}}%
+    \put(0.48031258,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=252]{output.pdf}}%
+    \put(0.49553179,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=253]{output.pdf}}%
+    \put(0.54327071,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_ur5A_grasped_end111\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=254]{output.pdf}}%
+    \put(0.52987257,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=255]{output.pdf}}%
+    \put(0.48304423,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[10.00, 10.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=256]{output.pdf}}%
+    \put(0.4722477,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start114\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=257]{output.pdf}}%
+    \put(0.4795321,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=258]{output.pdf}}%
+    \put(0.68089399,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=259]{output.pdf}}%
+    \put(0.63588675,0.23109784){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_release_start106\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=260]{output.pdf}}%
+    \put(0.64317116,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=261]{output.pdf}}%
+    \put(0.76518499,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=262]{output.pdf}}%
+    \put(0.67204863,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_release_end107\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=263]{output.pdf}}%
+    \put(0.66619509,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[30.00, 30.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=264]{output.pdf}}%
+    \put(0.59270062,0.20846415){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}item_can_drop_loc_released_start112\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=265]{output.pdf}}%
+    \put(0.62561053,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=266]{output.pdf}}%
+    \put(0.50450722,0.02739458){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end121\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=267]{output.pdf}}%
+    \put(0.64187037,0.12924621){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=268]{output.pdf}}%
+    \put(0.7217387,0.18583045){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_move_to_home_state_start108\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=269]{output.pdf}}%
+    \put(0.70456831,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=270]{output.pdf}}%
+    \put(0.72108831,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=271]{output.pdf}}%
+    \put(0.64434187,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=272]{output.pdf}}%
+    \put(0.73201492,0.1745136){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[10.00, 10.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=273]{output.pdf}}%
+    \put(0.55016488,0.24241469){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[30.00, 30.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=274]{output.pdf}}%
+    \put(0.5781318,0.21978099){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=275]{output.pdf}}%
+    \put(0.60089558,0.1971473){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[30.00, 30.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=276]{output.pdf}}%
+    \put(0.48655635,0.16319675){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end115\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=277]{output.pdf}}%
+    \put(0.49058879,0.1745136){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=278]{output.pdf}}%
+    \put(0.43907762,0.1518799){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=279]{output.pdf}}%
+    \put(0.49722281,0.14056306){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start116\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=280]{output.pdf}}%
+    \put(0.49982438,0.1518799){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=281]{output.pdf}}%
+    \put(0.461191,0.12924621){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=282]{output.pdf}}%
+    \put(0.54873401,0.11792936){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end117\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=283]{output.pdf}}%
+    \put(0.53637653,0.12924621){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=284]{output.pdf}}%
+    \put(0.49917399,0.12924621){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=285]{output.pdf}}%
+    \put(0.47120707,0.09529566){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start118\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=286]{output.pdf}}%
+    \put(0.49982438,0.10661251){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=287]{output.pdf}}%
+    \put(0.55406724,0.10661251){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=288]{output.pdf}}%
+    \put(0.47120707,0.07266197){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_end119\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=289]{output.pdf}}%
+    \put(0.48148328,0.08397882){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=290]{output.pdf}}%
+    \put(0.45052455,0.08397882){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=291]{output.pdf}}%
+    \put(0.47120707,0.05002827){\color[rgb]{1,1,1}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}robot_rail_move_start120\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=292]{output.pdf}}%
+    \put(0.47849147,0.06134512){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, inf]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=293]{output.pdf}}%
+    \put(0.45052455,0.06134512){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=294]{output.pdf}}%
+    \put(0.50021462,0.03871143){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=295]{output.pdf}}%
+    \put(0.46509337,0.03871143){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=296]{output.pdf}}%
+    \put(0.4838247,0.01607773){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[0.00, 0.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=297]{output.pdf}}%
+    \put(0.40603763,0.10661251){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=298]{output.pdf}}%
+    \put(0.52571005,0.10661251){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=299]{output.pdf}}%
+    \put(0.41488298,0.06134512){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=300]{output.pdf}}%
+    \put(0.44818313,0.01607773){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}[20.00, 20.00]\end{tabular}}}}%
+  \end{picture}%
+\endgroup%

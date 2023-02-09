@@ -1,0 +1,13 @@
+{
+    "block_bounds": {
+                        "blockA": [-1.25, -0.75], 
+                        "blockB": [-0.75, -0.25], 
+                        "blockC": [-0.25, 0.25], 
+                        "blockD": [0.25, 0.75], 
+                        "blockE": [0.75, 1.25]
+                    }, 
+    "locations":    {
+                        "box1_pick_loc": [0.5, 0.5, 1.03], 
+                        "box1_drop_loc": [0.5, 0.0, 1.03] 
+                    }
+}

@@ -1,0 +1,324 @@
+{
+    "initialization": {
+        "constants": {
+            "item": [
+                "empty"
+            ],
+            "location": [
+                "grasped"
+            ],
+            "state": [
+                "home",
+                "random"
+            ]
+        },
+        "predicates": [
+            "safe_state home",
+            "unsafe_state random",
+            "reachable blockD box_pick_loc",
+            "reachable blockA box_drop_loc",
+            "loc box box_pick_loc",
+            "vertices network [blockA blockB blockC blockD blockE]",
+            "edges network [(blockA blockB) (blockB blockA) (blockB blockC) (blockC blockB) (blockC blockD) (blockD blockC) (blockD blockE)]",
+            "release_time requestA 0",
+            "due_date requestA 300",
+            "demand requestA [move_item box box_drop_loc]",
+            "block ur5A blockA",
+            "st ur5A home",
+            "grasp ur5A empty"
+        ]
+    },
+    "relations": [
+        "cz [0.00, 300.00] robot_move_item-m_move_item_end31",
+        "cz [0.00, inf] robot_move_item-m_move_item_start30",
+        "item_box_drop_loc_released_end63 contains [0.00, 0.00] robot_release_end41",
+        "item_box_drop_loc_released_end63 sequencing [0.00, inf] item_tail_start24",
+        "item_box_drop_loc_released_start62 duration [30.00, 30.00] item_box_drop_loc_released_end63",
+        "item_head_end23 sequencing [0.00, inf] item_ur5A_grasped_start44",
+        "item_head_start22 duration [0.00, 0.00] item_head_end23",
+        "item_tail_start24 duration [0.00, 0.00] item_tail_end25",
+        "item_ur5A_grasped_end45 contains [0.00, 0.00] robot_grasp_end35",
+        "item_ur5A_grasped_end45 sequencing [0.00, inf] item_box_drop_loc_released_start62",
+        "item_ur5A_grasped_start44 duration [30.00, 30.00] item_ur5A_grasped_end45",
+        "rail_block_head_end11 sequencing [0.00, inf] rail_block_ur5A_occupied_start58",
+        "rail_block_head_end15 sequencing [0.00, inf] rail_block_ur5A_occupied_start60",
+        "rail_block_head_end19 sequencing [0.00, inf] rail_block_tail_start20",
+        "rail_block_head_end3 sequencing [0.00, inf] rail_block_ur5A_occupied_start54",
+        "rail_block_head_end7 sequencing [0.00, inf] rail_block_ur5A_occupied_start56",
+        "rail_block_head_start10 duration [0.00, 0.00] rail_block_head_end11",
+        "rail_block_head_start14 duration [0.00, 0.00] rail_block_head_end15",
+        "rail_block_head_start18 duration [0.00, 0.00] rail_block_head_end19",
+        "rail_block_head_start2 duration [0.00, 0.00] rail_block_head_end3",
+        "rail_block_head_start6 duration [0.00, 0.00] rail_block_head_end7",
+        "rail_block_tail_start12 duration [0.00, 0.00] rail_block_tail_end13",
+        "rail_block_tail_start16 duration [0.00, 0.00] rail_block_tail_end17",
+        "rail_block_tail_start20 duration [0.00, 0.00] rail_block_tail_end21",
+        "rail_block_tail_start4 duration [0.00, 0.00] rail_block_tail_end5",
+        "rail_block_tail_start8 duration [0.00, 0.00] rail_block_tail_end9",
+        "rail_block_ur5A_occupied_end55 contains [0.00, 0.00] robot_rail_move_end47",
+        "rail_block_ur5A_occupied_end55 sequencing [0.00, inf] rail_block_ur5A_occupied_start78",
+        "rail_block_ur5A_occupied_end57 contains [0.00, 0.00] robot_rail_move_end49",
+        "rail_block_ur5A_occupied_end57 sequencing [0.00, inf] rail_block_ur5A_occupied_start76",
+        "rail_block_ur5A_occupied_end59 contains [0.00, 0.00] robot_rail_move_end51",
+        "rail_block_ur5A_occupied_end59 sequencing [0.00, inf] rail_block_ur5A_occupied_start74",
+        "rail_block_ur5A_occupied_end61 contains [0.00, 0.00] robot_rail_move_end53",
+        "rail_block_ur5A_occupied_end61 sequencing [0.00, inf] rail_block_ur5A_occupied_start72",
+        "rail_block_ur5A_occupied_end73 contains [0.00, 0.00] robot_rail_move_end65",
+        "rail_block_ur5A_occupied_end73 sequencing [0.00, inf] rail_block_tail_start16",
+        "rail_block_ur5A_occupied_end75 contains [0.00, 0.00] robot_rail_move_end67",
+        "rail_block_ur5A_occupied_end75 sequencing [0.00, inf] rail_block_tail_start12",
+        "rail_block_ur5A_occupied_end77 contains [0.00, 0.00] robot_rail_move_end69",
+        "rail_block_ur5A_occupied_end77 sequencing [0.00, inf] rail_block_tail_start8",
+        "rail_block_ur5A_occupied_end79 contains [0.00, 0.00] robot_rail_move_end71",
+        "rail_block_ur5A_occupied_end79 sequencing [0.00, inf] rail_block_tail_start4",
+        "rail_block_ur5A_occupied_start54 duration [20.00, 20.00] rail_block_ur5A_occupied_end55",
+        "rail_block_ur5A_occupied_start56 duration [20.00, 20.00] rail_block_ur5A_occupied_end57",
+        "rail_block_ur5A_occupied_start58 duration [20.00, 20.00] rail_block_ur5A_occupied_end59",
+        "rail_block_ur5A_occupied_start60 duration [20.00, 20.00] rail_block_ur5A_occupied_end61",
+        "rail_block_ur5A_occupied_start72 duration [20.00, 20.00] rail_block_ur5A_occupied_end73",
+        "rail_block_ur5A_occupied_start74 duration [20.00, 20.00] rail_block_ur5A_occupied_end75",
+        "rail_block_ur5A_occupied_start76 duration [20.00, 20.00] rail_block_ur5A_occupied_end77",
+        "rail_block_ur5A_occupied_start78 duration [20.00, 20.00] rail_block_ur5A_occupied_end79",
+        "robot_drop_item-m_drop_item_end39 contains [0.00, inf] robot_move_item-m_move_item_end31",
+        "robot_drop_item-m_drop_item_start38 contains [0.00, inf] robot_release_start40",
+        "robot_drop_item-m_drop_item_start38 duration [0.00, inf] robot_drop_item-m_drop_item_end39",
+        "robot_grasp_end35 meets [0.00, 0.00] robot_move_to_home_state_start36",
+        "robot_grasp_end35 sequencing [0.00, inf] robot_move_to_home_state_start36",
+        "robot_grasp_start34 contains [0.00, 0.00] item_ur5A_grasped_start44",
+        "robot_grasp_start34 duration [30.00, 30.00] robot_grasp_end35",
+        "robot_head_end27 sequencing [0.00, inf] robot_rail_move_start46",
+        "robot_head_start26 duration [0.00, 0.00] robot_head_end27",
+        "robot_move_item-m_move_item_start30 contains [0.00, inf] robot_pick_item-m_pick_item_start32",
+        "robot_move_item-m_move_item_start30 duration [0.00, inf] robot_move_item-m_move_item_end31",
+        "robot_move_to_home_state_end37 contains [0.00, inf] robot_pick_item-m_pick_item_end33",
+        "robot_move_to_home_state_end37 sequencing [0.00, inf] robot_rail_move_start64",
+        "robot_move_to_home_state_end43 contains [0.00, inf] robot_drop_item-m_drop_item_end39",
+        "robot_move_to_home_state_end43 sequencing [0.00, inf] robot_tail_start28",
+        "robot_move_to_home_state_start36 duration [10.00, 10.00] robot_move_to_home_state_end37",
+        "robot_move_to_home_state_start42 duration [10.00, 10.00] robot_move_to_home_state_end43",
+        "robot_pick_item-m_pick_item_end33 before [0.00, inf] robot_drop_item-m_drop_item_start38",
+        "robot_pick_item-m_pick_item_start32 contains [0.00, inf] robot_grasp_start34",
+        "robot_pick_item-m_pick_item_start32 duration [0.00, inf] robot_pick_item-m_pick_item_end33",
+        "robot_rail_move_end47 sequencing [0.00, inf] robot_rail_move_start48",
+        "robot_rail_move_end49 sequencing [0.00, inf] robot_rail_move_start50",
+        "robot_rail_move_end51 sequencing [0.00, inf] robot_rail_move_start52",
+        "robot_rail_move_end53 sequencing [0.00, inf] robot_grasp_start34",
+        "robot_rail_move_end65 sequencing [0.00, inf] robot_rail_move_start66",
+        "robot_rail_move_end67 sequencing [0.00, inf] robot_rail_move_start68",
+        "robot_rail_move_end69 sequencing [0.00, inf] robot_rail_move_start70",
+        "robot_rail_move_end71 sequencing [0.00, inf] robot_release_start40",
+        "robot_rail_move_start46 contains [0.00, 0.00] rail_block_ur5A_occupied_start54",
+        "robot_rail_move_start46 duration [20.00, 20.00] robot_rail_move_end47",
+        "robot_rail_move_start48 contains [0.00, 0.00] rail_block_ur5A_occupied_start56",
+        "robot_rail_move_start48 duration [20.00, 20.00] robot_rail_move_end49",
+        "robot_rail_move_start50 contains [0.00, 0.00] rail_block_ur5A_occupied_start58",
+        "robot_rail_move_start50 duration [20.00, 20.00] robot_rail_move_end51",
+        "robot_rail_move_start52 contains [0.00, 0.00] rail_block_ur5A_occupied_start60",
+        "robot_rail_move_start52 duration [20.00, 20.00] robot_rail_move_end53",
+        "robot_rail_move_start64 contains [0.00, 0.00] rail_block_ur5A_occupied_start72",
+        "robot_rail_move_start64 duration [20.00, 20.00] robot_rail_move_end65",
+        "robot_rail_move_start66 contains [0.00, 0.00] rail_block_ur5A_occupied_start74",
+        "robot_rail_move_start66 duration [20.00, 20.00] robot_rail_move_end67",
+        "robot_rail_move_start68 contains [0.00, 0.00] rail_block_ur5A_occupied_start76",
+        "robot_rail_move_start68 duration [20.00, 20.00] robot_rail_move_end69",
+        "robot_rail_move_start70 contains [0.00, 0.00] rail_block_ur5A_occupied_start78",
+        "robot_rail_move_start70 duration [20.00, 20.00] robot_rail_move_end71",
+        "robot_release_end41 meets [0.00, 0.00] robot_move_to_home_state_start42",
+        "robot_release_end41 sequencing [0.00, inf] robot_move_to_home_state_start42",
+        "robot_release_start40 contains [0.00, 0.00] item_box_drop_loc_released_start62",
+        "robot_release_start40 duration [30.00, 30.00] robot_release_end41",
+        "robot_tail_start28 duration [0.00, 0.00] robot_tail_end29"
+    ],
+    "timelines": {
+        "ur5A": [
+            {
+                "effects": [
+                    "block ur5A blockA"
+                ],
+                "preconditions": [
+                    "block ur5A blockA",
+                    "clear ur5A.block blockA",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ],
+                "rail_move ur5A blockA": [
+                    "robot_rail_move_start46: [0.00, 60.00]",
+                    "robot_rail_move_end47: [20.00, 80.00]"
+                ]
+            },
+            {
+                "effects": [
+                    "block ur5A blockB"
+                ],
+                "preconditions": [
+                    "block ur5A blockA",
+                    "clear ur5A.block blockB",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ],
+                "rail_move ur5A blockB": [
+                    "robot_rail_move_start48: [20.00, 80.00]",
+                    "robot_rail_move_end49: [40.00, 100.00]"
+                ]
+            },
+            {
+                "effects": [
+                    "block ur5A blockC"
+                ],
+                "preconditions": [
+                    "block ur5A blockB",
+                    "clear ur5A.block blockC",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ],
+                "rail_move ur5A blockC": [
+                    "robot_rail_move_start50: [40.00, 100.00]",
+                    "robot_rail_move_end51: [60.00, 120.00]"
+                ]
+            },
+            {
+                "effects": [
+                    "block ur5A blockD"
+                ],
+                "preconditions": [
+                    "block ur5A blockC",
+                    "clear ur5A.block blockD",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ],
+                "rail_move ur5A blockD": [
+                    "robot_rail_move_start52: [60.00, 120.00]",
+                    "robot_rail_move_end53: [80.00, 140.00]"
+                ]
+            },
+            {
+                "effects": [
+                    "loc box grasped",
+                    "grasp ur5A box",
+                    "st ur5A random"
+                ],
+                "grasp ur5A box": [
+                    "robot_grasp_start34: [80.00, 140.00]",
+                    "robot_grasp_end35: [110.00, 170.00]"
+                ],
+                "preconditions": [
+                    "grasp ur5A empty",
+                    "not __equal ur5A.grasp box",
+                    "block ur5A blockD",
+                    "loc box box_pick_loc",
+                    "reachable ur5A.block box.loc",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ]
+            },
+            {
+                "effects": [
+                    "st ur5A home"
+                ],
+                "move_to_home_state ur5A": [
+                    "robot_move_to_home_state_start36: [110.00, 170.00]",
+                    "robot_move_to_home_state_end37: [120.00, 180.00]"
+                ],
+                "preconditions": [
+                    "st ur5A random",
+                    "unsafe_state ur5A.st"
+                ]
+            },
+            {
+                "effects": [
+                    "block ur5A blockD"
+                ],
+                "preconditions": [
+                    "block ur5A blockD",
+                    "clear ur5A.block blockD",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ],
+                "rail_move ur5A blockD": [
+                    "robot_rail_move_start64: [120.00, 180.00]",
+                    "robot_rail_move_end65: [140.00, 200.00]"
+                ]
+            },
+            {
+                "effects": [
+                    "block ur5A blockC"
+                ],
+                "preconditions": [
+                    "block ur5A blockD",
+                    "clear ur5A.block blockC",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ],
+                "rail_move ur5A blockC": [
+                    "robot_rail_move_start66: [140.00, 200.00]",
+                    "robot_rail_move_end67: [160.00, 220.00]"
+                ]
+            },
+            {
+                "effects": [
+                    "block ur5A blockB"
+                ],
+                "preconditions": [
+                    "block ur5A blockC",
+                    "clear ur5A.block blockB",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ],
+                "rail_move ur5A blockB": [
+                    "robot_rail_move_start68: [160.00, 220.00]",
+                    "robot_rail_move_end69: [180.00, 240.00]"
+                ]
+            },
+            {
+                "effects": [
+                    "block ur5A blockA"
+                ],
+                "preconditions": [
+                    "block ur5A blockB",
+                    "clear ur5A.block blockA",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ],
+                "rail_move ur5A blockA": [
+                    "robot_rail_move_start70: [180.00, 240.00]",
+                    "robot_rail_move_end71: [200.00, 260.00]"
+                ]
+            },
+            {
+                "effects": [
+                    "loc box box_drop_loc",
+                    "grasp ur5A empty",
+                    "st ur5A random"
+                ],
+                "preconditions": [
+                    "loc box grasped",
+                    "__equal box.loc grasped",
+                    "grasp ur5A box",
+                    "__equal ur5A.grasp box",
+                    "block ur5A blockA",
+                    "reachable ur5A.block box_drop_loc",
+                    "st ur5A home",
+                    "safe_state ur5A.st"
+                ],
+                "release ur5A box box_drop_loc": [
+                    "robot_release_start40: [200.00, 260.00]",
+                    "robot_release_end41: [230.00, 290.00]"
+                ]
+            },
+            {
+                "effects": [
+                    "grasp ur5A empty",
+                    "st ur5A home"
+                ],
+                "move_to_home_state ur5A": [
+                    "robot_move_to_home_state_start42: [230.00, 290.00]",
+                    "robot_move_to_home_state_end43: [240.00, 300.00]"
+                ],
+                "preconditions": [
+                    "st ur5A random",
+                    "unsafe_state ur5A.st"
+                ]
+            }
+        ]
+    }
+}

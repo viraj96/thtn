@@ -1,0 +1,30 @@
+(define (problem pick_place_coordination_problem)
+        (:domain pick_place_coordination)
+        (:objects
+            box1 - item
+            network - map
+            ur5A ur5B - robot
+            requestA - request
+			box1_pick_loc box1_drop_loc - location
+			blockA blockB blockC blockD blockE - rail_block
+		)
+        (:object-instants
+            ur5A {block = blockC, st = home, grasp = empty}
+    		ur5B {block = blockB, st = home, grasp = empty}
+			box1 {loc = box1_pick_loc}
+			requestA {release_time = 0, due_date = 10000, demand = [move_item box1 box1_drop_loc]}
+			network {vertices = [blockA blockB blockC blockD blockE], edges = [(blockA blockB) (blockB blockA) (blockB blockC) (blockC blockB) (blockC blockD) (blockD blockC) (blockD blockE) (blockE blockD) 
+            ]}
+        )
+        (:htn
+            :requests (and
+				(requestA)
+            )
+        )
+        (:init
+            (over all (safe_state home))
+            (over all (unsafe_state random))
+			(over all (reachable blockC box1_pick_loc))
+			(over all (reachable blockB box1_drop_loc))
+		)
+)

@@ -1,0 +1,114 @@
+(define (problem pick_place_coordination_problem)
+        (:domain pick_place_coordination)
+        (:objects
+            network - map
+            ur5A ur5B - robot
+    		box1 box2 box3 box4 box5 box6 box7 box8 box9 box10 box11 box12 box13 box14 box15 - item
+			box1_pick_loc box1_drop_loc - location
+			box2_pick_loc box2_drop_loc - location
+			box3_pick_loc box3_drop_loc - location
+			box4_pick_loc box4_drop_loc - location
+			box5_pick_loc box5_drop_loc - location
+			box6_pick_loc box6_drop_loc - location
+			box7_pick_loc box7_drop_loc - location
+			box8_pick_loc box8_drop_loc - location
+			box9_pick_loc box9_drop_loc - location
+			box10_pick_loc box10_drop_loc - location
+			box11_pick_loc box11_drop_loc - location
+			box12_pick_loc box12_drop_loc - location
+			box13_pick_loc box13_drop_loc - location
+			box14_pick_loc box14_drop_loc - location
+			box15_pick_loc box15_drop_loc - location
+			requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO - request
+			blockA blockB blockC blockD blockE blockF blockG blockH blockI blockJ - rail_block
+		)
+        (:object-instants
+            ur5A {block = blockA, st = home, grasp = empty}
+    		ur5B {block = blockJ, st = home, grasp = empty}
+			box1 {loc = box1_pick_loc}
+			box2 {loc = box2_pick_loc}
+			box3 {loc = box3_pick_loc}
+			box4 {loc = box4_pick_loc}
+			box5 {loc = box5_pick_loc}
+			box6 {loc = box6_pick_loc}
+			box7 {loc = box7_pick_loc}
+			box8 {loc = box8_pick_loc}
+			box9 {loc = box9_pick_loc}
+			box10 {loc = box10_pick_loc}
+			box11 {loc = box11_pick_loc}
+			box12 {loc = box12_pick_loc}
+			box13 {loc = box13_pick_loc}
+			box14 {loc = box14_pick_loc}
+			box15 {loc = box15_pick_loc}
+			requestA {release_time = 0, due_date = 10000, demand = [move_item box1 box1_drop_loc]}
+			requestB {release_time = 0, due_date = 10000, demand = [move_item box2 box2_drop_loc]}
+			requestC {release_time = 0, due_date = 10000, demand = [move_item box3 box3_drop_loc]}
+			requestD {release_time = 0, due_date = 10000, demand = [move_item box4 box4_drop_loc]}
+			requestE {release_time = 0, due_date = 10000, demand = [move_item box5 box5_drop_loc]}
+			requestF {release_time = 0, due_date = 10000, demand = [move_item box6 box6_drop_loc]}
+			requestG {release_time = 0, due_date = 10000, demand = [move_item box7 box7_drop_loc]}
+			requestH {release_time = 0, due_date = 10000, demand = [move_item box8 box8_drop_loc]}
+			requestI {release_time = 0, due_date = 10000, demand = [move_item box9 box9_drop_loc]}
+			requestJ {release_time = 0, due_date = 10000, demand = [move_item box10 box10_drop_loc]}
+			requestK {release_time = 0, due_date = 10000, demand = [move_item box11 box11_drop_loc]}
+			requestL {release_time = 0, due_date = 10000, demand = [move_item box12 box12_drop_loc]}
+			requestM {release_time = 0, due_date = 10000, demand = [move_item box13 box13_drop_loc]}
+			requestN {release_time = 0, due_date = 10000, demand = [move_item box14 box14_drop_loc]}
+			requestO {release_time = 0, due_date = 10000, demand = [move_item box15 box15_drop_loc]}
+			network {vertices = [blockA blockB blockC blockD blockE blockF blockG blockH blockI blockJ], edges = [(blockA blockB) (blockB blockA) (blockB blockC) (blockC blockB) (blockC blockD) (blockD blockC) (blockD blockE) (blockE blockD) (blockE blockF) (blockF blockE) (blockF blockG) (blockG blockF) (blockG blockH) (blockH blockG) (blockH blockI) (blockI blockH) (blockI blockJ) (blockJ blockI) 
+            ]}
+        )
+        (:htn
+            :requests (and
+				(requestA)
+				(requestB)
+				(requestC)
+				(requestD)
+				(requestE)
+				(requestF)
+				(requestG)
+				(requestH)
+				(requestI)
+				(requestJ)
+				(requestK)
+				(requestL)
+				(requestM)
+				(requestN)
+				(requestO)
+            )
+        )
+        (:init
+            (over all (safe_state home))
+            (over all (unsafe_state random))
+			(over all (reachable blockH box1_pick_loc))
+			(over all (reachable blockE box1_drop_loc))
+			(over all (reachable blockE box2_pick_loc))
+			(over all (reachable blockD box2_drop_loc))
+			(over all (reachable blockA box3_pick_loc))
+			(over all (reachable blockG box3_drop_loc))
+			(over all (reachable blockH box4_pick_loc))
+			(over all (reachable blockC box4_drop_loc))
+			(over all (reachable blockF box5_pick_loc))
+			(over all (reachable blockH box5_drop_loc))
+			(over all (reachable blockA box6_pick_loc))
+			(over all (reachable blockG box6_drop_loc))
+			(over all (reachable blockE box7_pick_loc))
+			(over all (reachable blockA box7_drop_loc))
+			(over all (reachable blockC box8_pick_loc))
+			(over all (reachable blockA box8_drop_loc))
+			(over all (reachable blockG box9_pick_loc))
+			(over all (reachable blockB box9_drop_loc))
+			(over all (reachable blockG box10_pick_loc))
+			(over all (reachable blockA box10_drop_loc))
+			(over all (reachable blockA box11_pick_loc))
+			(over all (reachable blockD box11_drop_loc))
+			(over all (reachable blockG box12_pick_loc))
+			(over all (reachable blockD box12_drop_loc))
+			(over all (reachable blockB box13_pick_loc))
+			(over all (reachable blockE box13_drop_loc))
+			(over all (reachable blockG box14_pick_loc))
+			(over all (reachable blockC box14_drop_loc))
+			(over all (reachable blockG box15_pick_loc))
+			(over all (reachable blockB box15_drop_loc))
+		)
+)

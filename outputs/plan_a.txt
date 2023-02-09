@@ -1,0 +1,251 @@
+Running the parser on the given domain and problem files!
+Instance is totally-ordered: yes
+Instance is acyclic:         yes
+Requirements:
+	:hierarchy
+	:typing
+	:equality
+	:method-preconditions
+Compiling the rail network!
+Assigning function pointers for functional methods and predicates!
+Search Tree: 
+	 Id = requestA
+	 Adjacency List: 
+		 move_item-m_move_item -> pick_item-m_pick_item
+		 move_item-m_move_item -> drop_item-m_drop_item
+		 pick_item-m_pick_item -> grasp-pick_item-m_pick_item
+		 pick_item-m_pick_item -> move_to_home_state-pick_item-m_pick_item
+		 drop_item-m_drop_item -> release-drop_item-m_drop_item
+		 drop_item-m_drop_item -> move_to_home_state-drop_item-m_drop_item
+
+Task Network: 
+	 Id = requestA
+	 Adjacency List = 
+		 move_item-m_move_item -> pick_item-m_pick_item
+		 move_item-m_move_item -> drop_item-m_drop_item
+		 pick_item-m_pick_item -> grasp
+		 pick_item-m_pick_item -> move_to_home_state
+		 drop_item-m_drop_item -> release
+		 drop_item-m_drop_item -> move_to_home_state
+
+Before planning: 43
+After planning: 43
+After commiting: 79
+Plan: 
+	 Timelines = 
+		 Timeline: 
+	 Id = blockA
+	 Resource = rail_block
+	 Tokens = 
+		 Token: 
+	 Name = head
+	 Start Timepoint = rail_block_head_start2 (0.000000, 60.000000)
+	 End Timepoint = rail_block_head_end3 (0.000000, 60.000000)
+
+		 Token: 
+	 Name = ur5A_occupied ur5A  blockA 
+	 Start Timepoint = rail_block_ur5A_occupied_start54 (0.000000, 60.000000)
+	 End Timepoint = rail_block_ur5A_occupied_end55 (20.000000, 80.000000)
+
+		 Token: 
+	 Name = ur5A_occupied ur5A  blockA 
+	 Start Timepoint = rail_block_ur5A_occupied_start78 (180.000000, 240.000000)
+	 End Timepoint = rail_block_ur5A_occupied_end79 (200.000000, 260.000000)
+
+		 Token: 
+	 Name = tail
+	 Start Timepoint = rail_block_tail_start4 (200.000000, inf)
+	 End Timepoint = rail_block_tail_end5 (200.000000, inf)
+
+
+		 Timeline: 
+	 Id = blockB
+	 Resource = rail_block
+	 Tokens = 
+		 Token: 
+	 Name = head
+	 Start Timepoint = rail_block_head_start6 (0.000000, 80.000000)
+	 End Timepoint = rail_block_head_end7 (0.000000, 80.000000)
+
+		 Token: 
+	 Name = ur5A_occupied ur5A  blockB 
+	 Start Timepoint = rail_block_ur5A_occupied_start56 (20.000000, 80.000000)
+	 End Timepoint = rail_block_ur5A_occupied_end57 (40.000000, 100.000000)
+
+		 Token: 
+	 Name = ur5A_occupied ur5A  blockB 
+	 Start Timepoint = rail_block_ur5A_occupied_start76 (160.000000, 220.000000)
+	 End Timepoint = rail_block_ur5A_occupied_end77 (180.000000, 240.000000)
+
+		 Token: 
+	 Name = tail
+	 Start Timepoint = rail_block_tail_start8 (180.000000, inf)
+	 End Timepoint = rail_block_tail_end9 (180.000000, inf)
+
+
+		 Timeline: 
+	 Id = blockC
+	 Resource = rail_block
+	 Tokens = 
+		 Token: 
+	 Name = head
+	 Start Timepoint = rail_block_head_start10 (0.000000, 100.000000)
+	 End Timepoint = rail_block_head_end11 (0.000000, 100.000000)
+
+		 Token: 
+	 Name = ur5A_occupied ur5A  blockC 
+	 Start Timepoint = rail_block_ur5A_occupied_start58 (40.000000, 100.000000)
+	 End Timepoint = rail_block_ur5A_occupied_end59 (60.000000, 120.000000)
+
+		 Token: 
+	 Name = ur5A_occupied ur5A  blockC 
+	 Start Timepoint = rail_block_ur5A_occupied_start74 (140.000000, 200.000000)
+	 End Timepoint = rail_block_ur5A_occupied_end75 (160.000000, 220.000000)
+
+		 Token: 
+	 Name = tail
+	 Start Timepoint = rail_block_tail_start12 (160.000000, inf)
+	 End Timepoint = rail_block_tail_end13 (160.000000, inf)
+
+
+		 Timeline: 
+	 Id = blockD
+	 Resource = rail_block
+	 Tokens = 
+		 Token: 
+	 Name = head
+	 Start Timepoint = rail_block_head_start14 (0.000000, 120.000000)
+	 End Timepoint = rail_block_head_end15 (0.000000, 120.000000)
+
+		 Token: 
+	 Name = ur5A_occupied ur5A  blockD 
+	 Start Timepoint = rail_block_ur5A_occupied_start60 (60.000000, 120.000000)
+	 End Timepoint = rail_block_ur5A_occupied_end61 (80.000000, 140.000000)
+
+		 Token: 
+	 Name = ur5A_occupied ur5A  blockD 
+	 Start Timepoint = rail_block_ur5A_occupied_start72 (120.000000, 180.000000)
+	 End Timepoint = rail_block_ur5A_occupied_end73 (140.000000, 200.000000)
+
+		 Token: 
+	 Name = tail
+	 Start Timepoint = rail_block_tail_start16 (140.000000, inf)
+	 End Timepoint = rail_block_tail_end17 (140.000000, inf)
+
+
+		 Timeline: 
+	 Id = blockE
+	 Resource = rail_block
+	 Tokens = 
+		 Token: 
+	 Name = head
+	 Start Timepoint = rail_block_head_start18 (0.000000, inf)
+	 End Timepoint = rail_block_head_end19 (0.000000, inf)
+
+		 Token: 
+	 Name = tail
+	 Start Timepoint = rail_block_tail_start20 (0.000000, inf)
+	 End Timepoint = rail_block_tail_end21 (0.000000, inf)
+
+
+		 Timeline: 
+	 Id = box
+	 Resource = item
+	 Tokens = 
+		 Token: 
+	 Name = head
+	 Start Timepoint = item_head_start22 (0.000000, 140.000000)
+	 End Timepoint = item_head_end23 (0.000000, 140.000000)
+
+		 Token: 
+	 Name = ur5A_grasped box  ur5A 
+	 Start Timepoint = item_ur5A_grasped_start44 (80.000000, 140.000000)
+	 End Timepoint = item_ur5A_grasped_end45 (110.000000, 170.000000)
+
+		 Token: 
+	 Name = box_drop_loc_released box_drop_loc  box  ur5A 
+	 Start Timepoint = item_box_drop_loc_released_start62 (200.000000, 260.000000)
+	 End Timepoint = item_box_drop_loc_released_end63 (230.000000, 290.000000)
+
+		 Token: 
+	 Name = tail
+	 Start Timepoint = item_tail_start24 (230.000000, inf)
+	 End Timepoint = item_tail_end25 (230.000000, inf)
+
+
+		 Timeline: 
+	 Id = ur5A
+	 Resource = robot
+	 Tokens = 
+		 Token: 
+	 Name = head
+	 Start Timepoint = robot_head_start26 (0.000000, 60.000000)
+	 End Timepoint = robot_head_end27 (0.000000, 60.000000)
+
+		 Token: 
+	 Name = rail_move ur5A  blockA 
+	 Start Timepoint = robot_rail_move_start46 (0.000000, 60.000000)
+	 End Timepoint = robot_rail_move_end47 (20.000000, 80.000000)
+
+		 Token: 
+	 Name = rail_move ur5A  blockB 
+	 Start Timepoint = robot_rail_move_start48 (20.000000, 80.000000)
+	 End Timepoint = robot_rail_move_end49 (40.000000, 100.000000)
+
+		 Token: 
+	 Name = rail_move ur5A  blockC 
+	 Start Timepoint = robot_rail_move_start50 (40.000000, 100.000000)
+	 End Timepoint = robot_rail_move_end51 (60.000000, 120.000000)
+
+		 Token: 
+	 Name = rail_move ur5A  blockD 
+	 Start Timepoint = robot_rail_move_start52 (60.000000, 120.000000)
+	 End Timepoint = robot_rail_move_end53 (80.000000, 140.000000)
+
+		 Token: 
+	 Name = grasp box  ur5A 
+	 Start Timepoint = robot_grasp_start34 (80.000000, 140.000000)
+	 End Timepoint = robot_grasp_end35 (110.000000, 170.000000)
+
+		 Token: 
+	 Name = move_to_home_state ur5A 
+	 Start Timepoint = robot_move_to_home_state_start36 (110.000000, 170.000000)
+	 End Timepoint = robot_move_to_home_state_end37 (120.000000, 180.000000)
+
+		 Token: 
+	 Name = rail_move ur5A  blockD 
+	 Start Timepoint = robot_rail_move_start64 (120.000000, 180.000000)
+	 End Timepoint = robot_rail_move_end65 (140.000000, 200.000000)
+
+		 Token: 
+	 Name = rail_move ur5A  blockC 
+	 Start Timepoint = robot_rail_move_start66 (140.000000, 200.000000)
+	 End Timepoint = robot_rail_move_end67 (160.000000, 220.000000)
+
+		 Token: 
+	 Name = rail_move ur5A  blockB 
+	 Start Timepoint = robot_rail_move_start68 (160.000000, 220.000000)
+	 End Timepoint = robot_rail_move_end69 (180.000000, 240.000000)
+
+		 Token: 
+	 Name = rail_move ur5A  blockA 
+	 Start Timepoint = robot_rail_move_start70 (180.000000, 240.000000)
+	 End Timepoint = robot_rail_move_end71 (200.000000, 260.000000)
+
+		 Token: 
+	 Name = release box_drop_loc  box  ur5A 
+	 Start Timepoint = robot_release_start40 (200.000000, 260.000000)
+	 End Timepoint = robot_release_end41 (230.000000, 290.000000)
+
+		 Token: 
+	 Name = move_to_home_state ur5A 
+	 Start Timepoint = robot_move_to_home_state_start42 (230.000000, 290.000000)
+	 End Timepoint = robot_move_to_home_state_end43 (240.000000, 300.000000)
+
+		 Token: 
+	 Name = tail
+	 Start Timepoint = robot_tail_start28 (240.000000, inf)
+	 End Timepoint = robot_tail_end29 (240.000000, inf)
+
+
+

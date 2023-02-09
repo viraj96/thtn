@@ -1,0 +1,400 @@
+5_5
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 120
+Best Ordering based on Time(s) with value = 0.129753: 
+requestC requestB requestD requestA requestE 
+Best Ordering based on metric Makespan with value = 460.000000: 
+requestA requestC requestB requestE requestD 
+	BASIC METRICS
+Time(s) : 
+	Mean = 0.169724
+	Std Dev = 0.027129
+Makespan :
+	Mean = 538.000000
+	Std Dev = 54.000000
+
+5_10
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 0.521891: 
+requestA requestB requestC requestD requestE requestF requestG requestJ requestH requestI 
+Best Ordering based on metric Makespan with value = 1040.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestJ requestI 
+	BASIC METRICS
+Time(s) : 
+	Mean = 0.553430
+	Std Dev = 0.020965
+Makespan :
+	Mean = 1070.000000
+	Std Dev = 25.690465
+
+5_15
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 2.055261: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestO requestN 
+Best Ordering based on metric Makespan with value = 1500.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestO requestN 
+	BASIC METRICS
+Time(s) : 
+	Mean = 2.163746
+	Std Dev = 0.080623
+Makespan :
+	Mean = 1540.000000
+	Std Dev = 28.284271
+
+5_20
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 3.506067: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestT requestS 
+Best Ordering based on metric Makespan with value = 1980.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestT requestS 
+	BASIC METRICS
+Time(s) : 
+	Mean = 3.711814
+	Std Dev = 0.171826
+Makespan :
+	Mean = 2010.000000
+	Std Dev = 20.493902
+
+5_25
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 10.445320: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestV requestY requestW requestX 
+Best Ordering based on metric Makespan with value = 2500.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestV requestX requestW requestY 
+	BASIC METRICS
+Time(s) : 
+	Mean = 11.082351
+	Std Dev = 0.410022
+Makespan :
+	Mean = 2548.000000
+	Std Dev = 25.612497
+
+10_5
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 120
+Best Ordering based on Time(s) with value = 0.313256: 
+requestC requestD requestA requestE requestB 
+Best Ordering based on metric Makespan with value = 700.000000: 
+requestA requestC requestD requestB requestE 
+	BASIC METRICS
+Time(s) : 
+	Mean = 0.436608
+	Std Dev = 0.090890
+Makespan :
+	Mean = 926.000000
+	Std Dev = 113.800996
+
+10_10
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 0.816196: 
+requestA requestB requestC requestD requestE requestF requestG requestI requestJ requestH 
+Best Ordering based on metric Makespan with value = 1240.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestI requestJ requestH 
+	BASIC METRICS
+Time(s) : 
+	Mean = 0.889631
+	Std Dev = 0.054845
+Makespan :
+	Mean = 1332.000000
+	Std Dev = 65.238026
+
+10_15
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 3.206160: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestO requestM requestN 
+Best Ordering based on metric Makespan with value = 2080.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestN requestM requestO 
+	BASIC METRICS
+Time(s) : 
+	Mean = 3.322893
+	Std Dev = 0.079161
+Makespan :
+	Mean = 2212.000000
+	Std Dev = 78.076885
+
+10_20
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 6.026496: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestT requestS 
+Best Ordering based on metric Makespan with value = 2280.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestS requestT requestR 
+	BASIC METRICS
+Time(s) : 
+	Mean = 6.137459
+	Std Dev = 0.054974
+Makespan :
+	Mean = 2342.000000
+	Std Dev = 61.611687
+
+10_25
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 6.347687: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestV requestX requestY requestW 
+Best Ordering based on metric Makespan with value = 2980.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestV requestX requestY requestW 
+	BASIC METRICS
+Time(s) : 
+	Mean = 6.511202
+	Std Dev = 0.130851
+Makespan :
+	Mean = 3054.000000
+	Std Dev = 49.030603
+
+15_5
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 120
+Best Ordering based on Time(s) with value = 0.408179: 
+requestE requestD requestC requestB requestA 
+Best Ordering based on metric Makespan with value = 700.000000: 
+requestA requestC requestB requestE requestD 
+	BASIC METRICS
+Time(s) : 
+	Mean = 0.504367
+	Std Dev = 0.051196
+Makespan :
+	Mean = 1141.166667
+	Std Dev = 166.779212
+
+15_10
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 1.607922: 
+requestA requestB requestC requestD requestE requestF requestH requestG requestI requestJ 
+Best Ordering based on metric Makespan with value = 1940.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestJ requestI 
+	BASIC METRICS
+Time(s) : 
+	Mean = 1.737180
+	Std Dev = 0.074476
+Makespan :
+	Mean = 2034.000000
+	Std Dev = 56.603887
+
+15_15
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 3.924355: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestN requestM requestO 
+Best Ordering based on metric Makespan with value = 2320.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestO requestN 
+	BASIC METRICS
+Time(s) : 
+	Mean = 4.133632
+	Std Dev = 0.169600
+Makespan :
+	Mean = 2408.000000
+	Std Dev = 77.562878
+
+15_20
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 8.050116: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestR requestQ requestT requestS 
+Best Ordering based on metric Makespan with value = 3520.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestT requestS 
+	BASIC METRICS
+Time(s) : 
+	Mean = 8.348278
+	Std Dev = 0.154534
+Makespan :
+	Mean = 3640.000000
+	Std Dev = 119.666202
+
+15_25
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 13.627289: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestW requestX requestY requestV 
+Best Ordering based on metric Makespan with value = 5040.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestV requestW requestY requestX 
+	BASIC METRICS
+Time(s) : 
+	Mean = 13.943376
+	Std Dev = 0.197724
+Makespan :
+	Mean = 5192.000000
+	Std Dev = 85.883642
+
+20_5
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 120
+Best Ordering based on Time(s) with value = 0.547963: 
+requestE requestA requestD requestC requestB 
+Best Ordering based on metric Makespan with value = 760.000000: 
+requestA requestC requestE requestB requestD 
+	BASIC METRICS
+Time(s) : 
+	Mean = 0.762351
+	Std Dev = 0.101997
+Makespan :
+	Mean = 1233.666667
+	Std Dev = 213.463242
+
+20_10
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 2.845871: 
+requestA requestB requestC requestD requestE requestF requestH requestG requestJ requestI 
+Best Ordering based on metric Makespan with value = 2320.000000: 
+requestA requestB requestC requestD requestE requestF requestH requestI requestJ requestG 
+	BASIC METRICS
+Time(s) : 
+	Mean = 3.057875
+	Std Dev = 0.100546
+Makespan :
+	Mean = 2560.000000
+	Std Dev = 205.523721
+
+20_15
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 4.706656: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestO requestM requestN 
+Best Ordering based on metric Makespan with value = 3200.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestM requestN requestO requestL 
+	BASIC METRICS
+Time(s) : 
+	Mean = 5.230259
+	Std Dev = 0.323106
+Makespan :
+	Mean = 3338.000000
+	Std Dev = 110.072703
+
+20_20
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 16.838289: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestR requestS requestQ requestT 
+Best Ordering based on metric Makespan with value = 4400.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestR requestQ requestT requestS 
+	BASIC METRICS
+Time(s) : 
+	Mean = 19.236367
+	Std Dev = 1.271303
+Makespan :
+	Mean = 4644.000000
+	Std Dev = 157.936696
+
+20_25
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 18.921136: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestV requestY requestW requestX 
+Best Ordering based on metric Makespan with value = 5620.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestV requestW requestY requestX 
+	BASIC METRICS
+Time(s) : 
+	Mean = 20.378894
+	Std Dev = 1.050387
+Makespan :
+	Mean = 5792.000000
+	Std Dev = 114.262855
+
+25_5
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 120
+Best Ordering based on Time(s) with value = 0.622345: 
+requestB requestA requestD requestE requestC 
+Best Ordering based on metric Makespan with value = 1040.000000: 
+requestA requestB requestD requestE requestC 
+	BASIC METRICS
+Time(s) : 
+	Mean = 0.854028
+	Std Dev = 0.128326
+Makespan :
+	Mean = 1300.166667
+	Std Dev = 179.582773
+
+25_10
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 1.932194: 
+requestA requestB requestC requestD requestE requestF requestH requestI requestG requestJ 
+Best Ordering based on metric Makespan with value = 1640.000000: 
+requestA requestB requestC requestD requestE requestF requestH requestI requestJ requestG 
+	BASIC METRICS
+Time(s) : 
+	Mean = 2.211234
+	Std Dev = 0.156092
+Makespan :
+	Mean = 1980.000000
+	Std Dev = 210.333069
+
+25_15
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 6.369613: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestN requestO requestM 
+Best Ordering based on metric Makespan with value = 3620.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestO requestN 
+	BASIC METRICS
+Time(s) : 
+	Mean = 7.064368
+	Std Dev = 0.482606
+Makespan :
+	Mean = 3790.000000
+	Std Dev = 175.556259
+
+25_20
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 12.861987: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestR requestQ requestS requestT 
+Best Ordering based on metric Makespan with value = 4680.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestR requestQ requestS requestT 
+	BASIC METRICS
+Time(s) : 
+	Mean = 13.611508
+	Std Dev = 0.460838
+Makespan :
+	Mean = 4982.000000
+	Std Dev = 239.741527
+
+25_25
+]		PERMUTATION BENCHMARKING RESULTS
+
+Total permutations tested = 10
+Best Ordering based on Time(s) with value = 15.283967: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestW requestV requestY requestX 
+Best Ordering based on metric Makespan with value = 5260.000000: 
+requestA requestB requestC requestD requestE requestF requestG requestH requestI requestJ requestK requestL requestM requestN requestO requestP requestQ requestR requestS requestT requestU requestV requestW requestY requestX 
+	BASIC METRICS
+Time(s) : 
+	Mean = 16.689177
+	Std Dev = 0.806455
+Makespan :
+	Mean = 5300.000000
+	Std Dev = 81.975606
+
