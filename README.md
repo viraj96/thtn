@@ -32,6 +32,8 @@ Invoke the planner using the following template,
 
 Note that you need to use the update HDDL syntax when defining your own domain and problem files for this planner. The details of the updated syntax can also be found in the [paper](https://icaps22.icaps-conference.org/workshops/HPlan/papers/paper-09.pdf). 
 
+* Tested on Ubuntu 20.04 and MacOS Ventura 13.1 with Apple M1 Chip
+
 ## Reference
 
 If you find this work useful, then please cite the following paper!
