@@ -228,11 +228,22 @@ int main(int argc, char **argv) {
                 obj.parent = cs.first; // type information
                 obj.object_name = m.first; // object name
                 obj.attribute_states = m.second; // object attributes defined under parent type
+                obj.attribute_types = var_declaration(); // object attribute types
+                for (sort_definition sd : sort_definitions)
+                    if (find(sd.declared_sorts.begin(), sd.declared_sorts.end(), 
+                                obj.parent) != sd.declared_sorts.end()) 
+                        for (arg_and_type s_types : sd.vars.vars)
+                            for (arg_and_type s_states : obj.attribute_states.vars)
+                                if (s_types.first.substr(1) == s_states.first)
+                                    obj.attribute_types.vars.push_back(
+                                            make_pair(s_states.first, 
+                                                s_types.second));
+                
                 initial_state.insert(make_pair(obj.object_name, obj));
             }
         }
     }
-
+    
     // extract the railway network
     for (pair<string, object_state> states : initial_state) {
         if (states.second.parent == "map") {

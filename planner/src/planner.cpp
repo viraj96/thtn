@@ -1248,7 +1248,8 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                         }
                     }
 
-                    if (s.tk.is_external() && s.tk.get_resource() == "robot") {
+                    if (s.tk.is_external() && s.tk.get_resource() == "robot" && 
+                            s.prev.is_external()) {
                         // If the current robot token is external and the
                         // previous robot token is external as well, then in
                         // this case we need to add a meets constraint from the
@@ -1265,56 +1266,44 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                         // rmA_e --> <0,0> --> A_occ_e
                         // This will tie the s_A_occ_e token to its 20 unit time
                         // bound
-                        for (pair<string, object_state> cs : current_state_copy)
-                            cout << cs.second.parent << " " << cs.second.object_name << " " << cs.second.attribute_states.to_string() << endl;
-                        if (s.prev.is_external()) {
-                            for (arg_and_type args : s.prev.get_arguments()) {
-                                if (args.second != "robot") {
-                                    string current_assignment = string();
-                                    for (arg_and_type vars :
-                                         current_state_copy[r->get_id()]
-                                             .attribute_states.vars)
-                                        for (sort_definition sd :
-                                             sort_definitions)
-                                            if (find(sd.declared_sorts.begin(),
-                                                     sd.declared_sorts.end(),
-                                                     "robot") !=
-                                                sd.declared_sorts.end())
-                                                for (arg_and_type v :
-                                                     sd.vars.vars)
-                                                    if (v.second == args.second)
-                                                        if (v.first.substr(1) ==
-                                                            vars.first)
-                                                            current_assignment =
-                                                                vars.second;
-                                    Timeline *aff_res_t =
-                                        p->get_timelines(current_assignment);
-                                    if (aff_res_t != nullptr) {
-                                        for (Token t :
-                                             aff_res_t->get_tokens()) {
-                                            string meets_name =
-                                                s.prev.get_end() +
-                                                meets_constraint +
-                                                t.get_start();
-                                            constraint meets =
-                                                stn->get_constraint(meets_name);
-                                            if (get<0>(meets) != "") {
-                                                string new_meets_name =
-                                                    s.tk.get_end() +
-                                                    meets_constraint +
-                                                    t.get_end();
-                                                constraint new_meets =
-                                                    make_tuple(s.tk.get_end(),
-                                                               t.get_end(),
-                                                               zero, zero);
-                                                bool succ = stn->add_constraint(
-                                                    new_meets_name, new_meets);
-                                                if (!succ) {
-                                                    local_check = false;
-                                                }
+                        set<arg_and_type> prev_token_args = s.prev.get_arguments();
+                        for (auto argit = prev_token_args.begin(); 
+                                argit != prev_token_args.end() && local_check; 
+                                argit++) {
+                            if (argit->second != "robot") {
+                                
+                                string current_assignment = "", assignment_type = "";
+                                for (arg_and_type types : 
+                                        current_state_copy[r->get_id()]
+                                        .attribute_types.vars)
+                                    if (types.second == argit->second)
+                                        assignment_type = types.first;
+                                for (arg_and_type vars :
+                                     current_state_copy[r->get_id()]
+                                         .attribute_states.vars)
+                                    if (vars.first == assignment_type)
+                                        current_assignment = vars.second;
+                                
+                                Timeline *aff_res_t =
+                                    p->get_timelines(current_assignment);
+                                if (aff_res_t != nullptr) {
+                                    for (Token t : aff_res_t->get_tokens()) {
+                                        string meets_name = s.prev.get_end() +
+                                            meets_constraint + t.get_start();
+                                        constraint meets =
+                                            stn->get_constraint(meets_name);
+                                        if (get<0>(meets) != "") {
+                                            string new_meets_name = s.tk.get_end() +
+                                                meets_constraint + t.get_end();
+                                            constraint new_meets = make_tuple(
+                                                    s.tk.get_end(), t.get_end(), 
+                                                    zero, zero);
+                                            bool succ = stn->add_constraint(
+                                                new_meets_name, new_meets);
+                                            if (!succ)
+                                                local_check = false;
 
-                                                break;
-                                            }
+                                            break;
                                         }
                                     }
                                 }
