@@ -50,19 +50,12 @@ graph construct_network(string vertices, string edges) {
 
     // Adding vertices
     size_t pos = 0;
-    bool first = true;
     while ((pos = vertices.find(" ")) != string::npos) {
         vertex v = vertex();
-        if (first)
-            v.id = vertices.substr(1, pos - 1);
-        else
-            v.id = vertices.substr(0, pos);
-        first = false;
+        v.id = vertices.substr(0, pos);
         boost::add_vertex(v, G.adj_list);
         vertices.erase(0, pos + 1);
     }
-
-    vertices.pop_back();
 
     vertex v = vertex();
     v.id = vertices;
@@ -70,13 +63,9 @@ graph construct_network(string vertices, string edges) {
 
     // Adding edges
     pos = 0;
-    first = true;
     while ((pos = edges.find(")")) != string::npos) {
         string candidate = "";
-        if (first)
-            candidate = edges.substr(1, pos + 1);
-        else
-            candidate = edges.substr(0, pos);
+        candidate = edges.substr(0, pos);
 
         unsigned start = candidate.find("(");
         unsigned end = candidate.find(")");

@@ -96,6 +96,8 @@ typedef priority_queue<tasknetwork_solution, vector<tasknetwork_solution>,
                        CompareSolutions>
     pq;
 
+extern world_state initial_state;
+
 bool is_resource(string type);
 void commit_slots(Plan *p, pq *solution);
 arg_and_type get_arg_and_attr(string arg);
@@ -135,7 +137,7 @@ bool check_equal_predicate(literal *precondition, set<arg_and_type> knowns,
 arg_and_type evaluate(arg_and_type argument, set<arg_and_type> knowns,
                       world_state *current_state);
 
-pq find_feasible_slots(task_network tree, Plan p, int plans = 1,
+pq find_feasible_slots(task_network tree, Plan p, int attempts = 1,
                        string metric = "makespan");
 
 tuple<bool, bool, bool> del_and_add_sequencing_constraint(Token *prev,
@@ -148,8 +150,11 @@ bool check_init(literal *precondition, set<arg_and_type> knowns,
 
 bool schedule_leafs(vector<task_vertex> leafs,
                     vector<vector<slot>> *tasknetwork_slots, Plan p,
-                    double *makespan, bool tried = false,
-                    string metric = "makespan");
+                    double *makespan, string metric = "makespan");
+
+void initialize_token_state(Token *tk, Plan *p, vector<Timeline *> *robots, 
+        world_state *current_state, vector<arg_and_type> *other_resources,
+        vector<arg_and_type> *affecting_resources);
 
 bool check_precondition(literal *precondition, set<arg_and_type> knowns,
                         pair<string, var_declaration> world_state,

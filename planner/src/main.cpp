@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <iostream>
 
-#define PLANS 1
+#define ATTEMPTS 1
 #define MAX_PERMUTATIONS 10
 /* #define USERDEBUG */
 
@@ -24,6 +24,7 @@ STN stn = STN();
 graph rail_network = graph();
 string domain_name = dummy_domain_name;
 string problem_name = dummy_problem_name;
+world_state initial_state = world_state();
 vector<method> methods = vector<method>();
 string metric_target = dummy_function_type;
 vector<request> requests = vector<request>();
@@ -67,8 +68,9 @@ pair<double, double> compute_metrics(Plan *p) {
 
 void find_plan_for_request(request r, Plan *p, bool *plan_found,
                            string metric) {
-    if (task_name_map.find(r.demand.name) == task_name_map.end())
+    if (task_name_map.find(r.demand.name) == task_name_map.end()) {
         DEBUG("Request " << r.id << " cannot be met!\n");
+    }
 
     search_tree r_tree = create_search_tree(r);
     DEBUG(r_tree.to_string() << endl);
@@ -82,9 +84,7 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
 
         search_vertex root = search_vertex();
         for (search_vertex s : candidate) {
-            if (s.parent == nullptr)
-                root = s;
-            else if (s.parent->or_node && s.parent->parent == nullptr)
+            if (s.parent == nullptr || (s.parent->or_node && s.parent->parent == nullptr))
                 root = s;
         }
 
@@ -107,7 +107,7 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
         pq solutions = pq();
 
         for (vector<string> assign : assignments) {
-            assert(assign.size() == 1);
+            assert(assign.size() == 1); // assigning only robots for now
             map<string, arg_and_type> all_assignments =
                 find_assignments(assign[0], open);
 
@@ -115,7 +115,7 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
                 assign_open_variables(all_assignments, r_net);
 
             // Try to schedule this network and find the first feasible plan
-            pq sol = find_feasible_slots(test_net, *p, PLANS, metric);
+            pq sol = find_feasible_slots(test_net, *p, ATTEMPTS, metric);
             if ((int)sol.size() > 0) solutions.push(sol.top());
         }
 
@@ -221,22 +221,35 @@ int main(int argc, char **argv) {
                linearConditionalEffectExpansion,
                encodeDisjunctivePreconditionsInMethods);
 
-    /* cout << "Compiling the rail network!\n"; */
-    for (map<string, var_declaration> cs : csorts["map"])
-        for (pair<string, var_declaration> m : cs) {
-            string vertices = "", edges = "";
-            for (arg_and_type v : m.second.vars)
-                if (v.first == "vertices")
-                    vertices = v.second;
-                else if (v.first == "edges")
-                    edges = v.second;
-
-            rail_network = construct_network(vertices, edges);
-            rail_network.id = m.first;
+    for (pair<string, set<map<string, var_declaration>>> cs : csorts) {
+        for (map<string, var_declaration> csm : cs.second) {
+            for (pair<string, var_declaration> m : csm) {
+                object_state obj = object_state();
+                obj.parent = cs.first; // type information
+                obj.object_name = m.first; // object name
+                obj.attribute_states = m.second; // object attributes defined under parent type
+                initial_state.insert(make_pair(obj.object_name, obj));
+            }
         }
+    }
 
-    /* cout << "Assigning function pointers for functional methods and " */
-    /*         "predicates!\n"; */
+    // extract the railway network
+    for (pair<string, object_state> states : initial_state) {
+        if (states.second.parent == "map") {
+            string vertices = "", edges = "";
+            for (arg_and_type args : states.second.attribute_states.vars) {
+                if (args.first == "vertices")
+                    vertices = args.second.substr(1, args.second.size() - 2);
+                else if (args.first == "edges") 
+                    edges = args.second.substr(1, args.second.size() - 2);
+                else
+                    cerr << "Do not identify attribute " << args.first << " for object type " << states.second.parent << "\n";
+            }
+            rail_network = construct_network(vertices, edges);
+            rail_network.id = states.first;
+        }
+    }
+
     map<string, fmethod> fm1 = {{"m_clear_and_move", &clear_and_move}};
     map<string, fmethod> fm2 = {{"m_reachable_location", &reachable_location}};
     map<string, fpredicate> fp = {{"clear", &clear}};

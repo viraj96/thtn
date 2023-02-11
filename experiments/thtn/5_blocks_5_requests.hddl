@@ -25,8 +25,7 @@
 			requestC {release_time = 0, due_date = 10000, demand = [move_item box3 box3_drop_loc]}
 			requestD {release_time = 0, due_date = 10000, demand = [move_item box4 box4_drop_loc]}
 			requestE {release_time = 0, due_date = 10000, demand = [move_item box5 box5_drop_loc]}
-			network {vertices = [blockA blockB blockC blockD blockE], edges = [(blockA blockB) (blockB blockA) (blockB blockC) (blockC blockB) (blockC blockD) (blockD blockC) (blockD blockE) (blockE blockD) 
-            ]}
+			network {vertices = [blockA blockB blockC blockD blockE], edges = [(blockA blockB) (blockB blockA) (blockB blockC) (blockC blockB) (blockC blockD) (blockD blockC) (blockD blockE) (blockE blockD)]}
         )
         (:htn
             :requests (and

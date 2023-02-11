@@ -1,6 +1,8 @@
 #include <tuple>
 #include <filesystem>
 
+#include <boost/range/adaptor/indexed.hpp>
+
 #include "domain.hpp"
 #include "planner.hpp"
 
@@ -894,14 +896,14 @@ pair<bool, vector<slot>> satisfy_precondition(literal *precondition,
 }
 
 bool check_temporal_bounds(slot *to_explore, STN *stn) {
-    tuple<double, double> curr_start_bounds =
+    stn_bounds curr_start_bounds =
         stn->get_feasible_values(to_explore->tk.get_start());
-    tuple<double, double> next_start_bounds =
+    stn_bounds next_start_bounds =
         stn->get_feasible_values(to_explore->next.get_start());
 
-    tuple<double, double> curr_end_bounds =
+    stn_bounds curr_end_bounds =
         stn->get_feasible_values(to_explore->tk.get_end());
-    tuple<double, double> prev_end_bounds =
+    stn_bounds prev_end_bounds =
         stn->get_feasible_values(to_explore->prev.get_end());
 
     // Add a check to rule out slots where a meets constraint exists
@@ -934,23 +936,17 @@ bool check_temporal_bounds(slot *to_explore, STN *stn) {
     return true;
 }
 
-pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
-                                        Plan *p, STN *stn) {
-    bool scheduled = false;
-    vector<slot> local_set = vector<slot>();
-    vector<Timeline *> robots = vector<Timeline *>();
-
-    vector<arg_and_type> other_resources = vector<arg_and_type>();
-    vector<arg_and_type> affecting_resources = vector<arg_and_type>();
-    world_state current_state = map<string, object_state>();
-
+void initialize_token_state(Token *tk, Plan *p, vector<Timeline *> *robots, 
+        world_state *current_state, vector<arg_and_type> *other_resources,
+        vector<arg_and_type> *affecting_resources) {
+    
     task tk_task = task();
     for (task t : primitive_tasks)
         if (t.name == tk->get_name()) {
             tk_task = t;
             break;
         }
-
+    
     for (arg_and_type arg : tk->get_arguments()) {
         if (find(tk_task.vars.begin(), tk_task.vars.end(), arg) ==
             tk_task.vars.end())
@@ -959,29 +955,16 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
         if (arg.second == "robot")
             for (arg_and_type k : tk->get_knowns())
                 if (k.first == arg.first)
-                    robots.push_back(p->get_timelines(k.second));
+                    robots->push_back(p->get_timelines(k.second));
 
         if (is_resource(arg.second)) {
             for (arg_and_type k : tk->get_knowns())
                 if (k.first == arg.first) {
-                    for (map<string, var_declaration> cs : csorts[arg.second])
-                        for (pair<string, var_declaration> m : cs) {
-                            if (arg.second == "robot") {
-                                object_state obj = object_state();
-                                obj.object_name = m.first;
-                                obj.attribute_states = m.second;
-                                current_state.insert(
-                                    make_pair(obj.object_name, obj));
-                            } else if (m.first == k.second) {
-                                object_state obj = object_state();
-                                obj.object_name = m.first;
-                                obj.attribute_states = m.second;
-                                current_state.insert(
-                                    make_pair(obj.object_name, obj));
-                            }
-                        }
+                    for (pair<string, object_state> is : initial_state)
+                        if (is.second.parent == "robot" || (is.second.object_name == k.second))
+                            current_state->insert(make_pair(is.second.object_name, is.second));
                     if (arg.second != "robot")
-                        other_resources.push_back(
+                        other_resources->push_back(
                             make_pair(k.second, arg.second));
                 }
 
@@ -992,14 +975,98 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                             if (is_resource(sd_arg.second)) {
                                 arg_and_type candidate = make_pair(
                                     arg.first, sd_arg.first.substr(1));
-                                if (find(affecting_resources.begin(),
-                                         affecting_resources.end(),
+                                if (find(affecting_resources->begin(),
+                                         affecting_resources->end(),
                                          candidate) ==
-                                    affecting_resources.end())
-                                    affecting_resources.push_back(candidate);
+                                    affecting_resources->end())
+                                    affecting_resources->push_back(candidate);
                             }
         }
     }
+
+}
+
+void extract_other_resource_tokens(vector<arg_and_type> *other_resources, Token *tk, 
+        vector<Token> *other_resource_tokens, vector<int> *other_resource_pos, 
+        world_state *current_state, vector<slot> *local_set, vector<bool> *exhausted,
+        Plan *p, STN *stn) {
+
+    for (auto const& o_r : (*other_resources) | boost::adaptors::indexed(0)) {
+        Timeline *o_r_tl = p->get_timelines(o_r.value().first, o_r.value().second);
+        Token o_r_tk = (*other_resource_tokens)[o_r.index()];
+
+        // Add contains constraint between free floating
+        // dependent token and th/e causal primitive token
+        bool succ = add_meets_constraint(tk, &o_r_tk, stn);
+        if (!succ) {
+            (*exhausted)[o_r.index()] = true;
+            break;
+        } else {
+            assert(stn->del_constraint(tk->get_start() +
+                                       meets_constraint +
+                                       o_r_tk.get_start()));
+        }
+        vector<Token> o_r_tokens = o_r_tl->get_tokens();
+        for (auto itr = o_r_tokens.rbegin();
+             itr != o_r_tokens.rend(); itr++) {
+
+            // Update the state of the other resource based on the current token we are considering
+            if (current_state->find(o_r_tl->get_id()) !=
+                current_state->end()) {
+                for (auto itri = o_r_tokens.begin();
+                     itri != o_r_tokens.end(); itri++) {
+                    if (*itr == *itri) {
+                        break;
+                    } else {
+                        object_state obj =
+                            current_state->at(o_r_tl->get_id());
+                        update_object_state(&obj, &(*itri));
+                        (*current_state)[o_r_tl->get_id()] = obj;
+                    }
+                }
+            }
+
+            Token n = Token();
+            if (itr + 1 == o_r_tokens.rend()) {
+                (*exhausted)[o_r.index()] = true;
+                n = o_r_tokens[0];
+
+            } else
+                n = *(itr + 1);
+
+            slot to_exp_o_r = slot(&o_r_tk, &n, &(*itr), o_r_tl->get_id());
+
+            if (!check_temporal_bounds(&to_exp_o_r, stn)) {
+                continue;
+            }
+
+            if ((int)local_set->size() > o_r.index() + 1 &&
+                (*other_resource_pos)[o_r.index()] < itr - o_r_tokens.rbegin()) {
+                (*local_set)[o_r.index() + 1] = to_exp_o_r;
+                (*other_resource_pos)[o_r.index()] = itr - o_r_tokens.rbegin();
+                break;
+
+            } else if ((int)local_set->size() <= o_r.index() + 1) {
+                local_set->insert(local_set->begin() + o_r.index() + 1,
+                                 to_exp_o_r);
+                (*other_resource_pos)[o_r.index()] = itr - o_r_tokens.rbegin();
+                break;
+            } 
+        }
+    }
+}
+
+pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
+                                        Plan *p, STN *stn) {
+    bool scheduled = false;
+    vector<slot> local_set = vector<slot>();
+    vector<Timeline *> robots = vector<Timeline *>();
+
+    world_state current_state = map<string, object_state>();
+    vector<arg_and_type> other_resources = vector<arg_and_type>();
+    vector<arg_and_type> affecting_resources = vector<arg_and_type>();
+
+    initialize_token_state(tk, p, &robots, &current_state, &other_resources, &affecting_resources);
 
     vector<Token> other_resource_tokens = vector<Token>();
     for (arg_and_type arg : other_resources)
@@ -1039,82 +1106,14 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
             local_set.push_back(to_explore);
 
             vector<bool> exhausted(other_resources.size(), false);
-            vector<int> other_resource_pos =
-                vector<int>(other_resources.size(), 0);
+            vector<int> other_resource_pos = vector<int>(other_resources.size(), 0);
             while (!scheduled) {
-                int index = 0;
                 map<string, constraint> pre_stn_constraints =
                     stn->get_constraints();
                 world_state current_state_copy = current_state;
-                for (arg_and_type o_r : other_resources) {
-                    Timeline *o_r_tl = p->get_timelines(o_r.first, o_r.second);
-                    Token o_r_tk = other_resource_tokens[index];
 
-                    // Add contains constraint between free floating
-                    // dependent token and the causal primitive token
-                    bool succ = add_meets_constraint(tk, &o_r_tk, stn);
-                    if (!succ) {
-                        exhausted[index++] = true;
-                        break;
-                    } else {
-                        assert(stn->del_constraint(tk->get_start() +
-                                                   meets_constraint +
-                                                   o_r_tk.get_start()));
-                    }
-                    int pos = 0;
-                    vector<Token> o_r_tokens = o_r_tl->get_tokens();
-                    for (auto itr = o_r_tokens.rbegin();
-                         itr != o_r_tokens.rend(); itr++) {
-                        if (current_state.find(o_r_tl->get_id()) !=
-                            current_state.end()) {
-                            for (auto itri = o_r_tokens.begin();
-                                 itri != o_r_tokens.end(); itri++) {
-                                if (*itr == *itri) {
-                                    break;
-                                } else {
-                                    object_state obj =
-                                        current_state.at(o_r_tl->get_id());
-                                    update_object_state(&obj, &(*itri));
-                                    current_state_copy[o_r_tl->get_id()] = obj;
-                                }
-                            }
-                        }
-
-                        Token n = Token();
-                        if (itr + 1 == o_r_tokens.rend()) {
-                            exhausted[index] = true;
-                            n = o_r_tokens[0];
-
-                        } else
-                            n = *(itr + 1);
-
-                        slot to_exp_o_r =
-                            slot(&o_r_tk, &n, &(*itr), o_r_tl->get_id());
-
-                        if (!check_temporal_bounds(&to_exp_o_r, stn)) {
-                            pos++;
-                            continue;
-                        }
-                        if ((int)local_set.size() > index + 1 &&
-                            other_resource_pos[index] < pos) {
-                            local_set[index + 1] = to_exp_o_r;
-                            other_resource_pos[index] = pos;
-
-                        } else if ((int)local_set.size() <= index + 1) {
-                            local_set.insert(local_set.begin() + index + 1,
-                                             to_exp_o_r);
-                            other_resource_pos[index] = pos;
-
-                        } else {
-                            pos++;
-                            continue;
-                        }
-
-                        break;
-                    }
-
-                    index++;
-                }
+                extract_other_resource_tokens(&other_resources, tk, &other_resource_tokens,
+                        &other_resource_pos, &current_state_copy, &local_set, &exhausted, p, stn);
 
                 if (find(exhausted.begin(), exhausted.end(), true) !=
                     exhausted.end()) {
@@ -1126,7 +1125,7 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                     if (s.prev.get_name() == "head" ||
                         s.prev.get_name() == "tail")
                         continue;
-                    tuple<double, double> prev_end_bounds =
+                    stn_bounds prev_end_bounds =
                         stn->get_feasible_values(s.prev.get_end());
                     if (eft <= abs(get<0>(prev_end_bounds)))
                         eft = abs(get<0>(prev_end_bounds));
@@ -1134,41 +1133,30 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
 
                 for (pair<string, object_state> ws : current_state_copy) {
                     if (ws.first != r->get_id()) {
-                        for (map<string, var_declaration> cs : csorts["robot"])
-                            for (pair<string, var_declaration> m : cs)
-                                if (m.first == ws.first) {
-                                    Timeline *o_robot_tl =
-                                        p->get_timelines(ws.first);
-                                    for (Token o_robot_tk :
-                                         o_robot_tl->get_tokens()) {
-                                        if (o_robot_tk.get_name() == "head")
-                                            continue;
-                                        tuple<double, double>
-                                            o_robot_start_bounds =
-                                                stn->get_feasible_values(
-                                                    o_robot_tk.get_start());
-                                        tuple<double, double>
-                                            o_robot_end_bounds =
-                                                stn->get_feasible_values(
-                                                    o_robot_tk.get_end());
-                                        if (get<1>(o_robot_end_bounds) > eft &&
-                                            abs(get<0>(o_robot_start_bounds)) >
-                                                eft)
-                                            break;
-
-                                        update_object_state(&ws.second,
-                                                            &o_robot_tk);
-                                        current_state_copy[ws.first] =
-                                            ws.second;
-                                    }
+                        for (pair<string, object_state> is : initial_state) {
+                            if (is.second.parent == "robot") {
+                                Timeline *o_robot_tl = p->get_timelines(ws.first);
+                                for (Token o_robot_tk : o_robot_tl->get_tokens()) {
+                                    if (o_robot_tk.get_name() == "head")
+                                        continue;
+                                    stn_bounds o_robot_start = stn->get_feasible_values(
+                                            o_robot_tk.get_start());
+                                    stn_bounds o_robot_end = stn->get_feasible_values(
+                                            o_robot_tk.get_end());
+                                    if (get<1>(o_robot_end) > eft && abs(get<0>(o_robot_start)) > eft)
+                                        break;
+                                    update_object_state(&ws.second, &o_robot_tk);
+                                    current_state_copy[ws.first] = ws.second;
                                 }
+                            }
+                        }
                     }
                 }
 
                 bool prec_succ = true, satisfied_once = false;
-                pair<bool, vector<slot>> return_slots =
-                    pair<bool, vector<slot>>();
+                pair<bool, vector<slot>> return_slots = pair<bool, vector<slot>>();
                 set<arg_and_type> knowns = tk->get_knowns();
+
                 for (literal prec : tk->get_preconditions()) {
                     bool succ = check_precondition(&prec, &knowns,
                                                    &current_state_copy, &init);
@@ -1198,7 +1186,7 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                 if (!prec_succ && other_resources.size() == 0) {
                     break;
                 } else if (!prec_succ) {
-                    if (satisfied_once)
+                    if (satisfied_once) // Some precondition was satisfied but another precondition failed
                         for (slot s : return_slots.second) {
                             stn->del_timepoint(s.tk.get_start());
                             stn->del_timepoint(s.tk.get_end());
@@ -1277,6 +1265,8 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                         // rmA_e --> <0,0> --> A_occ_e
                         // This will tie the s_A_occ_e token to its 20 unit time
                         // bound
+                        for (pair<string, object_state> cs : current_state_copy)
+                            cout << cs.second.parent << " " << cs.second.object_name << " " << cs.second.attribute_states.to_string() << endl;
                         if (s.prev.is_external()) {
                             for (arg_and_type args : s.prev.get_arguments()) {
                                 if (args.second != "robot") {
@@ -1564,9 +1554,8 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
 
 bool schedule_leafs(vector<task_vertex> leafs,
                     vector<primitive_solution> *solution, Plan p,
-                    double *value, bool tried, string metric) {
-    int leaf_id = 0;
-    int num_actions = 0;
+                    double *value, string metric) {
+    int leaf_id = 0, num_actions = 0;
     for (task_vertex leaf : leafs) {
         primitive_solution leaf_sol = primitive_solution();
         leaf_sol.primitive_token = leaf.tk;
@@ -1574,17 +1563,9 @@ bool schedule_leafs(vector<task_vertex> leafs,
             schedule_token(&leaf.tk, &leaf_sol.token_slots, &p, &stn);
         bool scheduled = res.first;
         if (scheduled) {
-            if (!tried) {
-                for (slot s : res.second) {
-                    leaf_sol.token_slots.push_back(s);
-                    if (s.tk.get_resource() == "robot") num_actions++;
-                }
-            } else {
-                leaf_sol.token_slots = vector<slot>();
-                for (slot s : res.second) {
-                    leaf_sol.token_slots.push_back(s);
-                    if (s.tk.get_resource() == "robot") num_actions++;
-                }
+            for (slot s : res.second) {
+                leaf_sol.token_slots.push_back(s);
+                if (s.tk.get_resource() == "robot") num_actions++;
             }
         }
 
@@ -1609,7 +1590,7 @@ bool schedule_leafs(vector<task_vertex> leafs,
             if (t.get_resource() == "robot") {
                 Token last = t.get_tokens().end()[-2];
                 if (last.get_name() != "head" && last.get_name() != "tail") {
-                    tuple<double, double> last_end_bounds =
+                    stn_bounds last_end_bounds =
                         stn.get_feasible_values(last.get_end());
                     if (abs(get<0>(last_end_bounds)) >= best_metric)
                         best_metric = abs(get<0>(last_end_bounds));
@@ -2014,7 +1995,7 @@ variant<bool, pair<bool, Token>> plan_validator(Plan *p,
     return true;
 }
 
-pq find_feasible_slots(task_network tree, Plan p, int plans, string metric) {
+pq find_feasible_slots(task_network tree, Plan p, int attempts, string metric) {
     pq ret = pq();
 
     vector<task_vertex> leafs = vector<task_vertex>();
@@ -2025,7 +2006,7 @@ pq find_feasible_slots(task_network tree, Plan p, int plans, string metric) {
         if (boost::out_degree(*vi, tree.adj_list) == 0)
             leafs.push_back(tree.adj_list[*vi]);
 
-    for (int plan_id = 0; plan_id < plans; plan_id++) {
+    for (int plan_id = 0; plan_id < attempts; plan_id++) {
         double value = 0.0;
         tasknetwork_solution sol = tasknetwork_solution();
         sol.plan_id = plan_id;
@@ -2034,7 +2015,7 @@ pq find_feasible_slots(task_network tree, Plan p, int plans, string metric) {
         map<string, constraint> pre_stn_constraints = stn.get_constraints();
 
         bool success =
-            schedule_leafs(leafs, &solution, p, &value, false, metric);
+            schedule_leafs(leafs, &solution, p, &value, metric);
 
         if (success) {
             vector<tuple<int, int, slot>> main =
@@ -2328,12 +2309,12 @@ vector<pair<task, var_declaration>> reachable_location(
     string nv = std::to_string(num_vertices(rail_network.adj_list));
     string nr = std::to_string(requests.size());
 
-    string json_file =
-        "/Users/viraj/Desktop/Work/Research/Timeline-Based_Planning/"
-        "NASA_HOME_RT4_CMU/src/robot/src/data/";
-    json_file += nv + "_blocks_" + nr + "_requests.json";
-    ifstream i(json_file);
+    filesystem::path json_file = filesystem::current_path().parent_path() /  "data";
+    string target_file = nv + "_blocks_" + nr + "_requests.json";
+    json_file = json_file / filesystem::path(target_file);
+    ifstream i(json_file.string());
     nlohmann::json datafile = nlohmann::json::parse(i);
+    i.close();
 
     nlohmann::json blocks = datafile["block_bounds"];
     nlohmann::json locations = datafile["locations"];

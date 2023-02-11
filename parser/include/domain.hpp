@@ -36,6 +36,7 @@ struct var_declaration {
 bool operator<(const var_declaration &left, const var_declaration &right);
 
 struct object_state {
+    string parent;
     string object_name;
     var_declaration attribute_states;
 };

@@ -14,6 +14,7 @@
 
 using namespace std;
 
+typedef tuple<double, double> stn_bounds;
 typedef tuple<string, string, double, double> constraint;
 
 const double inf = numeric_limits<double>::infinity();
