@@ -1056,6 +1056,334 @@ void extract_other_resource_tokens(vector<arg_and_type> *other_resources, Token 
     }
 }
 
+pair<bool, bool> precondition_check_phase(Token *tk, Timeline* r, 
+        world_state *current_state, vector<slot> *local_set, vector<slot> *explored, 
+        pair<bool, vector<slot>> *return_slots, Plan p, STN *stn) {
+
+    bool prec_succ = true, satisfied_once = false;
+    set<arg_and_type> knowns = tk->get_knowns();
+    for (literal prec : tk->get_preconditions()) {
+        bool succ = check_precondition(&prec, &knowns, current_state, &init);
+
+        if (!succ) {
+            if (!satisfied_once) {
+                *return_slots = satisfy_precondition(&prec, tk, &(*local_set)[0].prev,
+                    current_state, &p, stn, explored);
+                if (!return_slots->first) {
+                    prec_succ = false;
+                    break;
+
+                } else {
+                    satisfied_once = true;
+                    for (slot s : return_slots->second) {
+                        if (s.tl_id == r->get_id()) {
+                            object_state rs = 
+                                current_state->at(s.tl_id);
+                            update_object_state(&rs, &(s.tk));
+                            (*current_state)[s.tl_id] = rs;
+                        }
+                    }
+                }
+
+            } else {
+                prec_succ = false;
+                break;
+            }
+        }
+    }
+
+    if (!prec_succ) {
+        if (satisfied_once) // Some precondition was satisfied but another precondition failed
+            for (slot s : return_slots->second) {
+                stn->del_timepoint(s.tk.get_start());
+                stn->del_timepoint(s.tk.get_end());
+            }
+        satisfied_once = false;
+    } else if (prec_succ && satisfied_once) {
+        // Tried to satisfy this precondition and it
+        // succeeded so need to address the local set
+
+        vector<slot> newly_added_slots = return_slots->second;
+        for (int i = 0; i < (int)local_set->size(); i++)
+            for (int j = (int)newly_added_slots.size() - 1; j >= 0;
+                 j--)
+                if ((*local_set)[i].tl_id ==
+                    newly_added_slots[j].tl_id) {
+                    (*local_set)[i].prev = newly_added_slots[j].tk;
+                    (*local_set)[i].next = newly_added_slots[j].next;
+                    break;
+                }
+    }
+
+    return make_pair(prec_succ, satisfied_once);
+}
+
+bool local_stn_check_phase(Timeline *r, vector<slot> *local_set, 
+        world_state *current_state, bool satisfied_once,
+        pair<bool, vector<slot>> *return_slots, Plan *p, STN *stn) {
+
+    bool local_check = true;
+
+    Token main_tk = Token();
+    for (slot s : (*local_set)) {
+        if (s.tk.get_resource() == "robot") main_tk = s.tk;
+
+        tuple<bool, bool, bool> succ =
+            del_and_add_sequencing_constraint(&s.prev, &s.tk, &s.next, stn);
+        if (!get<0>(succ) || !get<1>(succ) || !get<2>(succ)) {
+            local_check = false;
+            break;
+        }
+
+        if (s.tk.get_name() != main_tk.get_name()) {
+            bool succ1 = add_meets_constraint(&main_tk, &s.tk, stn);
+
+            if (!succ1) {
+                local_check = false;
+                if (get<1>(succ))
+                    assert(stn->del_constraint(
+                        s.prev.get_end() + sequencing_constraint +
+                        s.tk.get_start()));
+
+                if (get<2>(succ))
+                    assert(stn->del_constraint(
+                        s.tk.get_end() + sequencing_constraint +
+                        s.next.get_end()));
+
+                if (get<0>(succ))
+                    assert(stn->add_constraint(
+                        s.prev.get_end() + sequencing_constraint +
+                            s.next.get_start(),
+                        make_tuple(s.prev.get_end(),
+                                   s.next.get_start(), zero, inf)));
+                break;
+            }
+        }
+
+        if (s.tk.is_external() && s.tk.get_resource() == "robot" && 
+                s.prev.is_external()) {
+            // If the current robot token is external and the
+            // previous robot token is external as well, then in
+            // this case we need to add a meets constraint from the
+            // current robot token's end timepooint to the previous
+            // robot token's dependent token's end timepoint to
+            // ensure that the previous robot token's dependent
+            // token does not exceed its time bound. B --> s_A_occ_e
+            // A -->              s_A_occ_e
+            // ur5A --> s_rmB_e   s_rmA_e
+            // The following edges exist at this point,
+            // rmB_e --> <0,0> --> s_A_occ
+            // rmA_e --> <0,0> --> s_A_occ
+            // Now the new edge needs to be added,
+            // rmA_e --> <0,0> --> A_occ_e
+            // This will tie the s_A_occ_e token to its 20 unit time
+            // bound
+            set<arg_and_type> prev_token_args = s.prev.get_arguments();
+            for (auto argit = prev_token_args.begin(); 
+                    argit != prev_token_args.end() && local_check; 
+                    argit++)
+                if (argit->second != "robot") {
+                    
+                    string current_assignment = "", assignment_type = "";
+                    for (arg_and_type types : 
+                            (*current_state)[r->get_id()].attribute_types.vars)
+                        if (types.second == argit->second)
+                            assignment_type = types.first;
+                    for (arg_and_type vars :
+                         (*current_state)[r->get_id()].attribute_states.vars)
+                        if (vars.first == assignment_type)
+                            current_assignment = vars.second;
+                    
+                    Timeline *aff_res_t = p->get_timelines(current_assignment);
+                    if (aff_res_t != nullptr)
+                        for (Token t : aff_res_t->get_tokens()) {
+                            string meets_name = s.prev.get_end() + meets_constraint 
+                                + t.get_start();
+                            constraint meets = stn->get_constraint(meets_name);
+                            if (get<0>(meets) != "") {
+                                string new_meets_name = s.tk.get_end() +
+                                    meets_constraint + t.get_end();
+                                constraint new_meets = make_tuple(s.tk.get_end(), 
+                                        t.get_end(), zero, zero);
+                                bool succ = stn->add_constraint(new_meets_name,
+                                        new_meets);
+                                if (!succ)
+                                    local_check = false;
+
+                                break;
+                            }
+                        }
+                }
+        }
+    }
+
+    if (!local_check) {
+        if (satisfied_once)
+            for (slot s : return_slots->second) {
+                stn->del_timepoint(s.tk.get_start());
+                stn->del_timepoint(s.tk.get_end());
+            }
+    }
+
+    return local_check;
+}
+
+bool rewiring_check_phase(slot *to_explore, Token *tk, Timeline *r,
+        vector<arg_and_type> affecting_resources, bool satisfied_once, 
+        world_state *current_state, pair<bool, vector<slot>> *return_slots, Plan *p,
+        STN *stn) {
+
+    bool rewiring_check = true;
+        if (satisfied_once)
+            for (slot s : return_slots->second) {
+                Timeline *t = p->get_timelines(s.tl_id);
+                t->insert_token(s.tk, s.prev, s.next);
+            }
+        // At this point we need to ensure that the tokens on
+        // timelines of resources that the scheduling token is
+        // affecting get updated so that they reflect the correct
+        // state of the world. So for example grasp preceded by
+        // rail_moves have to ensure that the occupied tokens on the
+        // last rail_block extends till the time grasp ends.
+        // Additionally the contains needs to be removed from the EP
+        // of rail_move to the EP of grasp for the EP of
+        // corresponding occupied token on rail_block
+
+        for (arg_and_type aff_res : affecting_resources) {
+            string var = aff_res.first;
+            string attribute = aff_res.second;
+
+            string attribute_assignment = string();
+            for (arg_and_type vars : (*current_state)[r->get_id()]
+                    .attribute_states.vars) {
+                if (vars.first == attribute)
+                    attribute_assignment = vars.second;
+            }
+
+            Timeline *aff_res_t = p->get_timelines(attribute_assignment);
+            if (aff_res_t != nullptr) {
+                for (Token t : aff_res_t->get_tokens()) {
+                    string dep_meets_name = to_explore->prev.get_end() +
+                        dependent_meets_constraint + t.get_end();
+                    constraint dep_meets = stn->get_constraint(dep_meets_name);
+                    if (get<0>(dep_meets) != "") {
+                        // The case when the dependent token's end
+                        // timpoint has a meets constraint between
+                        // the previous token's end timepoint. In
+                        // this case we need to first delete this
+                        // existing constraint and then add a new
+                        // meets constraint in its place from the
+                        // same dependent token's end timepoint to
+                        // the current token's end timepoint.
+
+                        assert(stn->del_constraint(dep_meets_name));
+                        string c_name = tk->get_end() + dependent_meets_constraint +
+                                        t.get_end();
+                        constraint c = make_tuple(tk->get_end(), t.get_end(), zero,
+                                inf);
+                        bool succ = stn->add_constraint(c_name, c);
+                        if (!succ) {
+                            rewiring_check = false;
+                            assert(stn->add_constraint(dep_meets_name, dep_meets));
+                        }
+                        break;
+                    }
+                }
+            }
+
+            Token updated_prev = Token();
+            world_state current_state_mod = *current_state;
+            if (satisfied_once) {
+                for (slot s : return_slots->second) {
+                    if (s.tl_id == r->get_id()) {
+                        object_state rs =
+                            current_state_mod.at(s.tl_id);
+                        update_object_state(&rs, &(s.tk));
+                        current_state_mod[s.tl_id] = rs;
+                        updated_prev = s.tk;
+                    }
+                }
+            }
+            attribute_assignment = string();
+            for (arg_and_type vars : current_state_mod[r->get_id()]
+                                         .attribute_states.vars) {
+                if (vars.first == attribute)
+                    attribute_assignment = vars.second;
+            }
+            assert(attribute_assignment != string());
+            aff_res_t = p->get_timelines(attribute_assignment);
+            if (aff_res_t != nullptr)
+                for (Token t : aff_res_t->get_tokens()) {
+                    string first_meets_name = updated_prev.get_end() +
+                        meets_constraint + t.get_start();
+                    constraint first_meets = stn->get_constraint(first_meets_name);
+                    if (get<0>(first_meets) != "") {
+                        // The case when the previous token's end
+                        // timepoint has a meets constraint with the
+                        // dependent token's start timepoint. In this
+                        // case we need to add an additional meets
+                        // constraint from the dependent token's end
+                        // timepoint to the current token's end
+                        // timepoint.
+                        string c_name = tk->get_end() + dependent_meets_constraint +
+                                        t.get_end();
+                        constraint c = make_tuple(tk->get_end(), t.get_end(), zero,
+                                inf);
+                        bool succ = stn->add_constraint(c_name, c);
+                        if (!succ)
+                            rewiring_check = false;
+                        break;
+                    }
+
+                    string second_meets_name = updated_prev.get_end() +
+                        dependent_meets_constraint + t.get_end();
+                    constraint second_meets = stn->get_constraint(second_meets_name);
+                    if (get<0>(second_meets) != "") {
+                        // The case when the dependent token's end
+                        // timpoint has a meets constraint between
+                        // the previous token's end timepoint. In
+                        // this case we need to first delete this
+                        // existing constraint and then add a new
+                        // meets constraint in its place from the
+                        // same dependent token's end timepoint to
+                        // the current token's end timepoint.
+
+                        assert(stn->del_constraint(second_meets_name));
+                        string c_name = tk->get_end() + dependent_meets_constraint +
+                                        t.get_end();
+                        constraint c = make_tuple(tk->get_end(), t.get_end(), zero,
+                                inf);
+                        bool succ = stn->add_constraint(c_name, c);
+                        if (!succ) {
+                            rewiring_check = false;
+                            assert(stn->add_constraint(second_meets_name,
+                                        second_meets));
+                        }
+                        break;
+                    }
+                }
+        }
+
+        if (!rewiring_check)
+            if (satisfied_once) {
+                for (slot s : return_slots->second) {
+                    Timeline *t = p->get_timelines(s.tl_id);
+                    vector<Token> t_tks = t->get_tokens();
+                    for (int i = 0; i < (int)t_tks.size(); i++)
+                        if (t_tks[i] == s.tk) {
+                            t->del_token(i);
+                            break;
+                        }
+                }
+                for (slot s : return_slots->second) {
+                    stn->del_timepoint(s.tk.get_start());
+                    stn->del_timepoint(s.tk.get_end());
+                }
+            }
+
+    return rewiring_check;
+}
+
 pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                                         Plan *p, STN *stn) {
     bool scheduled = false;
@@ -1152,341 +1480,46 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                         }
                     }
                 }
-
-                bool prec_succ = true, satisfied_once = false;
-                pair<bool, vector<slot>> return_slots = pair<bool, vector<slot>>();
-                set<arg_and_type> knowns = tk->get_knowns();
-
-                for (literal prec : tk->get_preconditions()) {
-                    bool succ = check_precondition(&prec, &knowns,
-                                                   &current_state_copy, &init);
-
-                    if (!succ) {
-                        if (!satisfied_once) {
-                            Plan plan_copy = *p;
-                            return_slots = satisfy_precondition(
-                                &prec, tk, &local_set[0].prev,
-                                &current_state_copy, &plan_copy, stn, explored);
-                            if (!return_slots.first) {
-                                prec_succ = false;
-                                break;
-
-                            } else
-                                satisfied_once = true;
-
-                        } else {
-                            prec_succ = false;
-                            break;
-                        }
-                    }
-                }
-
+                
                 vector<slot> local_set_copy = local_set;
 
+                // Check the preconditions and try to satisfy them
+                pair<bool, vector<slot>> return_slots = pair<bool, vector<slot>>();
+                pair<bool, bool> prec_check = precondition_check_phase(tk, r,
+                        &current_state_copy, &local_set, explored, &return_slots,
+                        *p, stn);
+                bool prec_succ = get<0>(prec_check), 
+                     satisfied_once = get<1>(prec_check);
+                
                 if (!prec_succ && other_resources.size() == 0) {
                     break;
                 } else if (!prec_succ) {
-                    if (satisfied_once) // Some precondition was satisfied but another precondition failed
-                        for (slot s : return_slots.second) {
-                            stn->del_timepoint(s.tk.get_start());
-                            stn->del_timepoint(s.tk.get_end());
-                        }
                     satisfied_once = false;
+                    current_state_copy = current_state;
                     continue;
-                } else if (prec_succ && satisfied_once) {
-                    // Tried to satisfy this precondition and it
-                    // succeeded so need to address the local set
-
-                    vector<slot> newly_added_slots = return_slots.second;
-                    for (int i = 0; i < (int)local_set.size(); i++)
-                        for (int j = (int)newly_added_slots.size() - 1; j >= 0;
-                             j--)
-                            if (local_set[i].tl_id ==
-                                newly_added_slots[j].tl_id) {
-                                local_set[i].prev = newly_added_slots[j].tk;
-                                local_set[i].next = newly_added_slots[j].next;
-                                break;
-                            }
                 }
 
-                bool local_check = true;
-
-                Token main_tk = Token();
-                for (slot s : local_set) {
-                    if (s.tk.get_resource() == "robot") main_tk = s.tk;
-
-                    tuple<bool, bool, bool> succ =
-                        del_and_add_sequencing_constraint(&s.prev, &s.tk,
-                                                          &s.next, stn);
-                    if (!get<0>(succ) || !get<1>(succ) || !get<2>(succ)) {
-                        local_check = false;
-                        break;
-                    }
-
-                    if (s.tk.get_name() != main_tk.get_name()) {
-                        bool succ1 = add_meets_constraint(&main_tk, &s.tk, stn);
-
-                        if (!succ1) {
-                            local_check = false;
-                            if (get<1>(succ))
-                                assert(stn->del_constraint(
-                                    s.prev.get_end() + sequencing_constraint +
-                                    s.tk.get_start()));
-
-                            if (get<2>(succ))
-                                assert(stn->del_constraint(
-                                    s.tk.get_end() + sequencing_constraint +
-                                    s.next.get_end()));
-
-                            if (get<0>(succ))
-                                assert(stn->add_constraint(
-                                    s.prev.get_end() + sequencing_constraint +
-                                        s.next.get_start(),
-                                    make_tuple(s.prev.get_end(),
-                                               s.next.get_start(), zero, inf)));
-                            break;
-                        }
-                    }
-
-                    if (s.tk.is_external() && s.tk.get_resource() == "robot" && 
-                            s.prev.is_external()) {
-                        // If the current robot token is external and the
-                        // previous robot token is external as well, then in
-                        // this case we need to add a meets constraint from the
-                        // current robot token's end timepooint to the previous
-                        // robot token's dependent token's end timepoint to
-                        // ensure that the previous robot token's dependent
-                        // token does not exceed its time bound. B --> s_A_occ_e
-                        // A -->              s_A_occ_e
-                        // ur5A --> s_rmB_e   s_rmA_e
-                        // The following edges exist at this point,
-                        // rmB_e --> <0,0> --> s_A_occ
-                        // rmA_e --> <0,0> --> s_A_occ
-                        // Now the new edge needs to be added,
-                        // rmA_e --> <0,0> --> A_occ_e
-                        // This will tie the s_A_occ_e token to its 20 unit time
-                        // bound
-                        set<arg_and_type> prev_token_args = s.prev.get_arguments();
-                        for (auto argit = prev_token_args.begin(); 
-                                argit != prev_token_args.end() && local_check; 
-                                argit++) {
-                            if (argit->second != "robot") {
-                                
-                                string current_assignment = "", assignment_type = "";
-                                for (arg_and_type types : 
-                                        current_state_copy[r->get_id()]
-                                        .attribute_types.vars)
-                                    if (types.second == argit->second)
-                                        assignment_type = types.first;
-                                for (arg_and_type vars :
-                                     current_state_copy[r->get_id()]
-                                         .attribute_states.vars)
-                                    if (vars.first == assignment_type)
-                                        current_assignment = vars.second;
-                                
-                                Timeline *aff_res_t =
-                                    p->get_timelines(current_assignment);
-                                if (aff_res_t != nullptr) {
-                                    for (Token t : aff_res_t->get_tokens()) {
-                                        string meets_name = s.prev.get_end() +
-                                            meets_constraint + t.get_start();
-                                        constraint meets =
-                                            stn->get_constraint(meets_name);
-                                        if (get<0>(meets) != "") {
-                                            string new_meets_name = s.tk.get_end() +
-                                                meets_constraint + t.get_end();
-                                            constraint new_meets = make_tuple(
-                                                    s.tk.get_end(), t.get_end(), 
-                                                    zero, zero);
-                                            bool succ = stn->add_constraint(
-                                                new_meets_name, new_meets);
-                                            if (!succ)
-                                                local_check = false;
-
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
+                // Check the stn connections
+                bool local_check = local_stn_check_phase(r, &local_set,
+                        &current_state_copy, satisfied_once, &return_slots, p, stn);
+                
                 if (!local_check) {
-                    if (satisfied_once)
-                        for (slot s : return_slots.second) {
-                            stn->del_timepoint(s.tk.get_start());
-                            stn->del_timepoint(s.tk.get_end());
-                        }
-
                     satisfied_once = false;
                     local_set = local_set_copy;
+                    current_state_copy = current_state;
                 }
 
+                // Check the stn connections with external tokens
                 bool rewiring_check = true;
-                if (local_check && prec_succ) {
-                    if (satisfied_once)
-                        for (slot s : return_slots.second) {
-                            Timeline *t = p->get_timelines(s.tl_id);
-                            t->insert_token(s.tk, s.prev, s.next);
-                        }
-                    // At this point we need to ensure that the tokens on
-                    // timelines of resources that the scheduling token is
-                    // affecting get updated so that they reflect the correct
-                    // state of the world. So for example grasp preceded by
-                    // rail_moves have to ensure that the occupied tokens on the
-                    // last rail_block extends till the time grasp ends.
-                    // Additionally the contains needs to be removed from the EP
-                    // of rail_move to the EP of grasp for the EP of
-                    // corresponding occupied token on rail_block
-
-                    for (arg_and_type aff_res : affecting_resources) {
-                        string var = aff_res.first;
-                        string attribute = aff_res.second;
-
-                        string attribute_assignment = string();
-                        for (arg_and_type vars : current_state_copy[r->get_id()]
-                                                     .attribute_states.vars) {
-                            if (vars.first == attribute)
-                                attribute_assignment = vars.second;
-                        }
-                        Timeline *aff_res_t =
-                            p->get_timelines(attribute_assignment);
-                        if (aff_res_t != nullptr) {
-                            for (Token t : aff_res_t->get_tokens()) {
-                                string dep_meets_name =
-                                    to_explore.prev.get_end() +
-                                    dependent_meets_constraint + t.get_end();
-                                constraint dep_meets =
-                                    stn->get_constraint(dep_meets_name);
-                                if (get<0>(dep_meets) != "") {
-                                    // The case when the dependent token's end
-                                    // timpoint has a meets constraint between
-                                    // the previous token's end timepoint. In
-                                    // this case we need to first delete this
-                                    // existing constraint and then add a new
-                                    // meets constraint in its place from the
-                                    // same dependent token's end timepoint to
-                                    // the current token's end timepoint.
-
-                                    assert(stn->del_constraint(dep_meets_name));
-                                    string c_name = tk->get_end() +
-                                                    dependent_meets_constraint +
-                                                    t.get_end();
-                                    constraint c = make_tuple(
-                                        tk->get_end(), t.get_end(), zero, inf);
-                                    bool succ = stn->add_constraint(c_name, c);
-                                    if (!succ) {
-                                        rewiring_check = false;
-                                        assert(stn->add_constraint(
-                                            dep_meets_name, dep_meets));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (satisfied_once) {
-                            for (slot s : return_slots.second) {
-                                if (s.tl_id == r->get_id()) {
-                                    object_state rs =
-                                        current_state_copy.at(s.tl_id);
-                                    update_object_state(&rs, &(s.tk));
-                                    current_state_copy[s.tl_id] = rs;
-                                    to_explore.prev = s.tk;
-                                }
-                            }
-                        }
-                        attribute_assignment = string();
-                        for (arg_and_type vars : current_state_copy[r->get_id()]
-                                                     .attribute_states.vars) {
-                            if (vars.first == attribute)
-                                attribute_assignment = vars.second;
-                        }
-                        assert(attribute_assignment != string());
-                        aff_res_t = p->get_timelines(attribute_assignment);
-                        if (aff_res_t != nullptr) {
-                            for (Token t : aff_res_t->get_tokens()) {
-                                string first_meets_name =
-                                    to_explore.prev.get_end() +
-                                    meets_constraint + t.get_start();
-                                constraint first_meets =
-                                    stn->get_constraint(first_meets_name);
-                                if (get<0>(first_meets) != "") {
-                                    // The case when the previous token's end
-                                    // timepoint has a meets constraint with the
-                                    // depedent token's start timepoint. In this
-                                    // case we need to add an additional meets
-                                    // constraint from the dependent token's end
-                                    // timepoint to the current token's end
-                                    // timepoint.
-                                    string c_name = tk->get_end() +
-                                                    dependent_meets_constraint +
-                                                    t.get_end();
-                                    constraint c = make_tuple(
-                                        tk->get_end(), t.get_end(), zero, inf);
-                                    bool succ = stn->add_constraint(c_name, c);
-                                    if (!succ) {
-                                        rewiring_check = false;
-                                    }
-                                    break;
-                                }
-
-                                string second_meets_name =
-                                    to_explore.prev.get_end() +
-                                    dependent_meets_constraint + t.get_end();
-                                constraint second_meets =
-                                    stn->get_constraint(second_meets_name);
-                                if (get<0>(second_meets) != "") {
-                                    // The case when the dependent token's end
-                                    // timpoint has a meets constraint between
-                                    // the previous token's end timepoint. In
-                                    // this case we need to first delete this
-                                    // existing constraint and then add a new
-                                    // meets constraint in its place from the
-                                    // same dependent token's end timepoint to
-                                    // the current token's end timepoint.
-
-                                    assert(
-                                        stn->del_constraint(second_meets_name));
-                                    string c_name = tk->get_end() +
-                                                    dependent_meets_constraint +
-                                                    t.get_end();
-                                    constraint c = make_tuple(
-                                        tk->get_end(), t.get_end(), zero, inf);
-                                    bool succ = stn->add_constraint(c_name, c);
-                                    if (!succ) {
-                                        rewiring_check = false;
-                                        assert(stn->add_constraint(
-                                            second_meets_name, second_meets));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if (!rewiring_check) {
-                        if (satisfied_once) {
-                            for (slot s : return_slots.second) {
-                                Timeline *t = p->get_timelines(s.tl_id);
-                                vector<Token> t_tks = t->get_tokens();
-                                for (int i = 0; i < (int)t_tks.size(); i++) {
-                                    if (t_tks[i] == s.tk) {
-                                        t->del_token(i);
-                                        break;
-                                    }
-                                }
-                            }
-                            for (slot s : return_slots.second) {
-                                stn->del_timepoint(s.tk.get_start());
-                                stn->del_timepoint(s.tk.get_end());
-                            }
-                        }
-
-                        satisfied_once = false;
-                        local_set = local_set_copy;
-                    }
+                if (local_check && prec_succ)
+                    rewiring_check = rewiring_check_phase(&to_explore, tk, r,
+                            affecting_resources, satisfied_once, &current_state,
+                            &return_slots, p, stn);
+                
+                if (!rewiring_check) {
+                    satisfied_once = false;
+                    local_set = local_set_copy;
+                    current_state_copy = current_state;
                 }
 
                 if (local_check && prec_succ && rewiring_check) {

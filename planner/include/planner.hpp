@@ -160,10 +160,19 @@ bool check_precondition(literal *precondition, set<arg_and_type> knowns,
                         pair<string, var_declaration> world_state,
                         vector<ground_literal> *init);
 
+bool local_stn_check_phase(Timeline *r, vector<slot> *local_set, 
+                           world_state *current_state, bool satisfied_once,
+                           pair<bool, vector<slot>> *return_slots, Plan *p, STN *stn);
+
 pair<set<arg_and_type>, set<arg_and_type>> get_satisfying_knowns_and_args(
     task *satisfying_task, set<arg_and_type> *arguments,
     set<arg_and_type> *knowns, world_state *current_state,
     set<string> *prec_arg_types, bool functional = false);
+
+bool rewiring_check_phase(slot *to_explore, Token *tk, Timeline *r,
+                          vector<arg_and_type> affecting_resources, 
+                          bool satisfied_once, world_state *current_state, 
+                          pair<bool, vector<slot>> *return_slots, Plan *p, STN *stn);
 
 pair<bool, vector<slot>> satisfy_precondition(literal *precondition,
                                               Token *failing_tk, Token *prev,
@@ -176,6 +185,21 @@ set<arg_and_type> align_args_and_knowns(task satisfying_task, Token prev,
                                         set<arg_and_type> satisfying_knowns,
                                         world_state current_state,
                                         vector<ground_literal> init);
+
+void extract_other_resource_tokens(vector<arg_and_type> *other_resources, 
+                                   Token *tk, vector<Token> *other_resource_tokens, 
+                                   vector<int> *other_resource_pos, 
+                                   world_state *current_state, 
+                                   vector<slot> *local_set, vector<bool> *exhausted,
+                                   Plan *p, STN *stn);
+
+pair<bool, bool> precondition_check_phase(Token *tk, Timeline* r, 
+                                          world_state *current_state, 
+                                          vector<slot> *local_set, 
+                                          vector<slot> *explored, 
+                                          pair<bool, vector<slot>> *return_slots,
+                                          Plan p, STN *stn);
+
 
 // Functional Predicates
 bool clear(vector<string> arguments, world_state *current_state);
