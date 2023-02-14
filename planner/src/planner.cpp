@@ -1491,9 +1491,9 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                 bool prec_succ = get<0>(prec_check), 
                      satisfied_once = get<1>(prec_check);
                 
-                if (!prec_succ && other_resources.size() == 0) {
+                if (!prec_succ && other_resources.size() == 0)
                     break;
-                } else if (!prec_succ) {
+                else if (!prec_succ) {
                     satisfied_once = false;
                     current_state_copy = current_state;
                     continue;
@@ -1502,11 +1502,14 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                 // Check the stn connections
                 bool local_check = local_stn_check_phase(r, &local_set,
                         &current_state_copy, satisfied_once, &return_slots, p, stn);
-                
-                if (!local_check) {
+               
+                if (!local_check && other_resources.size() == 0)
+                    break;
+                else if (!local_check) {
                     satisfied_once = false;
                     local_set = local_set_copy;
                     current_state_copy = current_state;
+                    continue;
                 }
 
                 // Check the stn connections with external tokens
@@ -1516,10 +1519,13 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                             affecting_resources, satisfied_once, &current_state,
                             &return_slots, p, stn);
                 
-                if (!rewiring_check) {
+                if (!rewiring_check && other_resources.size() == 0)
+                    break;
+                else if (!rewiring_check) {
                     satisfied_once = false;
                     local_set = local_set_copy;
                     current_state_copy = current_state;
+                    continue;
                 }
 
                 if (local_check && prec_succ && rewiring_check) {
@@ -1536,9 +1542,9 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                     scheduled = true;
                 }
 
-                if (other_resources.size() == 0) {
-                    break;
-                }
+                /* if (other_resources.size() == 0) { */
+                /*     break; */
+                /* } */
 
                 if (!scheduled) {
                     map<string, constraint> post_stn_constraints =
