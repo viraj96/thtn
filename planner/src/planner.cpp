@@ -1542,10 +1542,6 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                     scheduled = true;
                 }
 
-                /* if (other_resources.size() == 0) { */
-                /*     break; */
-                /* } */
-
                 if (!scheduled) {
                     map<string, constraint> post_stn_constraints =
                         stn->get_constraints();
