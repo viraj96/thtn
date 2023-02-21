@@ -148,10 +148,6 @@ tuple<bool, bool, bool> del_and_add_sequencing_constraint(Token *prev,
 bool check_init(literal *precondition, set<arg_and_type> knowns,
                 world_state current_state, ground_literal *lit);
 
-bool schedule_leafs(vector<task_vertex> leafs,
-                    vector<vector<slot>> *tasknetwork_slots, Plan p,
-                    double *makespan, string metric = "makespan");
-
 void initialize_token_state(Token *tk, Plan *p, vector<Timeline *> *robots, 
         world_state *current_state, vector<arg_and_type> *other_resources,
         vector<arg_and_type> *affecting_resources);
@@ -163,6 +159,11 @@ bool check_precondition(literal *precondition, set<arg_and_type> knowns,
 bool local_stn_check_phase(Timeline *r, vector<slot> *local_set, 
                            world_state *current_state, bool satisfied_once,
                            pair<bool, vector<slot>> *return_slots, Plan *p, STN *stn);
+
+bool schedule_leafs(vector<task_vertex> leafs,
+                    vector<vector<slot>> *tasknetwork_slots, Plan p,
+                    vector<slot> *explored_slots, double *makespan, 
+                    string metric = "makespan");
 
 pair<set<arg_and_type>, set<arg_and_type>> get_satisfying_knowns_and_args(
     task *satisfying_task, set<arg_and_type> *arguments,

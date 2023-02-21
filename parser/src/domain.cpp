@@ -26,6 +26,17 @@ bool operator<(const var_declaration &left, const var_declaration &right) {
     return (left.vars.size() < right.vars.size());
 }
 
+string object_state::to_string() const {
+    string result = "Object State: ";
+    result += "\n\t Name = " + object_name;
+    result += "\n\t Parent = " + parent;
+    result += "\n\t Attribute Types = " + attribute_types.to_string();
+    result += "\n\t Attribute States = " + attribute_states.to_string();
+    result += "\n";
+
+    return result;
+}
+
 string literal::to_string() const {
     string result = "Literal: ";
 

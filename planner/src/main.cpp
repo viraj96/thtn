@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <iostream>
 
-#define ATTEMPTS 1
+#define ATTEMPTS 5
 #define MAX_PERMUTATIONS 10
 /* #define USERDEBUG */
 

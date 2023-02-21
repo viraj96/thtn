@@ -40,6 +40,8 @@ struct object_state {
     string object_name;
     var_declaration attribute_types;
     var_declaration attribute_states;
+
+    string to_string() const;
 };
 
 typedef map<string, object_state> world_state;

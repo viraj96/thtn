@@ -244,6 +244,10 @@ arg_and_type get_arg_and_attr(string argument) {
 }
 
 void update_object_state(object_state *obj, Token *prev) {
+    /* if (prev->get_name() == "head") { */
+    /*     for (pair<string, object_state> os : initial_state) */
+    /*         if (os.second.object_name == obj->object_name) */
+    /* } */
     for (literal eff : prev->get_effects())
         if (eff.predicate == dummy_equal_literal) {
             string arg1 = eff.arguments[0];
@@ -1062,6 +1066,11 @@ pair<bool, bool> precondition_check_phase(Token *tk, Timeline* r,
 
     bool prec_succ = true, satisfied_once = false;
     set<arg_and_type> knowns = tk->get_knowns();
+
+    cout << "Current state is as follows\n";
+    for (pair<string, object_state> os : (*current_state)) {
+        cout << os.first << " " << os.second.to_string() << endl;
+    }
     for (literal prec : tk->get_preconditions()) {
         bool succ = check_precondition(&prec, &knowns, current_state, &init);
 
@@ -1086,6 +1095,11 @@ pair<bool, bool> precondition_check_phase(Token *tk, Timeline* r,
                 }
 
             } else {
+                cout << "Precondition that failed was " << prec.to_string() << endl;
+                cout << "Ground literals were\n";
+                for (ground_literal lit : init) {
+                    cout << lit.to_string() << endl;
+                }
                 prec_succ = false;
                 break;
             }
@@ -1431,6 +1445,17 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
 
             if (!check_temporal_bounds(&to_explore, stn)) continue;
 
+            // Debugging print - remove later
+            if (tk->get_name() == "grasp") {
+                cout << "Temporal check passed\n";
+                cout << "To explore slot : " << to_explore.to_string() << endl;
+                cout << "Explored slots :\n";
+                for (slot s : (*explored)) {
+                    if (s.tk.get_name() == "grasp")
+                        cout << s.to_string() << endl;
+                }
+            }
+
             local_set.push_back(to_explore);
 
             vector<bool> exhausted(other_resources.size(), false);
@@ -1494,6 +1519,7 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                 if (!prec_succ && other_resources.size() == 0)
                     break;
                 else if (!prec_succ) {
+                    cout << "Precondition satisfaction failed!\n";
                     satisfied_once = false;
                     current_state_copy = current_state;
                     continue;
@@ -1506,6 +1532,7 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                 if (!local_check && other_resources.size() == 0)
                     break;
                 else if (!local_check) {
+                    cout << "Local checks failed!\n";
                     satisfied_once = false;
                     local_set = local_set_copy;
                     current_state_copy = current_state;
@@ -1522,6 +1549,7 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
                 if (!rewiring_check && other_resources.size() == 0)
                     break;
                 else if (!rewiring_check) {
+                    cout << "Rewiring checks failed!\n";
                     satisfied_once = false;
                     local_set = local_set_copy;
                     current_state_copy = current_state;
@@ -1578,13 +1606,13 @@ pair<bool, vector<slot>> schedule_token(Token *tk, vector<slot> *explored,
 
 bool schedule_leafs(vector<task_vertex> leafs,
                     vector<primitive_solution> *solution, Plan p,
-                    double *value, string metric) {
+                    vector<slot> *explored_slots, double *value, string metric) {
     int leaf_id = 0, num_actions = 0;
     for (task_vertex leaf : leafs) {
         primitive_solution leaf_sol = primitive_solution();
         leaf_sol.primitive_token = leaf.tk;
         pair<bool, vector<slot>> res =
-            schedule_token(&leaf.tk, &leaf_sol.token_slots, &p, &stn);
+            schedule_token(&leaf.tk, explored_slots, &p, &stn);
         bool scheduled = res.first;
         if (scheduled) {
             for (slot s : res.second) {
@@ -2030,6 +2058,7 @@ pq find_feasible_slots(task_network tree, Plan p, int attempts, string metric) {
         if (boost::out_degree(*vi, tree.adj_list) == 0)
             leafs.push_back(tree.adj_list[*vi]);
 
+    vector<slot> explored_slots = vector<slot>();
     for (int plan_id = 0; plan_id < attempts; plan_id++) {
         double value = 0.0;
         tasknetwork_solution sol = tasknetwork_solution();
@@ -2038,8 +2067,13 @@ pq find_feasible_slots(task_network tree, Plan p, int attempts, string metric) {
         vector<primitive_solution> solution = vector<primitive_solution>();
         map<string, constraint> pre_stn_constraints = stn.get_constraints();
 
+        cout << "Plan ID: " << plan_id << endl;
+        cout << "Scheduling token " << leafs[0].tk.to_string() << endl;
+
         bool success =
-            schedule_leafs(leafs, &solution, p, &value, metric);
+            schedule_leafs(leafs, &solution, p, &explored_slots, &value, metric);
+
+        cout << "Success = " << success << endl;
 
         if (success) {
             vector<tuple<int, int, slot>> main =
@@ -2071,11 +2105,28 @@ pq find_feasible_slots(task_network tree, Plan p, int attempts, string metric) {
                     }
             }
 
+            for (int i = 0; i < (int)solution.size(); i++) {
+                cout << "Token slots : \n";
+                for (slot s : solution[i].token_slots)
+                    cout << s.to_string() << endl;
+            }
+
             for (int i = 0; i < (int)solution.size(); i++)
                 for (slot s : solution[i].token_slots) {
+                    /* explored_slots.push_back(s); */
                     if (s.tk.get_start() ==
-                        solution[i].primitive_token.get_start())
+                            solution[i].primitive_token.get_start()) {
+                        cout << "This is a primitive token\n";
+                        if (s.prev.is_external()) {
+                            slot original_explored_slot = slot(&s.tk, 
+                                    &solution[i].token_slots[0].prev,
+                                    &solution[i].token_slots[0].next, 
+                                    s.tl_id);
+                            explored_slots.push_back(original_explored_slot);
+                            cout << "Prev token was external" << s.to_string() << endl;
+                        }
                         continue;
+                    }
                     stn.del_timepoint(s.tk.get_start());
                     stn.del_timepoint(s.tk.get_end());
                 }
