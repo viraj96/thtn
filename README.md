@@ -6,9 +6,10 @@ This repository contains the implementation of T-HTN a Timeline-based multi-robo
 
 * A compiler with C++17 support
 * CMake 3.16 or higher
-* Bison 3.8.2
-* Flex 2.6.4
+* Bison 3.8.2 or higher
+* Flex 2.6.4 or higher
 * Boost 1.71 or higher
+* Plog 1.1.9 or higher
 
 ## Installation
 

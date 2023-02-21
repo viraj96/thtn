@@ -6,6 +6,7 @@
 
 #include <set>
 #include <string>
+#include <plog/Log.h>
 
 #include "stn.hpp"
 #include "graph.hpp"

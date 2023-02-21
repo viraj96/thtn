@@ -7,6 +7,7 @@ add_compile_options(-Wall -Wextra -g)
 FIND_PACKAGE(FLEX 2.6.4 REQUIRED)
 FIND_PACKAGE(BISON 3.8.2 REQUIRED)
 FIND_PACKAGE(nlohmann_json 3.2.0 REQUIRED)
+FIND_PACKAGE(plog)
 
 if (UNIX AND NOT APPLE)
     set(LINUX TRUE)

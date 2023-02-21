@@ -2,14 +2,9 @@
 
 #define __PLANNER
 
-#ifdef USERDEBUG
-#define DEBUG(x) std::cout << x
-#else
-#define DEBUG(x)
-#endif
-
 #include <queue>
 #include <variant>
+#include <plog/Log.h>
 #include <nlohmann/json.hpp>
 #include <boost/algorithm/string.hpp>
 

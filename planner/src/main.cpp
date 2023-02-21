@@ -1,5 +1,10 @@
 #include <getopt.h>
 
+#include <plog/Log.h>
+#include "plog/Formatters/TxtFormatter.h"
+#include "plog/Appenders/ColorConsoleAppender.h"
+#include "plog/Initializers/ConsoleInitializer.h"
+
 #include <map>
 #include <cstdio>
 #include <chrono>
@@ -9,9 +14,8 @@
 #include <algorithm>
 #include <iostream>
 
-#define ATTEMPTS 5
+#define ATTEMPTS 10
 #define MAX_PERMUTATIONS 10
-/* #define USERDEBUG */
 
 #include "parser.hpp"
 #include "search.hpp"
@@ -69,11 +73,11 @@ pair<double, double> compute_metrics(Plan *p) {
 void find_plan_for_request(request r, Plan *p, bool *plan_found,
                            string metric) {
     if (task_name_map.find(r.demand.name) == task_name_map.end()) {
-        DEBUG("Request " << r.id << " cannot be met!\n");
+        PLOGI << "Request " << r.id << " cannot be met!\n";
     }
 
     search_tree r_tree = create_search_tree(r);
-    DEBUG(r_tree.to_string() << endl);
+    PLOGI << r_tree.to_string() << endl;
 
     search_vertex root = r_tree.adj_list[0];
     vector<vector<string> > leafs = get_leafs(root, r_tree);
@@ -130,12 +134,14 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
 }
 
 int main(int argc, char **argv) {
+
     int dfile = -1;
     int pfile = -1;
 
     string metric = "makespan";
     bool permute = false;
     bool showProperties = false;
+    plog::Severity severity = plog::error;
     bool compileConditionalEffects = true;
     bool linearConditionalEffectExpansion = false;
     bool encodeDisjunctivePreconditionsInMethods = false;
@@ -147,6 +153,7 @@ int main(int argc, char **argv) {
         {"encode-disjunctive_preconditions-in-htn", no_argument, NULL, 'D'},
         {"properties", optional_argument, NULL, 'p'},
         {"metric", required_argument, NULL, 'm'},
+        {"severity", optional_argument, NULL, 'd'},
         {"permute_benchmark", no_argument, NULL, 'b'},
         {NULL, 0, NULL, 0},
 
@@ -155,7 +162,7 @@ int main(int argc, char **argv) {
     // Parsing command line options
     bool optionsValid = true;
     while (true) {
-        int c = getopt_long_only(argc, argv, "kLDpm:b", options, NULL);
+        int c = getopt_long_only(argc, argv, "kLDpmd:b", options, NULL);
         if (c == -1) break;
         if (c == '?' || c == ':') {
             // Invalid option
@@ -178,7 +185,12 @@ int main(int argc, char **argv) {
                 metric = "makespan";
             else
                 metric = "actions";
-        } else if (c == 'b') {
+        } 
+        else if (c == 'd') {
+           int choice = atoi(optarg);
+           severity = static_cast<plog::Severity>(choice);
+        }
+        else if (c == 'b') {
             permute = true;
         }
     }
@@ -200,6 +212,9 @@ int main(int argc, char **argv) {
              << endl;
         return 1;
     }
+
+    static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+    plog::init(severity, &consoleAppender);
 
     // Open c-style file handle
     FILE *domain_file = fopen(argv[dfile], "r");
@@ -341,7 +356,7 @@ int main(int argc, char **argv) {
         auto end = chrono::steady_clock::now();
         auto diff = end - start;
         if (plan_found) {
-            DEBUG(p.to_string());
+            PLOGI << p.to_string();
             pair<double, double> metric_values = compute_metrics(&p);
             cout << flush;
             cout << "Time(s): " << chrono::duration<double>(diff).count()
@@ -349,7 +364,7 @@ int main(int argc, char **argv) {
             cout << "Total Actions: " << metric_values.first << "\n";
             cout << "Makespan: " << metric_values.second << "\n";
         } else {
-            DEBUG("PLAN WAS NOT FOUND!!\n");
+            PLOGI << "PLAN WAS NOT FOUND!!\n";
             assert(false);
         }
     }

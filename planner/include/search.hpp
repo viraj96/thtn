@@ -7,6 +7,7 @@
 #include <set>
 #include <string>
 #include <numeric>
+#include <plog/Log.h>
 #include <boost/algorithm/string.hpp>
 
 #include "graph.hpp"

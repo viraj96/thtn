@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include <fstream>
+#include <plog/Log.h>
 #include <boost/function.hpp>
 
 #include "cwa.hpp"

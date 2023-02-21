@@ -2,6 +2,7 @@
 
 #define __GRAPH
 
+#include <plog/Log.h>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
