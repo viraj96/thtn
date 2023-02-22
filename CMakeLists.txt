@@ -37,7 +37,7 @@ add_executable(planner
     ${FLEX_thtnScanner_OUTPUTS}
     )
 if (LINUX)
-    target_link_libraries(planner ${FLEX_LIBRARIES} nlohmann_json::nlohmann_json)
+    target_link_libraries(planner ${FLEX_LIBRARIES} nlohmann_json::nlohmann_json plog::plog)
 else(NOT LINUX)
     target_link_libraries(planner nlohmann_json::nlohmann_json plog::plog)
 endif()
