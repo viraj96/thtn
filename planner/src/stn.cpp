@@ -1,21 +1,33 @@
 #include "stn.hpp"
 
-bool verbose_1 = false;  // Public Functions (high level checks)
-bool verbose_2 = false;  // Private Functions (high level checks)
-bool verbose_3 = false;  // Low level checks
+bool verbose_1 = false; // Public Functions (high level checks)
+bool verbose_2 = false; // Private Functions (high level checks)
+bool verbose_3 = false; // Low level checks
 
-int STN::num_points() { return n; }
+int
+STN::num_points()
+{
+    return n;
+}
 
-map<string, constraint> STN::get_constraints() { return constraints; }
+map<string, constraint>
+STN::get_constraints()
+{
+    return constraints;
+}
 
-void STN::print_queue() {
+void
+STN::print_queue()
+{
     cout << "Printing queue: \n";
     for (int i = 0; i < n; i++)
         cout << "\t" << graph[i]->id << ": " << graph[i]->in_queue;
     cout << "\n";
 }
 
-void STN::print_graph() {
+void
+STN::print_graph()
+{
     string tp_id = "";
     shared_ptr<Node> x = nullptr;
     shared_ptr<Node> y = nullptr;
@@ -24,7 +36,8 @@ void STN::print_graph() {
     for (int i = 0; i < (int)graph.size(); i++) {
         x = graph[i];
         if (x == nullptr) {
-            if (verbose_2 && verbose_3) cout << "Node " << i << " is null\n";
+            if (verbose_2 && verbose_3)
+                cout << "Node " << i << " is null\n";
             continue;
         }
 
@@ -37,8 +50,8 @@ void STN::print_graph() {
             if (y == nullptr)
                 cout << "Edge to null node, e->id = " << e->id << endl;
             else {
-                cout << "\t\t" << e->c_id << ": (" << x->timepoint_id << ", "
-                     << y->timepoint_id << ") = " << e->weight << "\n";
+                cout << "\t\t" << e->c_id << ": (" << x->timepoint_id << ", " << y->timepoint_id
+                     << ") = " << e->weight << "\n";
             }
             e = e->next;
         }
@@ -46,7 +59,9 @@ void STN::print_graph() {
     }
 }
 
-void STN::gen_dot_file(string file_name) {
+void
+STN::gen_dot_file(string file_name)
+{
     ofstream fout(file_name);
     fout << "graph plan {\n";
     for (int i = 0; i < (int)graph.size(); i++) {
@@ -58,11 +73,12 @@ void STN::gen_dot_file(string file_name) {
         }
     }
     vector<tuple<string, string, string, string, string>> relations =
-        vector<tuple<string, string, string, string, string>>();
+      vector<tuple<string, string, string, string, string>>();
 
     for (int i = 0; i < (int)graph.size(); i++) {
         shared_ptr<Node> x = graph[i];
-        if (x == nullptr) continue;
+        if (x == nullptr)
+            continue;
         shared_ptr<Edge> e = x->edges_out;
         while (e != nullptr) {
             shared_ptr<Node> y = graph[e->id];
@@ -92,13 +108,12 @@ void STN::gen_dot_file(string file_name) {
 
             if (!found) {
                 tuple<string, string, string, string, string> rel =
-                    tuple<string, string, string, string, string>();
+                  tuple<string, string, string, string, string>();
                 if (lower_bound)
-                    rel = make_tuple(to_string(x->id), to_string(y->id),
-                                     e_weight.substr(1), "", e->c_id);
+                    rel = make_tuple(
+                      to_string(x->id), to_string(y->id), e_weight.substr(1), "", e->c_id);
                 else if (upper_bound)
-                    rel = make_tuple(to_string(x->id), to_string(y->id), "",
-                                     e_weight, e->c_id);
+                    rel = make_tuple(to_string(x->id), to_string(y->id), "", e_weight, e->c_id);
                 relations.push_back(rel);
             }
             e = e->next;
@@ -115,7 +130,9 @@ void STN::gen_dot_file(string file_name) {
     fout << "}\n";
 }
 
-void STN::print_sp_tree() {
+void
+STN::print_sp_tree()
+{
     shared_ptr<Node> x = nullptr;
     string id = "";
     cout << "------PRINTING SHORTEST PATHS------\n";
@@ -127,15 +144,16 @@ void STN::print_sp_tree() {
             continue;
         }
         cout << "Node [" << x->id << "]: " << x->timepoint_id << "\n";
-        cout << "\t LB: (" << x->lb_data->pred << ", " << x->lb_data->dist
-             << ")\n";
-        cout << "\t UB: (" << x->ub_data->pred << ", " << x->ub_data->dist
-             << ")\n";
+        cout << "\t LB: (" << x->lb_data->pred << ", " << x->lb_data->dist << ")\n";
+        cout << "\t UB: (" << x->ub_data->pred << ", " << x->ub_data->dist << ")\n";
     }
 }
 
-void STN::add_edge(int x, int y, double weight, string s) {
-    if (verbose_2) cout << "\tAdding edge: " << s << "\n";
+void
+STN::add_edge(int x, int y, double weight, string s)
+{
+    if (verbose_2)
+        cout << "\tAdding edge: " << s << "\n";
     shared_ptr<Node> u = graph[x];
     shared_ptr<Node> v = graph[y];
 
@@ -166,8 +184,11 @@ void STN::add_edge(int x, int y, double weight, string s) {
     }
 }
 
-void STN::del_edge(int x, int y, string s) {
-    if (verbose_2) cout << "Deleting edge: " << s << "\n";
+void
+STN::del_edge(int x, int y, string s)
+{
+    if (verbose_2)
+        cout << "Deleting edge: " << s << "\n";
     shared_ptr<Node> u = graph[x];
     shared_ptr<Node> v = graph[y];
     shared_ptr<Edge> e = nullptr, p = nullptr;
@@ -205,13 +226,15 @@ void STN::del_edge(int x, int y, string s) {
     }
 }
 
-void STN::rollback_updates(deque<tuple<int, bool, int, double>> q) {
-    if (verbose_2) cout << "\tRolling back updates\n";
+void
+STN::rollback_updates(deque<tuple<int, bool, int, double>> q)
+{
+    if (verbose_2)
+        cout << "\tRolling back updates\n";
     tuple<int, bool, int, double> update = tuple<int, bool, int, double>();
     shared_ptr<Node> x = nullptr;
 
-    for (deque<tuple<int, bool, int, double>>::iterator i = q.begin();
-         i != q.end(); i++) {
+    for (deque<tuple<int, bool, int, double>>::iterator i = q.begin(); i != q.end(); i++) {
         update = *i;
         x = graph[get<0>(update)];
         x->in_queue = false;
@@ -221,8 +244,8 @@ void STN::rollback_updates(deque<tuple<int, bool, int, double>> q) {
         if (get<1>(update)) {
             // UB was updated;
             if (verbose_2 && verbose_3)
-                cout << "\t\tRolling back UB change for " << x->id << " "
-                     << x->timepoint_id << "\n";
+                cout << "\t\tRolling back UB change for " << x->id << " " << x->timepoint_id
+                     << "\n";
 
             x->ub_data->pred = get<2>(update);
             x->ub_data->dist = get<3>(update);
@@ -230,8 +253,7 @@ void STN::rollback_updates(deque<tuple<int, bool, int, double>> q) {
         } else {
             // LB was updated
             if (verbose_2 && verbose_3)
-                cout << "\tRolling back LB change for " << x->id << " "
-                     << x->timepoint_id << "\n";
+                cout << "\tRolling back LB change for " << x->id << " " << x->timepoint_id << "\n";
 
             x->lb_data->pred = get<2>(update);
             x->lb_data->dist = get<3>(update);
@@ -239,14 +261,16 @@ void STN::rollback_updates(deque<tuple<int, bool, int, double>> q) {
     }
 }
 
-bool STN::propagation(int x, int y, deque<int> *q) {
-    if (verbose_2) cout << "\tPropagation on " << x << ", " << y << "\n";
+bool
+STN::propagation(int x, int y, deque<int>* q)
+{
+    if (verbose_2)
+        cout << "\tPropagation on " << x << ", " << y << "\n";
 
     shared_ptr<Edge> e = nullptr;
     shared_ptr<Node> u = nullptr, v = nullptr;
     bool ubp_1 = false, ubp_2 = false, lbp_1 = false, lbp_2 = false;
-    deque<tuple<int, bool, int, double>> updates =
-        deque<tuple<int, bool, int, double>>();
+    deque<tuple<int, bool, int, double>> updates = deque<tuple<int, bool, int, double>>();
 
     // Execute propagation algorithm
     while (!q->empty()) {
@@ -266,30 +290,28 @@ bool STN::propagation(int x, int y, deque<int> *q) {
             while (e != nullptr) {
                 v = graph[e->id];
                 if (verbose_2 && verbose_3)
-                    cout << "\t\tUB EDGE (" << u->timepoint_id << ", "
-                         << v->timepoint_id << ") = " << e->weight << "\n";
+                    cout << "\t\tUB EDGE (" << u->timepoint_id << ", " << v->timepoint_id
+                         << ") = " << e->weight << "\n";
 
                 // Update UB distance of v
                 if (u->ub_data->dist + e->weight < v->ub_data->dist) {
                     // Store v's original values in case we need to rollback
                     // changes
                     if (verbose_2 && verbose_3)
-                        cout << "\t\tSaving ub data for " << v->timepoint_id
-                             << "\n";
+                        cout << "\t\tSaving ub data for " << v->timepoint_id << "\n";
 
                     if (verbose_2 && verbose_3)
                         cout << "\t\tOld: " << v->ub_data->dist
-                             << "\tNew: " << u->ub_data->dist + e->weight
-                             << endl;
-                    updates.push_front(make_tuple(v->id, true, v->ub_data->pred,
-                                                  v->ub_data->dist));
+                             << "\tNew: " << u->ub_data->dist + e->weight << endl;
+                    updates.push_front(make_tuple(v->id, true, v->ub_data->pred, v->ub_data->dist));
 
                     v->ub_data->dist = u->ub_data->dist + e->weight;
 
                     if (v->ub_data->dist + v->lb_data->dist < 0) {
                         // Lower bound value of v is > upper bound =>
                         // inconsistent!
-                        if (verbose_2 && verbose_3) cout << "\t\tFAIL\n";
+                        if (verbose_2 && verbose_3)
+                            cout << "\t\tFAIL\n";
                         rollback_updates(updates);
                         return false;
 
@@ -298,8 +320,7 @@ bool STN::propagation(int x, int y, deque<int> *q) {
                             // New edge has been updated twice in shortest
                             // path tree => inconsistent!
                             if (verbose_2 && verbose_3)
-                                cout << "\t\tFAIL UB updated twice for node "
-                                     << v->id << "\n";
+                                cout << "\t\tFAIL UB updated twice for node " << v->id << "\n";
                             rollback_updates(updates);
                             return false;
 
@@ -312,8 +333,7 @@ bool STN::propagation(int x, int y, deque<int> *q) {
                             // New edge has been updated twice in shortest
                             // path tree => inconsistent!
                             if (verbose_2 && verbose_3)
-                                cout << "\t\tFAIL UB updated twice for node "
-                                     << v->id << "\n";
+                                cout << "\t\tFAIL UB updated twice for node " << v->id << "\n";
                             rollback_updates(updates);
                             return false;
 
@@ -342,25 +362,25 @@ bool STN::propagation(int x, int y, deque<int> *q) {
             while (e != nullptr) {
                 v = graph[e->id];
                 if (verbose_2 && verbose_3)
-                    cout << "\t\tLB EDGE (" << u->timepoint_id << ", "
-                         << v->timepoint_id << ") = " << e->weight << "\n";
+                    cout << "\t\tLB EDGE (" << u->timepoint_id << ", " << v->timepoint_id
+                         << ") = " << e->weight << "\n";
 
                 // Update LB distance of v
                 if (u->lb_data->dist + e->weight < v->lb_data->dist) {
                     // Save original LB data incase new constraint is
                     // inconsistent
                     if (verbose_2 && verbose_3)
-                        cout << "\t\tSaving lb data for " << v->timepoint_id
-                             << "\n";
-                    updates.push_front(make_tuple(
-                        v->id, false, v->lb_data->pred, v->lb_data->dist));
+                        cout << "\t\tSaving lb data for " << v->timepoint_id << "\n";
+                    updates.push_front(
+                      make_tuple(v->id, false, v->lb_data->pred, v->lb_data->dist));
 
                     v->lb_data->dist = u->lb_data->dist + e->weight;
 
                     if (v->ub_data->dist + v->lb_data->dist < 0) {
                         // Lower bound value of v is > upper bound =>
                         // inconsistent!
-                        if (verbose_2 && verbose_3) cout << "\t\tFAIL\n";
+                        if (verbose_2 && verbose_3)
+                            cout << "\t\tFAIL\n";
                         rollback_updates(updates);
                         return false;
 
@@ -369,8 +389,7 @@ bool STN::propagation(int x, int y, deque<int> *q) {
                             // New edge has been updated twice in shortest
                             // path tree => inconsistent!
                             if (verbose_2 && verbose_3)
-                                cout << "\t\tFAIL LB updated twice for node "
-                                     << v->id << "\n";
+                                cout << "\t\tFAIL LB updated twice for node " << v->id << "\n";
                             rollback_updates(updates);
                             return false;
 
@@ -383,8 +402,7 @@ bool STN::propagation(int x, int y, deque<int> *q) {
                             // New edge has been updated twice in shortest
                             // path tree => inconsistent!
                             if (verbose_2 && verbose_3)
-                                cout << "\t\tFAIL LB updated twice for node "
-                                     << v->id << "\n";
+                                cout << "\t\tFAIL LB updated twice for node " << v->id << "\n";
                             rollback_updates(updates);
                             return false;
 
@@ -412,8 +430,11 @@ bool STN::propagation(int x, int y, deque<int> *q) {
     return true;
 }
 
-void STN::insert_new_node(int i, string s) {
-    if (verbose_2) cout << "\tInserting new node: " << s << endl;
+void
+STN::insert_new_node(int i, string s)
+{
+    if (verbose_2)
+        cout << "\tInserting new node: " << s << endl;
     shared_ptr<Node> x = nullptr;
     shared_ptr<SP_Data> data = nullptr;
 
@@ -449,7 +470,9 @@ void STN::insert_new_node(int i, string s) {
         graph[i] = x;
 }
 
-int STN::get_tp_id(string x) {
+int
+STN::get_tp_id(string x)
+{
     map<string, int>::iterator i = map<string, int>::iterator();
 
     i = timepoints.find(x);
@@ -459,7 +482,9 @@ int STN::get_tp_id(string x) {
         return i->second;
 }
 
-constraint STN::get_constraint(string s) {
+constraint
+STN::get_constraint(string s)
+{
     map<string, constraint>::iterator i = map<string, constraint>::iterator();
     i = constraints.find(s);
     if (i == constraints.end())
@@ -468,8 +493,11 @@ constraint STN::get_constraint(string s) {
         return i->second;
 }
 
-void STN::init() {
-    if (verbose_1) cout << "Initializing STN\n";
+void
+STN::init()
+{
+    if (verbose_1)
+        cout << "Initializing STN\n";
     n = 1;
     id = "global_stn";
     graph = vector<shared_ptr<Node>>(n, nullptr);
@@ -481,11 +509,15 @@ void STN::init() {
     constraints = map<string, constraint>();
 }
 
-tuple<double, double> STN::get_feasible_values(string s) {
-    if (verbose_1) cout << "Getting feasible values\n";
+tuple<double, double>
+STN::get_feasible_values(string s)
+{
+    if (verbose_1)
+        cout << "Getting feasible values\n";
     map<string, int>::iterator i = timepoints.find(s);
     if (i == timepoints.end()) {
-        if (verbose_1) cout << "No such timepoint";
+        if (verbose_1)
+            cout << "No such timepoint";
         return make_tuple(0, inf);
 
     } else {
@@ -494,13 +526,17 @@ tuple<double, double> STN::get_feasible_values(string s) {
     }
 }
 
-void STN::add_timepoint(string x) {
-    if (verbose_1) cout << "Adding timepoint: " << x << endl;
+void
+STN::add_timepoint(string x)
+{
+    if (verbose_1)
+        cout << "Adding timepoint: " << x << endl;
     map<string, int>::iterator i = map<string, int>::iterator();
 
     i = timepoints.find(x);
     if (i == timepoints.end()) {
-        if (verbose_1) cout << "Added timepoint " << x << "\n";
+        if (verbose_1)
+            cout << "Added timepoint " << x << "\n";
         int idx = n;
         n++;
 
@@ -511,7 +547,9 @@ void STN::add_timepoint(string x) {
         cout << "Timepoint " << x << " already in STN\n";
 }
 
-void STN::cleanup() {
+void
+STN::cleanup()
+{
     map<string, int> tps_copy = timepoints;
     for (pair<string, int> tps : tps_copy) {
         shared_ptr<Node> x = graph[tps.second];
@@ -525,12 +563,16 @@ void STN::cleanup() {
     }
 }
 
-void STN::del_timepoint(string x) {
-    if (verbose_1) cout << "Deleting timepoint: " << x << endl;
+void
+STN::del_timepoint(string x)
+{
+    if (verbose_1)
+        cout << "Deleting timepoint: " << x << endl;
     map<string, int>::iterator i = timepoints.find(x);
 
     if (i == timepoints.end()) {
-        if (verbose_1) cout << "No such timepoint found\n";
+        if (verbose_1)
+            cout << "No such timepoint found\n";
         return;
     }
 
@@ -538,8 +580,8 @@ void STN::del_timepoint(string x) {
     shared_ptr<Edge> e = nullptr, p = nullptr;
 
     if (verbose_1 && verbose_3)
-        cout << "\t\tInvalidating nodes dependent on Node[" << i->second << ": "
-             << i->first << endl;
+        cout << "\t\tInvalidating nodes dependent on Node[" << i->second << ": " << i->first
+             << endl;
 
     set<int> invalidated_nodes = set<int>();
     deque<int> q = deque<int>();
@@ -548,8 +590,7 @@ void STN::del_timepoint(string x) {
     invalidate_lb(invalidated_nodes, i->second);
 
     shared_ptr<Node> temp_1 = nullptr, temp_2 = nullptr;
-    for (set<int>::iterator i = invalidated_nodes.begin();
-         i != invalidated_nodes.end(); i++) {
+    for (set<int>::iterator i = invalidated_nodes.begin(); i != invalidated_nodes.end(); i++) {
         temp_1 = graph[*i];
         e = temp_1->edges_in;
         while (e != nullptr) {
@@ -567,8 +608,7 @@ void STN::del_timepoint(string x) {
     }
 
     if (verbose_1 && verbose_3)
-        cout << "\t\tDeleting all edges to/from Node[" << i->second
-             << "]: " << i->first << endl;
+        cout << "\t\tDeleting all edges to/from Node[" << i->second << "]: " << i->first << endl;
 
     e = x_node->edges_out;
     p = nullptr;
@@ -590,7 +630,8 @@ void STN::del_timepoint(string x) {
         e = p;
     }
 
-    if (verbose_1 && verbose_3) cout << "\t\tDeleting node from memory\n";
+    if (verbose_1 && verbose_3)
+        cout << "\t\tDeleting node from memory\n";
 
     x_node->edges_out = nullptr;
     x_node->edges_in = nullptr;
@@ -603,8 +644,11 @@ void STN::del_timepoint(string x) {
     return;
 }
 
-bool STN::add_constraint(string s, constraint c) {
-    if (verbose_1) cout << "Adding constraint " << s << endl;
+bool
+STN::add_constraint(string s, constraint c)
+{
+    if (verbose_1)
+        cout << "Adding constraint " << s << endl;
 
     int x_id = 0, y_id = 0;
     string x = get<0>(c);
@@ -633,7 +677,8 @@ bool STN::add_constraint(string s, constraint c) {
 
     constraint temp = get_constraint(s);
     if (get<0>(temp) != "") {
-        if (verbose_1) cout << "Constraint with that name already exists\n";
+        if (verbose_1)
+            cout << "Constraint with that name already exists\n";
         return true;
 
     } else
@@ -665,20 +710,27 @@ bool STN::add_constraint(string s, constraint c) {
     return f;
 }
 
-bool STN::modify_constraint(string s, constraint c) {
-    if (verbose_1) cout << "Modifying constraint\n";
+bool
+STN::modify_constraint(string s, constraint c)
+{
+    if (verbose_1)
+        cout << "Modifying constraint\n";
 
     bool status = false;
     status = del_constraint(s);
     if (!status)
-        if (verbose_1) cout << "Error, couldn't delete constraint\n";
+        if (verbose_1)
+            cout << "Error, couldn't delete constraint\n";
     status = add_constraint(s, c);
 
     return status;
 }
 
-void STN::invalidate_ub(set<int> &invalidated_nodes, int x) {
-    if (verbose_2) cout << "\tInvalidating upper bounds\n";
+void
+STN::invalidate_ub(set<int>& invalidated_nodes, int x)
+{
+    if (verbose_2)
+        cout << "\tInvalidating upper bounds\n";
 
     shared_ptr<Node> u = nullptr, v = nullptr;
     u = graph[x];
@@ -689,7 +741,8 @@ void STN::invalidate_ub(set<int> &invalidated_nodes, int x) {
 
         if (v->ub_data->pred == u->id) {
             if (v->id == 0)
-                if (verbose_2 && verbose_3) cout << "\t\tRESETTING CZ\n";
+                if (verbose_2 && verbose_3)
+                    cout << "\t\tRESETTING CZ\n";
             v->ub_data->pred = -1;
             v->ub_data->dist = inf;
             invalidated_nodes.insert(v->id);
@@ -700,8 +753,11 @@ void STN::invalidate_ub(set<int> &invalidated_nodes, int x) {
     }
 }
 
-void STN::invalidate_lb(set<int> &invalidated_nodes, int x) {
-    if (verbose_2) cout << "\tInvalidating lower bounds\n";
+void
+STN::invalidate_lb(set<int>& invalidated_nodes, int x)
+{
+    if (verbose_2)
+        cout << "\tInvalidating lower bounds\n";
 
     shared_ptr<Node> u = nullptr, v = nullptr;
     u = graph[x];
@@ -712,7 +768,8 @@ void STN::invalidate_lb(set<int> &invalidated_nodes, int x) {
 
         if (v->lb_data->pred == u->id) {
             if (v->id == 0)
-                if (verbose_2) cout << "\t\tRESETTING CZ\n";
+                if (verbose_2)
+                    cout << "\t\tRESETTING CZ\n";
             v->lb_data->pred = -1;
             v->lb_data->dist = inf;
             invalidated_nodes.insert(v->id);
@@ -723,8 +780,11 @@ void STN::invalidate_lb(set<int> &invalidated_nodes, int x) {
     }
 }
 
-deque<int> STN::invalidate_nodes(int x_id, int y_id) {
-    if (verbose_2) cout << "\tInvalidating nodes\n";
+deque<int>
+STN::invalidate_nodes(int x_id, int y_id)
+{
+    if (verbose_2)
+        cout << "\tInvalidating nodes\n";
 
     shared_ptr<Node> u = graph[x_id];
     shared_ptr<Node> v = graph[y_id];
@@ -767,8 +827,7 @@ deque<int> STN::invalidate_nodes(int x_id, int y_id) {
     }
 
     shared_ptr<Node> temp_1 = nullptr, temp_2 = nullptr;
-    for (set<int>::iterator i = invalidated_nodes.begin();
-         i != invalidated_nodes.end(); i++) {
+    for (set<int>::iterator i = invalidated_nodes.begin(); i != invalidated_nodes.end(); i++) {
         temp_1 = graph[*i];
         e = temp_1->edges_in;
         while (e != nullptr) {
@@ -789,8 +848,11 @@ deque<int> STN::invalidate_nodes(int x_id, int y_id) {
     return q;
 }
 
-bool STN::del_constraint(string s) {
-    if (verbose_1) cout << "Deleting constraint: " << s << endl;
+bool
+STN::del_constraint(string s)
+{
+    if (verbose_1)
+        cout << "Deleting constraint: " << s << endl;
 
     int x_id = 0, y_id = 0;
     string x = "", y = "";
@@ -799,7 +861,8 @@ bool STN::del_constraint(string s) {
     map<string, constraint>::iterator i = constraints.find(s);
 
     if (i == constraints.end()) {
-        if (verbose_1) cout << "No matching constraint for name: " << s << endl;
+        if (verbose_1)
+            cout << "No matching constraint for name: " << s << endl;
         return true;
 
     } else {
@@ -815,14 +878,20 @@ bool STN::del_constraint(string s) {
     if (x_id == -1) {
         if (verbose_1 && verbose_3)
             printf("\t\tConstraint <%s, %s, %f, %f> not found in STN\n",
-                   get<0>(c).c_str(), get<1>(c).c_str(), get<2>(c), get<3>(c));
+                   get<0>(c).c_str(),
+                   get<1>(c).c_str(),
+                   get<2>(c),
+                   get<3>(c));
         return false;
     }
 
     if (y_id == -1) {
         if (verbose_1 && verbose_3)
             printf("\t\tConstraint <%s, %s, %f, %f> not found in STN\n",
-                   get<0>(c).c_str(), get<1>(c).c_str(), get<2>(c), get<3>(c));
+                   get<0>(c).c_str(),
+                   get<1>(c).c_str(),
+                   get<2>(c),
+                   get<3>(c));
         return false;
     }
 
@@ -836,16 +905,20 @@ bool STN::del_constraint(string s) {
     return f;
 }
 
-shared_ptr<Edge> STN::del_all_edges(shared_ptr<Edge> e, int y, bool del_name) {
+shared_ptr<Edge>
+STN::del_all_edges(shared_ptr<Edge> e, int y, bool del_name)
+{
     shared_ptr<Edge> head = e;
     while (e != nullptr && e->id == y) {
-        if (del_name) constraints.erase(e->c_id);
+        if (del_name)
+            constraints.erase(e->c_id);
         e = e->next;
     }
 
     while (head->next != nullptr) {
         if (head->next->id == y) {
-            if (del_name) constraints.erase(head->next->c_id);
+            if (del_name)
+                constraints.erase(head->next->c_id);
             shared_ptr<Edge> tmp = head->next;
             head->next = head->next->next;
 
@@ -856,10 +929,11 @@ shared_ptr<Edge> STN::del_all_edges(shared_ptr<Edge> e, int y, bool del_name) {
     return e;
 }
 
-bool STN::del_all_constraints(string x, string y) {
+bool
+STN::del_all_constraints(string x, string y)
+{
     if (verbose_1)
-        cout << "Deleting all constraints between " << x << " and " << y
-             << endl;
+        cout << "Deleting all constraints between " << x << " and " << y << endl;
 
     int x_id = get_tp_id(x);
     int y_id = get_tp_id(y);
@@ -889,8 +963,11 @@ bool STN::del_all_constraints(string x, string y) {
     return f;
 }
 
-void STN::destroy() {
-    if (verbose_1) cout << "Deleting STN " << this->id << "\n";
+void
+STN::destroy()
+{
+    if (verbose_1)
+        cout << "Deleting STN " << this->id << "\n";
 
     shared_ptr<Node> x = nullptr;
     shared_ptr<Edge> e = nullptr, p = nullptr;

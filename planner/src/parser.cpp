@@ -1,10 +1,15 @@
 #include "parser.hpp"
 
-void run_parser(FILE *domain_file, FILE *problem_file, char *domain_name,
-                char *problem_name, bool showProperties,
-                bool compileConditionalEffects,
-                bool linearConditionalEffectExpansion,
-                bool encodeDisjunctivePreconditionsInMethods) {
+void
+run_parser(FILE* domain_file,
+           FILE* problem_file,
+           char* domain_name,
+           char* problem_name,
+           bool showProperties,
+           bool compileConditionalEffects,
+           bool linearConditionalEffectExpansion,
+           bool encodeDisjunctivePreconditionsInMethods)
+{
     // Parse the domain file and problem files
     // argv[dfile], argv[pfile]
     run_parser_on_file(domain_file, domain_name);
@@ -18,7 +23,8 @@ void run_parser(FILE *domain_file, FILE *problem_file, char *domain_name,
     equalsPredicate.argument_sorts.push_back("object");
     predicate_definitions.push_back(equalsPredicate);
 
-    if (showProperties) printProperties();
+    if (showProperties)
+        printProperties();
 
     // Add constants to all sorts
     expand_sorts();
@@ -26,7 +32,8 @@ void run_parser(FILE *domain_file, FILE *problem_file, char *domain_name,
     compile_goal_into_action();
 
     // Flatten all primitive tasks
-    flatten_tasks(compileConditionalEffects, linearConditionalEffectExpansion,
+    flatten_tasks(compileConditionalEffects,
+                  linearConditionalEffectExpansion,
                   encodeDisjunctivePreconditionsInMethods);
 
     // Flatten the goal
@@ -49,25 +56,30 @@ void run_parser(FILE *domain_file, FILE *problem_file, char *domain_name,
     compile_requests();
 }
 
-void update_literals(vector<literal> *l, string name, fpredicate f) {
+void
+update_literals(vector<literal>* l, string name, fpredicate f)
+{
     for (auto it = (*l).begin(); it != (*l).end(); it++)
-        if ((*it).functional && (*it).predicate == name) (*it).func_literal = f;
+        if ((*it).functional && (*it).predicate == name)
+            (*it).func_literal = f;
 }
 
-void update_conditional_effects(vector<conditional_effect> *ceff, string name,
-                                fpredicate f) {
+void
+update_conditional_effects(vector<conditional_effect>* ceff, string name, fpredicate f)
+{
     for (auto it = (*ceff).begin(); it != (*ceff).end(); it++) {
         if ((*it).effect.functional && (*it).effect.predicate == name)
             (*it).effect.func_literal = f;
 
-        for (auto itce = (*it).condition.begin(); itce != (*it).condition.end();
-             itce++)
+        for (auto itce = (*it).condition.begin(); itce != (*it).condition.end(); itce++)
             if ((*itce).functional && (*itce).predicate == name)
                 (*itce).func_literal = f;
     }
 }
 
-void update_tasks(vector<task> *tasks, string name, fpredicate f) {
+void
+update_tasks(vector<task>* tasks, string name, fpredicate f)
+{
     for (auto it = (*tasks).begin(); it != (*tasks).end(); it++) {
         update_literals(&(*it).eff, name, f);
         update_literals(&(*it).prec, name, f);
@@ -77,8 +89,13 @@ void update_tasks(vector<task> *tasks, string name, fpredicate f) {
     }
 }
 
-void update_methods(vector<method> *methods, string predicate_name,
-                    string method_name, fpredicate fp, fmethod fm) {
+void
+update_methods(vector<method>* methods,
+               string predicate_name,
+               string method_name,
+               fpredicate fp,
+               fmethod fm)
+{
     for (auto it = (*methods).begin(); it != (*methods).end(); it++) {
         if ((*it).functional && (*it).name == method_name)
             (*it).func_method = fm;
@@ -86,14 +103,17 @@ void update_methods(vector<method> *methods, string predicate_name,
     }
 }
 
-void update_methods(vector<method> *methods, string method_name, fmethod fm) {
+void
+update_methods(vector<method>* methods, string method_name, fmethod fm)
+{
     for (auto it = (*methods).begin(); it != (*methods).end(); it++)
         if ((*it).functional && (*it).name == method_name)
             (*it).func_method = fm;
 }
 
-void assign_func_impl(map<string, fpredicate> fpredicates,
-                      map<string, fmethod> fmethods) {
+void
+assign_func_impl(map<string, fpredicate> fpredicates, map<string, fmethod> fmethods)
+{
     for (pair<string, fpredicate> fp : fpredicates) {
         update_tasks(&abstract_tasks, fp.first, fp.second);
         update_tasks(&primitive_tasks, fp.first, fp.second);
@@ -102,7 +122,9 @@ void assign_func_impl(map<string, fpredicate> fpredicates,
     }
 }
 
-void assign_func_impl(map<string, fmethod> fmethods) {
+void
+assign_func_impl(map<string, fmethod> fmethods)
+{
     for (pair<string, fmethod> fm : fmethods)
         update_methods(&methods, fm.first, fm.second);
 }

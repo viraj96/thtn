@@ -1,25 +1,25 @@
 #include <getopt.h>
 
-#include <plog/Log.h>
-#include "plog/Formatters/TxtFormatter.h"
 #include "plog/Appenders/ColorConsoleAppender.h"
+#include "plog/Formatters/TxtFormatter.h"
 #include "plog/Initializers/ConsoleInitializer.h"
+#include <plog/Log.h>
 
-#include <map>
-#include <cstdio>
-#include <chrono>
-#include <cassert>
-#include <vector>
-#include <fstream>
 #include <algorithm>
+#include <cassert>
+#include <chrono>
+#include <cstdio>
+#include <fstream>
 #include <iostream>
+#include <map>
+#include <vector>
 
 #define ATTEMPTS 10
 #define MAX_PERMUTATIONS 10
 
 #include "parser.hpp"
-#include "search.hpp"
 #include "planner.hpp"
+#include "search.hpp"
 #include "timelines.hpp"
 
 using namespace std;
@@ -38,19 +38,19 @@ vector<string> parsed_requests = vector<string>();
 map<string, task> task_name_map = map<string, task>();
 vector<parsed_task> parsed_abstract = vector<parsed_task>();
 vector<parsed_task> parsed_primitive = vector<parsed_task>();
-map<string, set<string> > sorts = map<string, set<string> >();
-map<string, set<string> > constants = map<string, set<string> >();
+map<string, set<string>> sorts = map<string, set<string>>();
+map<string, set<string>> constants = map<string, set<string>>();
 vector<sort_definition> sort_definitions = vector<sort_definition>();
-vector<predicate_definition> predicate_definitions =
-    vector<predicate_definition>();
-map<string, vector<parsed_method> > parsed_methods =
-    map<string, vector<parsed_method> >();
-vector<pair<predicate_definition, string> > parsed_functions =
-    vector<pair<predicate_definition, string> >();
-map<string, set<map<string, var_declaration> > > csorts =
-    map<string, set<map<string, var_declaration> > >();
+vector<predicate_definition> predicate_definitions = vector<predicate_definition>();
+map<string, vector<parsed_method>> parsed_methods = map<string, vector<parsed_method>>();
+vector<pair<predicate_definition, string>> parsed_functions =
+  vector<pair<predicate_definition, string>>();
+map<string, set<map<string, var_declaration>>> csorts =
+  map<string, set<map<string, var_declaration>>>();
 
-pair<double, double> compute_metrics(Plan *p) {
+pair<double, double>
+compute_metrics(Plan* p)
+{
     double total_tokens = 0;
     double makespan = -1.0 * std::numeric_limits<double>::infinity();
     vector<Timeline> tls = p->get_timelines();
@@ -60,8 +60,7 @@ pair<double, double> compute_metrics(Plan *p) {
             total_tokens += (double)(tks.size()) - 2;
             Token last = tks.end()[-2];
             if (last.get_name() != "head" && last.get_name() != "tail") {
-                tuple<double, double> last_end_bounds =
-                    stn.get_feasible_values(last.get_end());
+                tuple<double, double> last_end_bounds = stn.get_feasible_values(last.get_end());
                 if (abs(get<0>(last_end_bounds)) >= makespan)
                     makespan = abs(get<0>(last_end_bounds));
             }
@@ -70,17 +69,18 @@ pair<double, double> compute_metrics(Plan *p) {
     return make_pair(total_tokens, makespan);
 }
 
-void find_plan_for_request(request r, Plan *p, bool *plan_found,
-                           string metric) {
+void
+find_plan_for_request(request r, Plan* p, bool* plan_found, string metric)
+{
     if (task_name_map.find(r.demand.name) == task_name_map.end()) {
-        PLOGI << "Request " << r.id << " cannot be met!\n";
+        PLOGV << "Request " << r.id << " cannot be met!\n";
     }
 
     search_tree r_tree = create_search_tree(r);
-    PLOGI << r_tree.to_string() << endl;
+    PLOGV << r_tree.to_string() << endl;
 
     search_vertex root = r_tree.adj_list[0];
-    vector<vector<string> > leafs = get_leafs(root, r_tree);
+    vector<vector<string>> leafs = get_leafs(root, r_tree);
 
     *(plan_found) = false;
     for (vector<string> cand : leafs) {
@@ -92,12 +92,12 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
                 root = s;
         }
 
-        pair<task_network, vector<arg_and_type> > ret =
-            instantiate_task_network(&root, candidate, r);
+        pair<task_network, vector<arg_and_type>> ret =
+          instantiate_task_network(&root, candidate, r);
         task_network r_net = ret.first;
         vector<arg_and_type> open = ret.second;
 
-        vector<vector<string> > assignments = vector<vector<string> >();
+        vector<vector<string>> assignments = vector<vector<string>>();
         for (arg_and_type open_arg : open) {
             set<string> assign = sorts[open_arg.second];
             vector<string> v_assign = vector<string>();
@@ -112,28 +112,29 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
 
         for (vector<string> assign : assignments) {
             assert(assign.size() == 1); // assigning only robots for now
-            map<string, arg_and_type> all_assignments =
-                find_assignments(assign[0], open);
+            map<string, arg_and_type> all_assignments = find_assignments(assign[0], open);
 
-            task_network test_net =
-                assign_open_variables(all_assignments, r_net);
+            task_network test_net = assign_open_variables(all_assignments, r_net);
 
             // Try to schedule this network and find the first feasible plan
             pq sol = find_feasible_slots(test_net, *p, ATTEMPTS, metric);
-            if ((int)sol.size() > 0) solutions.push(sol.top());
+            if ((int)sol.size() > 0)
+                solutions.push(sol.top());
         }
 
-        if (solutions.top().metric_value !=
-            std::numeric_limits<double>::infinity()) {
+        if (solutions.top().metric_value != std::numeric_limits<double>::infinity()) {
             commit_slots(p, &solutions);
             *(plan_found) = true;
         }
 
-        if (*(plan_found)) break;
+        if (*(plan_found))
+            break;
     }
 }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char** argv)
+{
 
     int dfile = -1;
     int pfile = -1;
@@ -148,14 +149,14 @@ int main(int argc, char **argv) {
 
     struct option options[] = {
 
-        {"keep-conditional-effects", no_argument, NULL, 'k'},
-        {"linear-conditional-effect", no_argument, NULL, 'L'},
-        {"encode-disjunctive_preconditions-in-htn", no_argument, NULL, 'D'},
-        {"properties", optional_argument, NULL, 'p'},
-        {"metric", required_argument, NULL, 'm'},
-        {"severity", optional_argument, NULL, 'd'},
-        {"permute_benchmark", no_argument, NULL, 'b'},
-        {NULL, 0, NULL, 0},
+        { "keep-conditional-effects", no_argument, NULL, 'k' },
+        { "linear-conditional-effect", no_argument, NULL, 'L' },
+        { "encode-disjunctive_preconditions-in-htn", no_argument, NULL, 'D' },
+        { "properties", optional_argument, NULL, 'p' },
+        { "metric", required_argument, NULL, 'm' },
+        { "severity", optional_argument, NULL, 'd' },
+        { "permute_benchmark", no_argument, NULL, 'b' },
+        { NULL, 0, NULL, 0 },
 
     };
 
@@ -163,7 +164,8 @@ int main(int argc, char **argv) {
     bool optionsValid = true;
     while (true) {
         int c = getopt_long_only(argc, argv, "kLDpmd:b", options, NULL);
-        if (c == -1) break;
+        if (c == -1)
+            break;
         if (c == '?' || c == ':') {
             // Invalid option
             optionsValid = false;
@@ -185,12 +187,10 @@ int main(int argc, char **argv) {
                 metric = "makespan";
             else
                 metric = "actions";
-        } 
-        else if (c == 'd') {
-           int choice = atoi(optarg);
-           severity = static_cast<plog::Severity>(choice);
-        }
-        else if (c == 'b') {
+        } else if (c == 'd') {
+            int choice = atoi(optarg);
+            severity = static_cast<plog::Severity>(choice);
+        } else if (c == 'b') {
             permute = true;
         }
     }
@@ -208,8 +208,7 @@ int main(int argc, char **argv) {
     }
 
     if (dfile == -1 || pfile == -1) {
-        cout << "You need to provide a domain and problem file as input."
-             << endl;
+        cout << "You need to provide a domain and problem file as input." << endl;
         return 1;
     }
 
@@ -217,8 +216,8 @@ int main(int argc, char **argv) {
     plog::init(severity, &consoleAppender);
 
     // Open c-style file handle
-    FILE *domain_file = fopen(argv[dfile], "r");
-    FILE *problem_file = fopen(argv[pfile], "r");
+    FILE* domain_file = fopen(argv[dfile], "r");
+    FILE* problem_file = fopen(argv[pfile], "r");
 
     if (!domain_file) {
         cout << "Can't open " << argv[dfile] << "!" << endl;
@@ -231,8 +230,12 @@ int main(int argc, char **argv) {
     }
 
     /* cout << "Running the parser on the given domain and problem files!\n"; */
-    run_parser(domain_file, problem_file, argv[dfile], argv[pfile],
-               showProperties, compileConditionalEffects,
+    run_parser(domain_file,
+               problem_file,
+               argv[dfile],
+               argv[pfile],
+               showProperties,
+               compileConditionalEffects,
                linearConditionalEffectExpansion,
                encodeDisjunctivePreconditionsInMethods);
 
@@ -240,25 +243,24 @@ int main(int argc, char **argv) {
         for (map<string, var_declaration> csm : cs.second) {
             for (pair<string, var_declaration> m : csm) {
                 object_state obj = object_state();
-                obj.parent = cs.first; // type information
-                obj.object_name = m.first; // object name
+                obj.parent = cs.first;           // type information
+                obj.object_name = m.first;       // object name
                 obj.attribute_states = m.second; // object attributes defined under parent type
                 obj.attribute_types = var_declaration(); // object attribute types
                 for (sort_definition sd : sort_definitions)
-                    if (find(sd.declared_sorts.begin(), sd.declared_sorts.end(), 
-                                obj.parent) != sd.declared_sorts.end()) 
+                    if (find(sd.declared_sorts.begin(), sd.declared_sorts.end(), obj.parent) !=
+                        sd.declared_sorts.end())
                         for (arg_and_type s_types : sd.vars.vars)
                             for (arg_and_type s_states : obj.attribute_states.vars)
                                 if (s_types.first.substr(1) == s_states.first)
                                     obj.attribute_types.vars.push_back(
-                                            make_pair(s_states.first, 
-                                                s_types.second));
-                
+                                      make_pair(s_states.first, s_types.second));
+
                 initial_state.insert(make_pair(obj.object_name, obj));
             }
         }
     }
-    
+
     // extract the railway network
     for (pair<string, object_state> states : initial_state) {
         if (states.second.parent == "map") {
@@ -266,19 +268,20 @@ int main(int argc, char **argv) {
             for (arg_and_type args : states.second.attribute_states.vars) {
                 if (args.first == "vertices")
                     vertices = args.second.substr(1, args.second.size() - 2);
-                else if (args.first == "edges") 
+                else if (args.first == "edges")
                     edges = args.second.substr(1, args.second.size() - 2);
                 else
-                    cerr << "Do not identify attribute " << args.first << " for object type " << states.second.parent << "\n";
+                    cerr << "Do not identify attribute " << args.first << " for object type "
+                         << states.second.parent << "\n";
             }
             rail_network = construct_network(vertices, edges);
             rail_network.id = states.first;
         }
     }
 
-    map<string, fmethod> fm1 = {{"m_clear_and_move", &clear_and_move}};
-    map<string, fmethod> fm2 = {{"m_reachable_location", &reachable_location}};
-    map<string, fpredicate> fp = {{"clear", &clear}};
+    map<string, fmethod> fm1 = { { "m_clear_and_move", &clear_and_move } };
+    map<string, fmethod> fm2 = { { "m_reachable_location", &reachable_location } };
+    map<string, fpredicate> fp = { { "clear", &clear } };
     assign_func_impl(fp, fm1);
     assign_func_impl(fm2);
 
@@ -300,20 +303,17 @@ int main(int argc, char **argv) {
                 if (plan_found) {
                     pair<double, double> metric_vals = compute_metrics(&p);
                     if (metric == "actions")
-                        metric_values.insert(
-                            make_pair(permute_counter, metric_vals.first));
+                        metric_values.insert(make_pair(permute_counter, metric_vals.first));
                     else
-                        metric_values.insert(
-                            make_pair(permute_counter, metric_vals.second));
+                        metric_values.insert(make_pair(permute_counter, metric_vals.second));
                     time_values.insert(
-                        make_pair(permute_counter,
-                                  chrono::duration<double>(diff).count()));
+                      make_pair(permute_counter, chrono::duration<double>(diff).count()));
                 }
                 stn.destroy();
                 permute_counter++;
-            } while (next_permutation(
-                requests_copy.begin(), requests_copy.end(),
-                [](request a, request b) { return a.id < b.id; }));
+            } while (next_permutation(requests_copy.begin(),
+                                      requests_copy.end(),
+                                      [](request a, request b) { return a.id < b.id; }));
         } else {
             int counter = 0, permute_counter = 0;
             do {
@@ -328,21 +328,18 @@ int main(int argc, char **argv) {
                 if (plan_found) {
                     pair<double, double> metric_vals = compute_metrics(&p);
                     if (metric == "actions")
-                        metric_values.insert(
-                            make_pair(permute_counter, metric_vals.first));
+                        metric_values.insert(make_pair(permute_counter, metric_vals.first));
                     else
-                        metric_values.insert(
-                            make_pair(permute_counter, metric_vals.second));
+                        metric_values.insert(make_pair(permute_counter, metric_vals.second));
                     time_values.insert(
-                        make_pair(permute_counter,
-                                  chrono::duration<double>(diff).count()));
+                      make_pair(permute_counter, chrono::duration<double>(diff).count()));
                     counter++;
                 }
                 stn.destroy();
                 permute_counter++;
-            } while (next_permutation(
-                         requests_copy.begin(), requests_copy.end(),
-                         [](request a, request b) { return a.id < b.id; }) &&
+            } while (next_permutation(requests_copy.begin(),
+                                      requests_copy.end(),
+                                      [](request a, request b) { return a.id < b.id; }) &&
                      counter < MAX_PERMUTATIONS);
         }
     } else {
@@ -356,59 +353,54 @@ int main(int argc, char **argv) {
         auto end = chrono::steady_clock::now();
         auto diff = end - start;
         if (plan_found) {
-            PLOGI << p.to_string();
+            PLOGV << p.to_string();
             pair<double, double> metric_values = compute_metrics(&p);
             cout << flush;
-            cout << "Time(s): " << chrono::duration<double>(diff).count()
-                 << "\n";
+            cout << "Time(s): " << chrono::duration<double>(diff).count() << "\n";
             cout << "Total Actions: " << metric_values.first << "\n";
             cout << "Makespan: " << metric_values.second << "\n";
         } else {
-            PLOGI << "PLAN WAS NOT FOUND!!\n";
+            PLOGV << "PLAN WAS NOT FOUND!!\n";
             assert(false);
         }
     }
 
     if (permute) {
         cout << "\t\tPERMUTATION BENCHMARKING RESULTS\n\n";
-        cout << "Total permutations tested = "
-             << std::to_string(time_values.size()) << endl;
+        cout << "Total permutations tested = " << std::to_string(time_values.size()) << endl;
 
         vector<request> time_requests = requests;
         vector<request> metric_requests = requests;
         map<int, double>::iterator t_it =
-            min_element(time_values.begin(), time_values.end(),
-                        [](pair<int, double> a, pair<int, double> b) {
-                            return a.second < b.second;
-                        });
+          min_element(time_values.begin(),
+                      time_values.end(),
+                      [](pair<int, double> a, pair<int, double> b) { return a.second < b.second; });
         int t_pos = t_it->first, counter = 0;
         double t_value = t_it->second;
         do {
             counter++;
-        } while (next_permutation(
-                     time_requests.begin(), time_requests.end(),
-                     [](request a, request b) { return a.id < b.id; }) &&
+        } while (next_permutation(time_requests.begin(),
+                                  time_requests.end(),
+                                  [](request a, request b) { return a.id < b.id; }) &&
                  counter < t_pos);
-        cout << "Best Ordering based on Time(s) with value = "
-             << std::to_string(t_value) << ": \n";
+        cout << "Best Ordering based on Time(s) with value = " << std::to_string(t_value) << ": \n";
         for (request r : time_requests) {
             cout << r.id << " ";
         }
         cout << endl;
 
         map<int, double>::iterator m_it =
-            min_element(metric_values.begin(), metric_values.end(),
-                        [](pair<int, double> a, pair<int, double> b) {
-                            return a.second < b.second;
-                        });
+          min_element(metric_values.begin(),
+                      metric_values.end(),
+                      [](pair<int, double> a, pair<int, double> b) { return a.second < b.second; });
         counter = 0;
         int m_pos = m_it->first;
         double m_value = m_it->second;
         do {
             counter++;
-        } while (next_permutation(
-                     metric_requests.begin(), metric_requests.end(),
-                     [](request a, request b) { return a.id < b.id; }) &&
+        } while (next_permutation(metric_requests.begin(),
+                                  metric_requests.end(),
+                                  [](request a, request b) { return a.id < b.id; }) &&
                  counter < m_pos);
         cout << "Best Ordering based on metric ";
         if (metric == "actions")
@@ -423,21 +415,26 @@ int main(int argc, char **argv) {
 
         vector<double> times = vector<double>();
         vector<double> metrics = vector<double>();
-        for (const pair<int, double> t : time_values) times.push_back(t.second);
+        for (const pair<int, double> t : time_values)
+            times.push_back(t.second);
         for (const pair<int, double> m : metric_values)
             metrics.push_back(m.second);
 
         // mean
         double mean_time = 0, mean_metric = 0;
-        for (double val : times) mean_time += val;
-        for (double val : metrics) mean_metric += val;
+        for (double val : times)
+            mean_time += val;
+        for (double val : metrics)
+            mean_metric += val;
         mean_time /= (double)times.size();
         mean_metric /= (double)metrics.size();
 
         // std
         double std_time = 0, std_metric = 0;
-        for (double val : times) std_time += pow(val - mean_time, 2);
-        for (double val : metrics) std_metric += pow(val - mean_metric, 2);
+        for (double val : times)
+            std_time += pow(val - mean_time, 2);
+        for (double val : metrics)
+            std_metric += pow(val - mean_metric, 2);
         std_time /= (double)times.size();
         std_time = sqrt(std_time);
         std_metric /= (double)metrics.size();
@@ -450,7 +447,7 @@ int main(int argc, char **argv) {
             cout << "Total Actions :\n\tMean = ";
         else
             cout << "Makespan :\n\tMean = ";
-        cout << std::to_string(mean_metric)
-             << "\n\tStd Dev = " << std::to_string(std_metric) << "\n\n";
+        cout << std::to_string(mean_metric) << "\n\tStd Dev = " << std::to_string(std_metric)
+             << "\n\n";
     }
 }

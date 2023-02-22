@@ -1,6 +1,8 @@
 #include "graph.hpp"
 
-string coordinate::to_string() const {
+string
+coordinate::to_string() const
+{
     string result = "Coordinate: ";
     result += "\n\t X = " + std::to_string(x) + "\n";
     result += "\t Y = " + std::to_string(y) + "\n";
@@ -9,14 +11,18 @@ string coordinate::to_string() const {
     return result;
 }
 
-string vertex::to_string() const {
+string
+vertex::to_string() const
+{
     string result = "Vertex: ";
     result += "\n\t Id = " + id + "\n";
 
     return result;
 }
 
-string edge::to_string() const {
+string
+edge::to_string() const
+{
     string result = "Edge: ";
     result += "\n\t Id 1 = " + id1 + "\n";
     result += "\n\t Id 2 = " + id2 + "\n";
@@ -24,7 +30,9 @@ string edge::to_string() const {
     return result;
 }
 
-string graph::to_string() const {
+string
+graph::to_string() const
+{
     string result = "Graph: ";
     result += "\n\t Id = " + id + "\n";
 
@@ -37,15 +45,20 @@ string graph::to_string() const {
     return result;
 }
 
-vertex_t get_vertex(string id, graph G) {
+vertex_t
+get_vertex(string id, graph G)
+{
     vertex_it v = vertex_it(), vend = vertex_it();
     for (boost::tie(v, vend) = boost::vertices(G.adj_list); v != vend; v++)
-        if (G.adj_list[*v].id == id) return *v;
+        if (G.adj_list[*v].id == id)
+            return *v;
 
     return vertex_t();
 }
 
-graph construct_network(string vertices, string edges) {
+graph
+construct_network(string vertices, string edges)
+{
     graph G = graph();
 
     // Adding vertices
@@ -89,16 +102,19 @@ graph construct_network(string vertices, string edges) {
     return G;
 }
 
-void find_all_paths_helper(vertex_t source, vertex_t sink,
-                           vector<vertex_t> path,
-                           vector<vector<vertex_t> > &paths) {
+void
+find_all_paths_helper(vertex_t source,
+                      vertex_t sink,
+                      vector<vertex_t> path,
+                      vector<vector<vertex_t>>& paths)
+{
     path.push_back(source);
 
     if (source == sink)
         paths.push_back(path);
     else {
-        for (edge_t out : boost::make_iterator_range(
-                 boost::out_edges(source, rail_network.adj_list))) {
+        for (edge_t out :
+             boost::make_iterator_range(boost::out_edges(source, rail_network.adj_list))) {
             vertex_t v = target(out, rail_network.adj_list);
             if (find(path.begin(), path.end(), v) == path.end())
                 find_all_paths_helper(v, sink, path, paths);
@@ -108,9 +124,11 @@ void find_all_paths_helper(vertex_t source, vertex_t sink,
     path.pop_back();
 }
 
-vector<vector<vertex_t> > find_all_paths(vertex_t source, vertex_t sink) {
+vector<vector<vertex_t>>
+find_all_paths(vertex_t source, vertex_t sink)
+{
     vector<vertex_t> path = vector<vertex_t>();
-    vector<vector<vertex_t> > paths = vector<vector<vertex_t> >();
+    vector<vector<vertex_t>> paths = vector<vector<vertex_t>>();
 
     find_all_paths_helper(source, sink, path, paths);
 
