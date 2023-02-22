@@ -39,5 +39,5 @@ add_executable(planner
 if (LINUX)
     target_link_libraries(planner ${FLEX_LIBRARIES} nlohmann_json::nlohmann_json)
 else(NOT LINUX)
-    target_link_libraries(planner nlohmann_json::nlohmann_json)
+    target_link_libraries(planner nlohmann_json::nlohmann_json plog::plog)
 endif()
