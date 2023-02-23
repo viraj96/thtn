@@ -1057,19 +1057,6 @@ extract_other_resource_tokens(vector<arg_and_type>* other_resources,
         }
         vector<Token> o_r_tokens = o_r_tl->get_tokens();
         for (auto itr = o_r_tokens.rbegin(); itr != o_r_tokens.rend(); itr++) {
-            // Update the state of the other resource based on the current token
-            // we are considering
-            if (current_state->find(o_r_tl->get_id()) != current_state->end()) {
-                for (auto itri = o_r_tokens.begin(); itri != o_r_tokens.end(); itri++) {
-                    if (*itr == *itri) {
-                        break;
-                    } else {
-                        object_state obj = current_state->at(o_r_tl->get_id());
-                        update_object_state(&obj, &(*itri));
-                        (*current_state)[o_r_tl->get_id()] = obj;
-                    }
-                }
-            }
 
             Token n = Token();
             if (itr + 1 == o_r_tokens.rend()) {
@@ -1083,6 +1070,20 @@ extract_other_resource_tokens(vector<arg_and_type>* other_resources,
 
             if (!check_temporal_bounds(&to_exp_o_r, stn)) {
                 continue;
+            }
+
+            // Update the state of the other resource based on the current token
+            // we are considering
+            if (current_state->find(o_r_tl->get_id()) != current_state->end()) {
+                for (auto itri = o_r_tokens.begin(); itri != o_r_tokens.end(); itri++) {
+                    if (*itr == *itri) {
+                        break;
+                    } else {
+                        object_state obj = current_state->at(o_r_tl->get_id());
+                        update_object_state(&obj, &(*itri));
+                        (*current_state)[o_r_tl->get_id()] = obj;
+                    }
+                }
             }
 
             if ((int)local_set->size() > o_r.index() + 1 &&
@@ -1480,6 +1481,8 @@ schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn)
             vector<bool> exhausted(other_resources.size(), false);
             vector<int> other_resource_pos = vector<int>(other_resources.size(), 0);
             while (!scheduled) {
+
+                PLOGV << "Why am i not exiting this??\n";
                 map<string, constraint> pre_stn_constraints = stn->get_constraints();
                 world_state current_state_copy = current_state;
 
@@ -1523,6 +1526,11 @@ schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn)
                                         break;
                                     update_object_state(&ws.second, &o_robot_tk);
                                     current_state_copy[ws.first] = ws.second;
+                                    /* if (get<1>(o_robot_end) < eft) { */
+                                    /*     update_object_state(&ws.second, &o_robot_tk); */
+                                    /*     current_state_copy[ws.first] = ws.second; */
+                                    /* } else */
+                                    /*     break; */
                                 }
                             }
                         }
