@@ -904,6 +904,7 @@ satisfy_precondition(literal* precondition,
 
         if (failing_timeline == new_timeline) {
             bool succ1 = true;
+            // Change where theis meets constraint is going to be added.
             if (prev->get_request_id() == satisfying_tokens[0].get_request_id())
                 succ1 = add_meets_constraint(prev, &satisfying_tokens[0], stn);
 
