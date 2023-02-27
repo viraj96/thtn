@@ -1483,7 +1483,9 @@ schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn)
             vector<int> other_resource_pos = vector<int>(other_resources.size(), 0);
             while (!scheduled) {
 
-                PLOGV << "Why am i not exiting this??\n";
+                if (tk->get_request_id() == "requestY") {
+                    PLOGV << "Why am i not exiting this??\n";
+                }
                 map<string, constraint> pre_stn_constraints = stn->get_constraints();
                 world_state current_state_copy = current_state;
 
@@ -1512,28 +1514,17 @@ schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn)
 
                 for (pair<string, object_state> ws : current_state_copy) {
                     if (ws.first != r->get_id() && ws.second.parent == "robot") {
-                        for (pair<string, object_state> is : initial_state) {
-                            if (is.second.parent == "robot") {
-                                Timeline* o_robot_tl = p->get_timelines(ws.first);
-                                for (Token o_robot_tk : o_robot_tl->get_tokens()) {
-                                    if (o_robot_tk.get_name() == "head")
-                                        continue;
-                                    stn_bounds o_robot_start =
-                                      stn->get_feasible_values(o_robot_tk.get_start());
-                                    stn_bounds o_robot_end =
-                                      stn->get_feasible_values(o_robot_tk.get_end());
-                                    if (get<1>(o_robot_end) > eft &&
-                                        abs(get<0>(o_robot_start)) > eft)
-                                        break;
-                                    update_object_state(&ws.second, &o_robot_tk);
-                                    current_state_copy[ws.first] = ws.second;
-                                    /* if (get<1>(o_robot_end) < eft) { */
-                                    /*     update_object_state(&ws.second, &o_robot_tk); */
-                                    /*     current_state_copy[ws.first] = ws.second; */
-                                    /* } else */
-                                    /*     break; */
-                                }
-                            }
+                        Timeline* o_robot_tl = p->get_timelines(ws.first);
+                        for (Token o_robot_tk : o_robot_tl->get_tokens()) {
+                            if (o_robot_tk.get_name() == "head")
+                                continue;
+                            stn_bounds o_robot_start =
+                              stn->get_feasible_values(o_robot_tk.get_start());
+                            stn_bounds o_robot_end = stn->get_feasible_values(o_robot_tk.get_end());
+                            if (get<1>(o_robot_end) > eft && abs(get<0>(o_robot_start)) > eft)
+                                break;
+                            update_object_state(&ws.second, &o_robot_tk);
+                            current_state_copy[ws.first] = ws.second;
                         }
                     }
                 }
@@ -2083,7 +2074,9 @@ find_feasible_slots(task_network tree, Plan p, int attempts, string metric)
 
     vector<slot> explored_slots = vector<slot>();
     for (int plan_id = 0; plan_id < attempts; plan_id++) {
-        PLOGV << "Plan ID: " << plan_id << endl;
+        if (tree.id == "requestY") {
+            PLOGV << "Plan ID: " << plan_id << endl;
+        }
         double value = 0.0;
         tasknetwork_solution sol = tasknetwork_solution();
         sol.plan_id = plan_id;
