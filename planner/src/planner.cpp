@@ -740,7 +740,8 @@ satisfy_precondition(literal* precondition,
                      world_state* current_state,
                      Plan* p,
                      STN* stn,
-                     vector<slot>* explored)
+                     vector<slot>* explored,
+                     int depth)
 {
     pair<bool, vector<slot>> result = pair<bool, vector<slot>>();
 
@@ -805,7 +806,7 @@ satisfy_precondition(literal* precondition,
             return make_pair(scheduled, vector<slot>());
         }
 
-        pair<bool, vector<slot>> ret = schedule_token(&tk, explored, p, stn);
+        pair<bool, vector<slot>> ret = schedule_token(&tk, explored, p, stn, depth + 1);
         scheduled = ret.first;
         vector<slot> new_slots = ret.second;
 
@@ -922,7 +923,7 @@ satisfy_precondition(literal* precondition,
 
         vector<slot> satisfying_tokens_slots = vector<slot>();
         for (Token tk : satisfying_tokens) {
-            pair<bool, vector<slot>> ret = schedule_token(&tk, explored, p, stn);
+            pair<bool, vector<slot>> ret = schedule_token(&tk, explored, p, stn, depth + 1);
             bool scheduled = ret.first;
             vector<slot> new_slots = ret.second;
 
@@ -1110,7 +1111,8 @@ precondition_check_phase(Token* tk,
                          vector<slot>* explored,
                          pair<bool, vector<slot>>* return_slots,
                          Plan p,
-                         STN* stn)
+                         STN* stn,
+                         int depth)
 {
     bool prec_succ = true, satisfied_once = false;
     set<arg_and_type> knowns = tk->get_knowns();
@@ -1121,7 +1123,7 @@ precondition_check_phase(Token* tk,
         if (!succ) {
             if (!satisfied_once) {
                 *return_slots = satisfy_precondition(
-                  &prec, tk, &(*local_set)[0].prev, current_state, &p, stn, explored);
+                  &prec, tk, &(*local_set)[0].prev, current_state, &p, stn, explored, depth);
                 if (!return_slots->first) {
                     prec_succ = false;
                     break;
@@ -1427,8 +1429,13 @@ rewiring_check_phase(slot* to_explore,
 }
 
 pair<bool, vector<slot>>
-schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn)
+schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn, int depth)
 {
+
+    // If we exceed the limit of recursion then we need to stop immediately
+    if (depth > max_recursive_depth)
+        return make_pair(false, vector<slot>());
+
     bool scheduled = false;
     vector<slot> local_set = vector<slot>();
     vector<Timeline*> robots = vector<Timeline*>();
@@ -1483,9 +1490,6 @@ schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn)
             vector<int> other_resource_pos = vector<int>(other_resources.size(), 0);
             while (!scheduled) {
 
-                if (tk->get_request_id() == "requestY") {
-                    PLOGV << "Why am i not exiting this??\n";
-                }
                 map<string, constraint> pre_stn_constraints = stn->get_constraints();
                 world_state current_state_copy = current_state;
 
@@ -1534,7 +1538,7 @@ schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn)
                 // Check the preconditions and try to satisfy them
                 pair<bool, vector<slot>> return_slots = pair<bool, vector<slot>>();
                 pair<bool, bool> prec_check = precondition_check_phase(
-                  tk, r, &current_state_copy, &local_set, explored, &return_slots, *p, stn);
+                  tk, r, &current_state_copy, &local_set, explored, &return_slots, *p, stn, depth);
                 bool prec_succ = get<0>(prec_check), satisfied_once = get<1>(prec_check);
 
                 if (!prec_succ && other_resources.size() == 0)
@@ -1638,7 +1642,7 @@ schedule_leafs(vector<task_vertex> leafs,
     for (task_vertex leaf : leafs) {
         primitive_solution leaf_sol = primitive_solution();
         leaf_sol.primitive_token = leaf.tk;
-        pair<bool, vector<slot>> res = schedule_token(&leaf.tk, explored_slots, &p, &stn);
+        pair<bool, vector<slot>> res = schedule_token(&leaf.tk, explored_slots, &p, &stn, 0);
         bool scheduled = res.first;
         if (scheduled) {
             for (slot s : res.second) {
@@ -1649,7 +1653,6 @@ schedule_leafs(vector<task_vertex> leafs,
         }
 
         leaf_id++;
-        PLOGV << "Tried to schedule leaf : " << leaf.to_string() << endl;
         solution->push_back(leaf_sol);
         if (!scheduled) {
             for (int i = 0; i < leaf_id; i++)
@@ -1759,306 +1762,318 @@ commit_slots(Plan* p, pq* solution)
     }
 }
 
-pair<bool, Plan>
-patch_plan(Plan p, Token* failing_tk, vector<ground_literal>* init)
-{
-    vector<Timeline> tls = p.get_timelines();
-    // Initialize the world state of all the robots and items
-    world_state current_state = world_state();
-    for (pair<string, set<map<string, var_declaration>>> cso : csorts)
-        if (cso.first == "item" or cso.first == "robot")
-            for (map<string, var_declaration> cs : cso.second)
-                for (pair<string, var_declaration> m : cs) {
-                    object_state obj = object_state();
-                    obj.object_name = m.first;
-                    obj.attribute_states = m.second;
-                    current_state.insert(make_pair(obj.object_name, obj));
-                }
-    // Access the failing token's timeline to update the world state for the
-    // failing robot token and get its earliest starting time. Also find the
-    // token that was not an external token i.e the token whose preconditions
-    // failed originally.
-    double earliest_start_time = abs(get<0>(stn.get_feasible_values(failing_tk->get_start())));
-    Token original_failing_tk = Token();
-    Timeline failing_timeline = Timeline();
-    for (Timeline t : tls) {
-        for (Token tk : t.get_tokens()) {
-            if (tk == (*failing_tk)) {
-                failing_timeline = t;
-                break;
-            }
-        }
-    }
-    int failing_tk_index = 0;
-    vector<Token> failing_timeline_tks = failing_timeline.get_tokens();
-    for (Token tk : failing_timeline_tks) {
-        if (tk == (*failing_tk))
-            break;
-        object_state rs = current_state.at(failing_timeline.get_id());
-        update_object_state(&rs, &tk);
-        current_state[failing_timeline.get_id()] = rs;
-        failing_tk_index++;
-    }
-    for (int i = failing_tk_index; i < (int)failing_timeline_tks.size(); i++) {
-        if (!failing_timeline_tks[i].is_external()) {
-            original_failing_tk = failing_timeline_tks[i];
-            break;
-        }
-    }
-    // For all the other robot timelines update their world state till their
-    // earliest start times are less than the failing token's earliest start
-    // time
-    for (Timeline t : tls) {
-        if (t.get_resource() != "rail_block" && t.get_id() != failing_timeline.get_id()) {
-            for (Token tk : t.get_tokens()) {
-                if (abs(get<0>(stn.get_feasible_values(tk.get_start()))) < earliest_start_time) {
-                    object_state rs = current_state.at(t.get_id());
-                    update_object_state(&rs, &tk);
-                    current_state[t.get_id()] = rs;
-                }
-            }
-        }
-    }
-    task tk_task = task();
-    for (task t : primitive_tasks)
-        if (t.name == original_failing_tk.get_name()) {
-            tk_task = t;
-            break;
-        }
-    // Remove the external tokens till the token that was the original failing
-    // task. Correspondingly remove the dependent tokens on other resources that
-    // were created
-    pair<int, int> range = pair<int, int>();
-    int i = failing_tk_index;
-    for (i = failing_tk_index; failing_timeline_tks[i] != original_failing_tk; i++) {
-        if (failing_timeline_tks[i].is_external()) {
-            task ftk_task = task();
-            for (task t : primitive_tasks)
-                if (t.name == failing_timeline_tks[i].get_name()) {
-                    ftk_task = t;
-                    break;
-                }
-            // For the other resources dependents of this token, we need to
-            // remove them as well and update their corresponding timeline
-            // states with new sequencing constraints
-            for (arg_and_type arg : failing_timeline_tks[i].get_arguments())
-                if (is_resource(arg.second) &&
-                    find(ftk_task.vars.begin(), ftk_task.vars.end(), arg) != ftk_task.vars.end())
-                    for (arg_and_type k : failing_timeline_tks[i].get_knowns())
-                        if (k.first == arg.first && arg.second != "robot") {
-                            Timeline* rt = p.get_timelines(k.second, arg.second);
-                            vector<Token> rt_tokens = rt->get_tokens();
-                            for (int j = 0; j < (int)rt_tokens.size(); j++) {
-                                string contains_co = failing_timeline_tks[i].get_start() +
-                                                     contains_constraint + rt_tokens[j].get_start();
-                                constraint contains = stn.get_constraint(contains_co);
-                                if (get<0>(contains) != "") {
-                                    stn.del_timepoint(rt_tokens[j].get_start());
-                                    stn.del_timepoint(rt_tokens[j].get_end());
-                                    rt->del_token(j);
-                                    if (j < (int)rt->get_tokens().size()) {
-                                        string seq_name = rt_tokens[j - 1].get_end() +
-                                                          sequencing_constraint +
-                                                          rt_tokens[j + 1].get_start();
-                                        constraint seq = make_tuple(rt_tokens[j - 1].get_end(),
-                                                                    rt_tokens[j + 1].get_start(),
-                                                                    zero,
-                                                                    inf);
-                                        assert(stn.add_constraint(seq_name, seq));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-            stn.del_timepoint(failing_timeline_tks[i].get_start());
-            stn.del_timepoint(failing_timeline_tks[i].get_end());
-        }
-    }
-    range = make_pair(failing_tk_index, i);
-    p.get_timelines(failing_timeline.get_id())->del_tokens(range);
-    failing_timeline_tks = p.get_timelines(failing_timeline.get_id())->get_tokens();
-    if (abs(failing_tk_index - i) > 0 && failing_tk_index < (int)failing_timeline_tks.size()) {
-        // Now need to add the sequencing constraint between the tokens that
-        // remained after we deleted the external tokens
-        string seq_name = failing_timeline_tks[failing_tk_index - 1].get_end() +
-                          sequencing_constraint +
-                          failing_timeline_tks[failing_tk_index].get_start();
-        constraint seq = make_tuple(failing_timeline_tks[failing_tk_index - 1].get_end(),
-                                    failing_timeline_tks[failing_tk_index].get_start(),
-                                    zero,
-                                    inf);
-        assert(stn.add_constraint(seq_name, seq));
-    }
+/* pair<bool, Plan> */
+/* patch_plan(Plan p, Token* failing_tk, vector<ground_literal>* init) */
+/* { */
+/*     vector<Timeline> tls = p.get_timelines(); */
+/*     // Initialize the world state of all the robots and items */
+/*     world_state current_state = world_state(); */
+/*     for (pair<string, set<map<string, var_declaration>>> cso : csorts) */
+/*         if (cso.first == "item" or cso.first == "robot") */
+/*             for (map<string, var_declaration> cs : cso.second) */
+/*                 for (pair<string, var_declaration> m : cs) { */
+/*                     object_state obj = object_state(); */
+/*                     obj.object_name = m.first; */
+/*                     obj.attribute_states = m.second; */
+/*                     current_state.insert(make_pair(obj.object_name, obj)); */
+/*                 } */
+/*     // Access the failing token's timeline to update the world state for the */
+/*     // failing robot token and get its earliest starting time. Also find the */
+/*     // token that was not an external token i.e the token whose preconditions */
+/*     // failed originally. */
+/*     double earliest_start_time = abs(get<0>(stn.get_feasible_values(failing_tk->get_start())));
+ */
+/*     Token original_failing_tk = Token(); */
+/*     Timeline failing_timeline = Timeline(); */
+/*     for (Timeline t : tls) { */
+/*         for (Token tk : t.get_tokens()) { */
+/*             if (tk == (*failing_tk)) { */
+/*                 failing_timeline = t; */
+/*                 break; */
+/*             } */
+/*         } */
+/*     } */
+/*     int failing_tk_index = 0; */
+/*     vector<Token> failing_timeline_tks = failing_timeline.get_tokens(); */
+/*     for (Token tk : failing_timeline_tks) { */
+/*         if (tk == (*failing_tk)) */
+/*             break; */
+/*         object_state rs = current_state.at(failing_timeline.get_id()); */
+/*         update_object_state(&rs, &tk); */
+/*         current_state[failing_timeline.get_id()] = rs; */
+/*         failing_tk_index++; */
+/*     } */
+/*     for (int i = failing_tk_index; i < (int)failing_timeline_tks.size(); i++) { */
+/*         if (!failing_timeline_tks[i].is_external()) { */
+/*             original_failing_tk = failing_timeline_tks[i]; */
+/*             break; */
+/*         } */
+/*     } */
+/*     // For all the other robot timelines update their world state till their */
+/*     // earliest start times are less than the failing token's earliest start */
+/*     // time */
+/*     for (Timeline t : tls) { */
+/*         if (t.get_resource() != "rail_block" && t.get_id() != failing_timeline.get_id()) { */
+/*             for (Token tk : t.get_tokens()) { */
+/*                 if (abs(get<0>(stn.get_feasible_values(tk.get_start()))) < earliest_start_time) {
+ */
+/*                     object_state rs = current_state.at(t.get_id()); */
+/*                     update_object_state(&rs, &tk); */
+/*                     current_state[t.get_id()] = rs; */
+/*                 } */
+/*             } */
+/*         } */
+/*     } */
+/*     task tk_task = task(); */
+/*     for (task t : primitive_tasks) */
+/*         if (t.name == original_failing_tk.get_name()) { */
+/*             tk_task = t; */
+/*             break; */
+/*         } */
+/*     // Remove the external tokens till the token that was the original failing */
+/*     // task. Correspondingly remove the dependent tokens on other resources that */
+/*     // were created */
+/*     pair<int, int> range = pair<int, int>(); */
+/*     int i = failing_tk_index; */
+/*     for (i = failing_tk_index; failing_timeline_tks[i] != original_failing_tk; i++) { */
+/*         if (failing_timeline_tks[i].is_external()) { */
+/*             task ftk_task = task(); */
+/*             for (task t : primitive_tasks) */
+/*                 if (t.name == failing_timeline_tks[i].get_name()) { */
+/*                     ftk_task = t; */
+/*                     break; */
+/*                 } */
+/*             // For the other resources dependents of this token, we need to */
+/*             // remove them as well and update their corresponding timeline */
+/*             // states with new sequencing constraints */
+/*             for (arg_and_type arg : failing_timeline_tks[i].get_arguments()) */
+/*                 if (is_resource(arg.second) && */
+/*                     find(ftk_task.vars.begin(), ftk_task.vars.end(), arg) != ftk_task.vars.end())
+ */
+/*                     for (arg_and_type k : failing_timeline_tks[i].get_knowns()) */
+/*                         if (k.first == arg.first && arg.second != "robot") { */
+/*                             Timeline* rt = p.get_timelines(k.second, arg.second); */
+/*                             vector<Token> rt_tokens = rt->get_tokens(); */
+/*                             for (int j = 0; j < (int)rt_tokens.size(); j++) { */
+/*                                 string contains_co = failing_timeline_tks[i].get_start() + */
+/*                                                      contains_constraint +
+ * rt_tokens[j].get_start(); */
+/*                                 constraint contains = stn.get_constraint(contains_co); */
+/*                                 if (get<0>(contains) != "") { */
+/*                                     stn.del_timepoint(rt_tokens[j].get_start()); */
+/*                                     stn.del_timepoint(rt_tokens[j].get_end()); */
+/*                                     rt->del_token(j); */
+/*                                     if (j < (int)rt->get_tokens().size()) { */
+/*                                         string seq_name = rt_tokens[j - 1].get_end() + */
+/*                                                           sequencing_constraint + */
+/*                                                           rt_tokens[j + 1].get_start(); */
+/*                                         constraint seq = make_tuple(rt_tokens[j - 1].get_end(),
+ */
+/*                                                                     rt_tokens[j + 1].get_start(),
+ */
+/*                                                                     zero, */
+/*                                                                     inf); */
+/*                                         assert(stn.add_constraint(seq_name, seq)); */
+/*                                     } */
+/*                                     break; */
+/*                                 } */
+/*                             } */
+/*                         } */
+/*             stn.del_timepoint(failing_timeline_tks[i].get_start()); */
+/*             stn.del_timepoint(failing_timeline_tks[i].get_end()); */
+/*         } */
+/*     } */
+/*     range = make_pair(failing_tk_index, i); */
+/*     p.get_timelines(failing_timeline.get_id())->del_tokens(range); */
+/*     failing_timeline_tks = p.get_timelines(failing_timeline.get_id())->get_tokens(); */
+/*     if (abs(failing_tk_index - i) > 0 && failing_tk_index < (int)failing_timeline_tks.size()) {
+ */
+/*         // Now need to add the sequencing constraint between the tokens that */
+/*         // remained after we deleted the external tokens */
+/*         string seq_name = failing_timeline_tks[failing_tk_index - 1].get_end() + */
+/*                           sequencing_constraint + */
+/*                           failing_timeline_tks[failing_tk_index].get_start(); */
+/*         constraint seq = make_tuple(failing_timeline_tks[failing_tk_index - 1].get_end(), */
+/*                                     failing_timeline_tks[failing_tk_index].get_start(), */
+/*                                     zero, */
+/*                                     inf); */
+/*         assert(stn.add_constraint(seq_name, seq)); */
+/*     } */
 
-    // Check the preconditions of the original failing task against the current
-    // updated world state
-    bool failed = false;
-    for (literal prec : original_failing_tk.get_preconditions()) {
-        // Need this check to limit ourselves to preconditions of the orginal
-        // task and not compare against the ones that were inherited from the
-        // task tree
-        //
-        if (find(tk_task.prec.begin(), tk_task.prec.end(), prec) != tk_task.prec.end()) {
-            set<arg_and_type> tk_knowns = original_failing_tk.get_knowns();
-            bool succ = check_precondition(&prec, &tk_knowns, &current_state, init);
-            if (!succ) {
-                // TODO: Add the case when we need to rectify the states
-                Plan plan_copy = p;
-                vector<slot> empty_explored = vector<slot>();
-                pair<bool, vector<slot>> return_slots =
-                  satisfy_precondition(&prec,
-                                       &original_failing_tk,
-                                       &failing_timeline_tks[failing_tk_index - 1],
-                                       &current_state,
-                                       &plan_copy,
-                                       &stn,
-                                       &empty_explored);
+/*     // Check the preconditions of the original failing task against the current */
+/*     // updated world state */
+/*     bool failed = false; */
+/*     for (literal prec : original_failing_tk.get_preconditions()) { */
+/*         // Need this check to limit ourselves to preconditions of the orginal */
+/*         // task and not compare against the ones that were inherited from the */
+/*         // task tree */
+/*         // */
+/*         if (find(tk_task.prec.begin(), tk_task.prec.end(), prec) != tk_task.prec.end()) { */
+/*             set<arg_and_type> tk_knowns = original_failing_tk.get_knowns(); */
+/*             bool succ = check_precondition(&prec, &tk_knowns, &current_state, init); */
+/*             if (!succ) { */
+/*                 // TODO: Add the case when we need to rectify the states */
+/*                 Plan plan_copy = p; */
+/*                 vector<slot> empty_explored = vector<slot>(); */
+/*                 pair<bool, vector<slot>> return_slots = */
+/*                   satisfy_precondition(&prec, */
+/*                                        &original_failing_tk, */
+/*                                        &failing_timeline_tks[failing_tk_index - 1], */
+/*                                        &current_state, */
+/*                                        &plan_copy, */
+/*                                        &stn, */
+/*                                        &empty_explored, */
+/*                                        depth + 1); */
 
-                if (!return_slots.first) {
-                    failed = true;
-                    break;
-                } else {
-                    // Managed to successfully be able to schedule new tokens to
-                    // satisfy the failed precondition
-                    for (slot s : return_slots.second) {
-                        Timeline* t = p.get_timelines(s.tl_id);
-                        t->insert_token(s.tk, s.prev, s.next);
-                    }
-                }
-            }
-        }
-    }
-    return make_pair(!failed, p);
-}
+/*                 if (!return_slots.first) { */
+/*                     failed = true; */
+/*                     break; */
+/*                 } else { */
+/*                     // Managed to successfully be able to schedule new tokens to */
+/*                     // satisfy the failed precondition */
+/*                     for (slot s : return_slots.second) { */
+/*                         Timeline* t = p.get_timelines(s.tl_id); */
+/*                         t->insert_token(s.tk, s.prev, s.next); */
+/*                     } */
+/*                 } */
+/*             } */
+/*         } */
+/*     } */
+/*     return make_pair(!failed, p); */
+/* } */
 
-variant<bool, pair<bool, Token>>
-plan_validator(Plan* p, vector<ground_literal>* init)
-{
-    vector<Timeline> tls = p->get_timelines();
-    for (Timeline t : tls) {
-        if (t.get_resource() == "robot") {
-            vector<Token> tks = t.get_tokens();
+/* variant<bool, pair<bool, Token>> */
+/* plan_validator(Plan* p, vector<ground_literal>* init) */
+/* { */
+/*     vector<Timeline> tls = p->get_timelines(); */
+/*     for (Timeline t : tls) { */
+/*         if (t.get_resource() == "robot") { */
+/*             vector<Token> tks = t.get_tokens(); */
 
-            world_state current_state = world_state();
-            for (map<string, var_declaration> cs : csorts["robot"])
-                for (pair<string, var_declaration> m : cs)
-                    if (m.first == t.get_id()) {
-                        object_state obj = object_state();
-                        obj.object_name = m.first;
-                        obj.attribute_states = m.second;
-                        current_state.insert(make_pair(obj.object_name, obj));
-                        break;
-                    }
+/*             world_state current_state = world_state(); */
+/*             for (map<string, var_declaration> cs : csorts["robot"]) */
+/*                 for (pair<string, var_declaration> m : cs) */
+/*                     if (m.first == t.get_id()) { */
+/*                         object_state obj = object_state(); */
+/*                         obj.object_name = m.first; */
+/*                         obj.attribute_states = m.second; */
+/*                         current_state.insert(make_pair(obj.object_name, obj)); */
+/*                         break; */
+/*                     } */
 
-            int tk_counter = 0;
-            for (Token tk : tks) {
-                task tk_task = task();
-                for (task t : primitive_tasks)
-                    if (t.name == tk.get_name()) {
-                        tk_task = t;
-                        break;
-                    }
-                vector<arg_and_type> resources = vector<arg_and_type>();
-                for (arg_and_type arg : tk.get_arguments())
-                    if (is_resource(arg.second) &&
-                        find(tk_task.vars.begin(), tk_task.vars.end(), arg) != tk_task.vars.end())
-                        for (arg_and_type k : tk.get_knowns())
-                            if (k.first == arg.first) {
-                                if (arg.second != "robot" && arg.second != "rail_block") {
-                                    resources.push_back(make_pair(k.second, arg.second));
-                                    for (map<string, var_declaration> cs : csorts[arg.second])
-                                        for (pair<string, var_declaration> m : cs)
-                                            if (m.first == k.second) {
-                                                object_state obj = object_state();
-                                                obj.object_name = m.first;
-                                                obj.attribute_states = m.second;
-                                                current_state.insert(
-                                                  make_pair(obj.object_name, obj));
-                                            }
-                                }
-                            }
+/*             int tk_counter = 0; */
+/*             for (Token tk : tks) { */
+/*                 task tk_task = task(); */
+/*                 for (task t : primitive_tasks) */
+/*                     if (t.name == tk.get_name()) { */
+/*                         tk_task = t; */
+/*                         break; */
+/*                     } */
+/*                 vector<arg_and_type> resources = vector<arg_and_type>(); */
+/*                 for (arg_and_type arg : tk.get_arguments()) */
+/*                     if (is_resource(arg.second) && */
+/*                         find(tk_task.vars.begin(), tk_task.vars.end(), arg) !=
+ * tk_task.vars.end()) */
+/*                         for (arg_and_type k : tk.get_knowns()) */
+/*                             if (k.first == arg.first) { */
+/*                                 if (arg.second != "robot" && arg.second != "rail_block") { */
+/*                                     resources.push_back(make_pair(k.second, arg.second)); */
+/*                                     for (map<string, var_declaration> cs : csorts[arg.second]) */
+/*                                         for (pair<string, var_declaration> m : cs) */
+/*                                             if (m.first == k.second) { */
+/*                                                 object_state obj = object_state(); */
+/*                                                 obj.object_name = m.first; */
+/*                                                 obj.attribute_states = m.second; */
+/*                                                 current_state.insert( */
+/*                                                   make_pair(obj.object_name, obj)); */
+/*                                             } */
+/*                                 } */
+/*                             } */
 
-                vector<Token> rt_pivots = vector<Token>();
-                for (arg_and_type o_r : resources) {
-                    Timeline* rt = p->get_timelines(o_r.first, o_r.second);
-                    for (Token rtk : rt->get_tokens()) {
-                        string contains_co = tk.get_start() + contains_constraint + rtk.get_start();
-                        constraint contains = stn.get_constraint(contains_co);
-                        if (get<0>(contains) != "") {
-                            rt_pivots.push_back(rtk);
-                            break;
-                        }
-                    }
+/*                 vector<Token> rt_pivots = vector<Token>(); */
+/*                 for (arg_and_type o_r : resources) { */
+/*                     Timeline* rt = p->get_timelines(o_r.first, o_r.second); */
+/*                     for (Token rtk : rt->get_tokens()) { */
+/*                         string contains_co = tk.get_start() + contains_constraint +
+ * rtk.get_start(); */
+/*                         constraint contains = stn.get_constraint(contains_co); */
+/*                         if (get<0>(contains) != "") { */
+/*                             rt_pivots.push_back(rtk); */
+/*                             break; */
+/*                         } */
+/*                     } */
 
-                    assert(rt_pivots.back() != Token());
-                }
+/*                     assert(rt_pivots.back() != Token()); */
+/*                 } */
 
-                for (literal prec : tk.get_preconditions()) {
-                    if (find(tk_task.prec.begin(), tk_task.prec.end(), prec) !=
-                        tk_task.prec.end()) {
-                        set<arg_and_type> tk_knowns = tk.get_knowns();
-                        bool succ = check_precondition(&prec, &tk_knowns, &current_state, init);
-                        if (!succ)
-                            return make_pair(false, tk);
-                    }
-                }
+/*                 for (literal prec : tk.get_preconditions()) { */
+/*                     if (find(tk_task.prec.begin(), tk_task.prec.end(), prec) != */
+/*                         tk_task.prec.end()) { */
+/*                         set<arg_and_type> tk_knowns = tk.get_knowns(); */
+/*                         bool succ = check_precondition(&prec, &tk_knowns, &current_state, init);
+ */
+/*                         if (!succ) */
+/*                             return make_pair(false, tk); */
+/*                     } */
+/*                 } */
 
-                // Additional custom check for rail move to restrict
-                // movements for one block at a time
-                if (tk.get_name() == "rail_move") {
-                    vertex source = vertex(), sink = vertex();
-                    for (arg_and_type a : tk.get_arguments()) {
-                        if (a.second == "rail_block")
-                            for (arg_and_type k : tk.get_knowns())
-                                if (k.first == a.first)
-                                    sink.id = k.second;
-                    }
-                    for (arg_and_type var : current_state[t.get_id()].attribute_states.vars)
-                        for (sort_definition sd : sort_definitions)
-                            if (find(sd.declared_sorts.begin(), sd.declared_sorts.end(), "robot") !=
-                                sd.declared_sorts.end())
-                                for (arg_and_type v : sd.vars.vars)
-                                    if (v.second == "rail_block")
-                                        if (v.first.substr(1) == var.first)
-                                            source.id = var.second;
+/*                 // Additional custom check for rail move to restrict */
+/*                 // movements for one block at a time */
+/*                 if (tk.get_name() == "rail_move") { */
+/*                     vertex source = vertex(), sink = vertex(); */
+/*                     for (arg_and_type a : tk.get_arguments()) { */
+/*                         if (a.second == "rail_block") */
+/*                             for (arg_and_type k : tk.get_knowns()) */
+/*                                 if (k.first == a.first) */
+/*                                     sink.id = k.second; */
+/*                     } */
+/*                     for (arg_and_type var : current_state[t.get_id()].attribute_states.vars) */
+/*                         for (sort_definition sd : sort_definitions) */
+/*                             if (find(sd.declared_sorts.begin(), sd.declared_sorts.end(), "robot")
+ * != */
+/*                                 sd.declared_sorts.end()) */
+/*                                 for (arg_and_type v : sd.vars.vars) */
+/*                                     if (v.second == "rail_block") */
+/*                                         if (v.first.substr(1) == var.first) */
+/*                                             source.id = var.second; */
 
-                    if (source.id != sink.id) {
-                        vertex_t t = get_vertex(sink.id, rail_network);
-                        vertex_t s = get_vertex(source.id, rail_network);
+/*                     if (source.id != sink.id) { */
+/*                         vertex_t t = get_vertex(sink.id, rail_network); */
+/*                         vertex_t s = get_vertex(source.id, rail_network); */
 
-                        if (!boost::edge(s, t, rail_network.adj_list).second)
-                            return make_pair(false, tk);
+/*                         if (!boost::edge(s, t, rail_network.adj_list).second) */
+/*                             return make_pair(false, tk); */
 
-                    } else
-                        return make_pair(false, tk);
-                }
+/*                     } else */
+/*                         return make_pair(false, tk); */
+/*                 } */
 
-                int counter = 0;
-                for (arg_and_type o_r : resources) {
-                    Timeline* rt = p->get_timelines(o_r.first, o_r.second);
-                    for (Token rtk : rt->get_tokens()) {
-                        object_state rs = current_state.at(rt->get_id());
-                        update_object_state(&rs, &rtk);
-                        current_state[rt->get_id()] = rs;
+/*                 int counter = 0; */
+/*                 for (arg_and_type o_r : resources) { */
+/*                     Timeline* rt = p->get_timelines(o_r.first, o_r.second); */
+/*                     for (Token rtk : rt->get_tokens()) { */
+/*                         object_state rs = current_state.at(rt->get_id()); */
+/*                         update_object_state(&rs, &rtk); */
+/*                         current_state[rt->get_id()] = rs; */
 
-                        if (rtk == rt_pivots[counter])
-                            break;
-                    }
+/*                         if (rtk == rt_pivots[counter]) */
+/*                             break; */
+/*                     } */
 
-                    counter++;
-                }
+/*                     counter++; */
+/*                 } */
 
-                object_state rs = current_state.at(t.get_id());
-                update_object_state(&rs, &tk);
-                current_state[t.get_id()] = rs;
+/*                 object_state rs = current_state.at(t.get_id()); */
+/*                 update_object_state(&rs, &tk); */
+/*                 current_state[t.get_id()] = rs; */
 
-                tk_counter++;
-            }
-        }
-    }
+/*                 tk_counter++; */
+/*             } */
+/*         } */
+/*     } */
 
-    return true;
-}
+/*     return true; */
+/* } */
 
 pq
 find_feasible_slots(task_network tree, Plan p, int attempts, string metric)
@@ -2074,9 +2089,6 @@ find_feasible_slots(task_network tree, Plan p, int attempts, string metric)
 
     vector<slot> explored_slots = vector<slot>();
     for (int plan_id = 0; plan_id < attempts; plan_id++) {
-        if (tree.id == "requestY") {
-            PLOGV << "Plan ID: " << plan_id << endl;
-        }
         double value = 0.0;
         tasknetwork_solution sol = tasknetwork_solution();
         sol.plan_id = plan_id;

@@ -14,7 +14,6 @@
 #include <map>
 #include <vector>
 
-#define ATTEMPTS 10
 #define MAX_PERMUTATIONS 10
 
 #include "parser.hpp"
@@ -25,7 +24,9 @@
 using namespace std;
 
 STN stn = STN();
+int attempts = 1;
 graph rail_network = graph();
+int max_recursive_depth = 2;
 string domain_name = dummy_domain_name;
 string problem_name = dummy_problem_name;
 world_state initial_state = world_state();
@@ -117,7 +118,7 @@ find_plan_for_request(request r, Plan* p, bool* plan_found, string metric)
             task_network test_net = assign_open_variables(all_assignments, r_net);
 
             // Try to schedule this network and find the first feasible plan
-            pq sol = find_feasible_slots(test_net, *p, ATTEMPTS, metric);
+            pq sol = find_feasible_slots(test_net, *p, attempts, metric);
             if ((int)sol.size() > 0)
                 solutions.push(sol.top());
         }
@@ -139,8 +140,8 @@ main(int argc, char** argv)
     int dfile = -1;
     int pfile = -1;
 
-    string metric = "makespan";
     bool permute = false;
+    string metric = "makespan";
     bool showProperties = false;
     plog::Severity severity = plog::error;
     bool compileConditionalEffects = true;
@@ -149,13 +150,15 @@ main(int argc, char** argv)
 
     struct option options[] = {
 
+        { "metric", required_argument, NULL, 'm' },
+        { "severity", required_argument, NULL, 'd' },
+        { "attempts", required_argument, NULL, 't' },
+        { "properties", optional_argument, NULL, 'p' },
+        { "permute_benchmark", no_argument, NULL, 'b' },
         { "keep-conditional-effects", no_argument, NULL, 'k' },
+        { "max-recursive-depth", required_argument, NULL, 'r' },
         { "linear-conditional-effect", no_argument, NULL, 'L' },
         { "encode-disjunctive_preconditions-in-htn", no_argument, NULL, 'D' },
-        { "properties", optional_argument, NULL, 'p' },
-        { "metric", required_argument, NULL, 'm' },
-        { "severity", optional_argument, NULL, 'd' },
-        { "permute_benchmark", no_argument, NULL, 'b' },
         { NULL, 0, NULL, 0 },
 
     };
@@ -163,7 +166,7 @@ main(int argc, char** argv)
     // Parsing command line options
     bool optionsValid = true;
     while (true) {
-        int c = getopt_long_only(argc, argv, "kLDpmd:b", options, NULL);
+        int c = getopt_long_only(argc, argv, "kLDptrmdb", options, NULL);
         if (c == -1)
             break;
         if (c == '?' || c == ':') {
@@ -192,6 +195,12 @@ main(int argc, char** argv)
             severity = static_cast<plog::Severity>(choice);
         } else if (c == 'b') {
             permute = true;
+        } else if (c == 'r') {
+            int choice = atoi(optarg);
+            max_recursive_depth = choice;
+        } else if (c == 't') {
+            int choice = atoi(optarg);
+            attempts = choice;
         }
     }
 
