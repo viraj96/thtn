@@ -5,6 +5,7 @@
 #include <tuple>
 
 #include "domain.hpp"
+#include "utils.hpp"
 
 string
 slot::to_string() const
@@ -1670,17 +1671,7 @@ schedule_leafs(vector<task_vertex> leafs,
 
     double best_metric = -1.0 * std::numeric_limits<double>::infinity();
     if (metric == "makespan") {
-        for (Timeline t : p.get_timelines()) {
-            if (t.get_resource() == "robot") {
-                Token last = t.get_tokens().end()[-2];
-                if (last.get_name() != "head" && last.get_name() != "tail") {
-                    stn_bounds last_end_bounds = stn.get_feasible_values(last.get_end());
-                    if (abs(get<0>(last_end_bounds)) >= best_metric)
-                        best_metric = abs(get<0>(last_end_bounds));
-                }
-            }
-        }
-
+        best_metric = compute_makespan(&p);
     } else if (metric == "actions") {
         best_metric = num_actions;
     }
@@ -1940,139 +1931,6 @@ commit_slots(Plan* p, pq* solution)
 /*         } */
 /*     } */
 /*     return make_pair(!failed, p); */
-/* } */
-
-/* variant<bool, pair<bool, Token>> */
-/* plan_validator(Plan* p, vector<ground_literal>* init) */
-/* { */
-/*     vector<Timeline> tls = p->get_timelines(); */
-/*     for (Timeline t : tls) { */
-/*         if (t.get_resource() == "robot") { */
-/*             vector<Token> tks = t.get_tokens(); */
-
-/*             world_state current_state = world_state(); */
-/*             for (map<string, var_declaration> cs : csorts["robot"]) */
-/*                 for (pair<string, var_declaration> m : cs) */
-/*                     if (m.first == t.get_id()) { */
-/*                         object_state obj = object_state(); */
-/*                         obj.object_name = m.first; */
-/*                         obj.attribute_states = m.second; */
-/*                         current_state.insert(make_pair(obj.object_name, obj)); */
-/*                         break; */
-/*                     } */
-
-/*             int tk_counter = 0; */
-/*             for (Token tk : tks) { */
-/*                 task tk_task = task(); */
-/*                 for (task t : primitive_tasks) */
-/*                     if (t.name == tk.get_name()) { */
-/*                         tk_task = t; */
-/*                         break; */
-/*                     } */
-/*                 vector<arg_and_type> resources = vector<arg_and_type>(); */
-/*                 for (arg_and_type arg : tk.get_arguments()) */
-/*                     if (is_resource(arg.second) && */
-/*                         find(tk_task.vars.begin(), tk_task.vars.end(), arg) !=
- * tk_task.vars.end()) */
-/*                         for (arg_and_type k : tk.get_knowns()) */
-/*                             if (k.first == arg.first) { */
-/*                                 if (arg.second != "robot" && arg.second != "rail_block") { */
-/*                                     resources.push_back(make_pair(k.second, arg.second)); */
-/*                                     for (map<string, var_declaration> cs : csorts[arg.second]) */
-/*                                         for (pair<string, var_declaration> m : cs) */
-/*                                             if (m.first == k.second) { */
-/*                                                 object_state obj = object_state(); */
-/*                                                 obj.object_name = m.first; */
-/*                                                 obj.attribute_states = m.second; */
-/*                                                 current_state.insert( */
-/*                                                   make_pair(obj.object_name, obj)); */
-/*                                             } */
-/*                                 } */
-/*                             } */
-
-/*                 vector<Token> rt_pivots = vector<Token>(); */
-/*                 for (arg_and_type o_r : resources) { */
-/*                     Timeline* rt = p->get_timelines(o_r.first, o_r.second); */
-/*                     for (Token rtk : rt->get_tokens()) { */
-/*                         string contains_co = tk.get_start() + contains_constraint +
- * rtk.get_start(); */
-/*                         constraint contains = stn.get_constraint(contains_co); */
-/*                         if (get<0>(contains) != "") { */
-/*                             rt_pivots.push_back(rtk); */
-/*                             break; */
-/*                         } */
-/*                     } */
-
-/*                     assert(rt_pivots.back() != Token()); */
-/*                 } */
-
-/*                 for (literal prec : tk.get_preconditions()) { */
-/*                     if (find(tk_task.prec.begin(), tk_task.prec.end(), prec) != */
-/*                         tk_task.prec.end()) { */
-/*                         set<arg_and_type> tk_knowns = tk.get_knowns(); */
-/*                         bool succ = check_precondition(&prec, &tk_knowns, &current_state, init);
- */
-/*                         if (!succ) */
-/*                             return make_pair(false, tk); */
-/*                     } */
-/*                 } */
-
-/*                 // Additional custom check for rail move to restrict */
-/*                 // movements for one block at a time */
-/*                 if (tk.get_name() == "rail_move") { */
-/*                     vertex source = vertex(), sink = vertex(); */
-/*                     for (arg_and_type a : tk.get_arguments()) { */
-/*                         if (a.second == "rail_block") */
-/*                             for (arg_and_type k : tk.get_knowns()) */
-/*                                 if (k.first == a.first) */
-/*                                     sink.id = k.second; */
-/*                     } */
-/*                     for (arg_and_type var : current_state[t.get_id()].attribute_states.vars) */
-/*                         for (sort_definition sd : sort_definitions) */
-/*                             if (find(sd.declared_sorts.begin(), sd.declared_sorts.end(), "robot")
- * != */
-/*                                 sd.declared_sorts.end()) */
-/*                                 for (arg_and_type v : sd.vars.vars) */
-/*                                     if (v.second == "rail_block") */
-/*                                         if (v.first.substr(1) == var.first) */
-/*                                             source.id = var.second; */
-
-/*                     if (source.id != sink.id) { */
-/*                         vertex_t t = get_vertex(sink.id, rail_network); */
-/*                         vertex_t s = get_vertex(source.id, rail_network); */
-
-/*                         if (!boost::edge(s, t, rail_network.adj_list).second) */
-/*                             return make_pair(false, tk); */
-
-/*                     } else */
-/*                         return make_pair(false, tk); */
-/*                 } */
-
-/*                 int counter = 0; */
-/*                 for (arg_and_type o_r : resources) { */
-/*                     Timeline* rt = p->get_timelines(o_r.first, o_r.second); */
-/*                     for (Token rtk : rt->get_tokens()) { */
-/*                         object_state rs = current_state.at(rt->get_id()); */
-/*                         update_object_state(&rs, &rtk); */
-/*                         current_state[rt->get_id()] = rs; */
-
-/*                         if (rtk == rt_pivots[counter]) */
-/*                             break; */
-/*                     } */
-
-/*                     counter++; */
-/*                 } */
-
-/*                 object_state rs = current_state.at(t.get_id()); */
-/*                 update_object_state(&rs, &tk); */
-/*                 current_state[t.get_id()] = rs; */
-
-/*                 tk_counter++; */
-/*             } */
-/*         } */
-/*     } */
-
-/*     return true; */
 /* } */
 
 pq

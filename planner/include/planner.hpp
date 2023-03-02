@@ -133,8 +133,8 @@ pair<bool, Plan>
 patch_plan(Plan p, Token* failing_tk, vector<ground_literal>* init);
 set<string>
 get_literal_args_and_types(literal* lit, set<arg_and_type>* arguments);
-variant<bool, pair<bool, Token>>
-plan_validator(Plan* p, vector<ground_literal>* init);
+pair<bool, Token>
+plan_validator(Plan* p);
 pair<bool, vector<slot>>
 schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn, int depth = 0);
 
@@ -187,8 +187,8 @@ initialize_token_state(Token* tk,
 
 bool
 check_precondition(literal* precondition,
-                   set<arg_and_type> knowns,
-                   pair<string, var_declaration> world_state,
+                   set<arg_and_type>* knowns,
+                   world_state* current_state,
                    vector<ground_literal>* init);
 
 bool

@@ -20,6 +20,7 @@
 #include "planner.hpp"
 #include "search.hpp"
 #include "timelines.hpp"
+#include "utils.hpp"
 
 using namespace std;
 
@@ -48,27 +49,6 @@ vector<pair<predicate_definition, string>> parsed_functions =
   vector<pair<predicate_definition, string>>();
 map<string, set<map<string, var_declaration>>> csorts =
   map<string, set<map<string, var_declaration>>>();
-
-pair<double, double>
-compute_metrics(Plan* p)
-{
-    double total_tokens = 0;
-    double makespan = -1.0 * std::numeric_limits<double>::infinity();
-    vector<Timeline> tls = p->get_timelines();
-    for (Timeline tl : tls) {
-        if (tl.get_resource() == "robot") {
-            vector<Token> tks = tl.get_tokens();
-            total_tokens += (double)(tks.size()) - 2;
-            Token last = tks.end()[-2];
-            if (last.get_name() != "head" && last.get_name() != "tail") {
-                tuple<double, double> last_end_bounds = stn.get_feasible_values(last.get_end());
-                if (abs(get<0>(last_end_bounds)) >= makespan)
-                    makespan = abs(get<0>(last_end_bounds));
-            }
-        }
-    }
-    return make_pair(total_tokens, makespan);
-}
 
 void
 find_plan_for_request(request r, Plan* p, bool* plan_found, string metric)
@@ -310,13 +290,28 @@ main(int argc, char** argv)
                 auto end = chrono::steady_clock::now();
                 auto diff = end - start;
                 if (plan_found) {
-                    pair<double, double> metric_vals = compute_metrics(&p);
-                    if (metric == "actions")
-                        metric_values.insert(make_pair(permute_counter, metric_vals.first));
-                    else
-                        metric_values.insert(make_pair(permute_counter, metric_vals.second));
-                    time_values.insert(
-                      make_pair(permute_counter, chrono::duration<double>(diff).count()));
+                    pair<bool, Token> validation = plan_validator(&p);
+                    if (validation.first) {
+                        pair<double, double> metric_vals = compute_metrics(&p);
+                        if (metric == "actions")
+                            metric_values.insert(make_pair(permute_counter, metric_vals.first));
+                        else
+                            metric_values.insert(make_pair(permute_counter, metric_vals.second));
+                        time_values.insert(
+                          make_pair(permute_counter, chrono::duration<double>(diff).count()));
+                    } else {
+
+                        PLOGE << "Permute Counter = " << permute_counter << endl;
+                        PLOGE << "PLAN WAS FOUND BUT VALIDATION FAILED!!\n";
+                        if (validation.second == Token())
+                            PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
+                        else
+                            PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
+                                  << validation.second.to_string() << endl;
+                        PLOGE << "The whole plan is - \n" << p.to_string() << endl;
+                        stn.destroy();
+                        assert(false);
+                    }
                 }
                 stn.destroy();
                 permute_counter++;
@@ -335,14 +330,29 @@ main(int argc, char** argv)
                 auto end = chrono::steady_clock::now();
                 auto diff = end - start;
                 if (plan_found) {
-                    pair<double, double> metric_vals = compute_metrics(&p);
-                    if (metric == "actions")
-                        metric_values.insert(make_pair(permute_counter, metric_vals.first));
-                    else
-                        metric_values.insert(make_pair(permute_counter, metric_vals.second));
-                    time_values.insert(
-                      make_pair(permute_counter, chrono::duration<double>(diff).count()));
-                    counter++;
+                    pair<bool, Token> validation = plan_validator(&p);
+                    if (validation.first) {
+                        pair<double, double> metric_vals = compute_metrics(&p);
+                        if (metric == "actions")
+                            metric_values.insert(make_pair(permute_counter, metric_vals.first));
+                        else
+                            metric_values.insert(make_pair(permute_counter, metric_vals.second));
+                        time_values.insert(
+                          make_pair(permute_counter, chrono::duration<double>(diff).count()));
+                        counter++;
+                    } else {
+                        PLOGE << "Counter = " << counter << endl;
+                        PLOGE << "Permute Counter = " << permute_counter << endl;
+                        PLOGE << "PLAN WAS FOUND BUT VALIDATION FAILED!!\n";
+                        if (validation.second == Token())
+                            PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
+                        else
+                            PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
+                                  << validation.second.to_string() << endl;
+                        PLOGE << "The whole plan is - \n" << p.to_string() << endl;
+                        stn.destroy();
+                        assert(false);
+                    }
                 }
                 stn.destroy();
                 permute_counter++;
@@ -362,14 +372,28 @@ main(int argc, char** argv)
         auto end = chrono::steady_clock::now();
         auto diff = end - start;
         if (plan_found) {
-            PLOGV << p.to_string();
-            pair<double, double> metric_values = compute_metrics(&p);
-            cout << flush;
-            cout << "Time(s): " << chrono::duration<double>(diff).count() << "\n";
-            cout << "Total Actions: " << metric_values.first << "\n";
-            cout << "Makespan: " << metric_values.second << "\n";
+            pair<bool, Token> validation = plan_validator(&p);
+            if (validation.first) {
+                PLOGV << p.to_string();
+                pair<double, double> metric_values = compute_metrics(&p);
+                cout << flush;
+                cout << "Time(s): " << chrono::duration<double>(diff).count() << "\n";
+                cout << "Total Actions: " << metric_values.first << "\n";
+                cout << "Makespan: " << metric_values.second << "\n";
+            } else {
+                PLOGE << "PLAN WAS FOUND BUT VALIDATION FAILED!!\n";
+                if (validation.second == Token())
+                    PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
+                else
+                    PLOGE << "\t[REASON]: OFFENDING TOKEN -> " << validation.second.to_string()
+                          << endl;
+                PLOGE << "The whole plan is - \n" << p.to_string() << endl;
+                stn.destroy();
+                assert(false);
+            }
         } else {
             PLOGV << "PLAN WAS NOT FOUND!!\n";
+            stn.destroy();
             assert(false);
         }
     }

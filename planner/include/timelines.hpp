@@ -4,39 +4,41 @@
 
 #include <stdlib.h>
 
+#include <plog/Log.h>
 #include <set>
 #include <string>
-#include <plog/Log.h>
 
-#include "stn.hpp"
-#include "graph.hpp"
-#include "search.hpp"
 #include "domain.hpp"
+#include "graph.hpp"
 #include "parsetree.hpp"
+#include "search.hpp"
+#include "stn.hpp"
 
 using namespace std;
 
 extern STN stn;
 
-class Token {
-   private:
+class Token
+{
+  private:
     set<arg_and_type> knowns;
     set<arg_and_type> arguments;
     set<literal> precondition_literals, effect_literals;
 
-   protected:
+  protected:
     bool external;
     string start_t, end_t;
     string name, resource, request_id;
 
-   public:
+  public:
     Token()
-        : external(false),
-          start_t(""),
-          end_t(""),
-          name(""),
-          resource(""),
-          request_id("") {}
+      : external(false)
+      , start_t("")
+      , end_t("")
+      , name("")
+      , resource("")
+      , request_id("")
+    {}
 
     void set_external();
     string get_end() const;
@@ -63,15 +65,21 @@ class Token {
     void add_preconditions(vector<literal> prec);
     void add_arguments(vector<arg_and_type> args);
     void add_knowns(vector<arg_and_type> assignments);
-    bool create_timepoints(STN *stn, double duration = 0);
+    bool create_timepoints(STN* stn, double duration = 0);
 };
 
-bool operator==(const Token &lhs, const Token &rhs);
-bool operator!=(const Token &lhs, const Token &rhs);
+bool
+operator<(const Token& lhs, const Token& rhs);
+bool
+operator==(const Token& lhs, const Token& rhs);
+bool
+operator!=(const Token& lhs, const Token& rhs);
 
-class Auxiliary_Token : public Token {
-   public:
-    Auxiliary_Token() {
+class Auxiliary_Token : public Token
+{
+  public:
+    Auxiliary_Token()
+    {
         name = "";
         end_t = "";
         start_t = "";
@@ -80,7 +88,8 @@ class Auxiliary_Token : public Token {
         external = false;
     }
 
-    Auxiliary_Token(string name) {
+    Auxiliary_Token(string name)
+    {
         end_t = "";
         start_t = "";
         resource = "";
@@ -92,14 +101,19 @@ class Auxiliary_Token : public Token {
     string to_string() const;
 };
 
-class Timeline {
-   protected:
+class Timeline
+{
+  protected:
     string id;
     string resource;
     vector<Token> tokens;
 
-   public:
-    Timeline() : id(""), resource(""), tokens() {}
+  public:
+    Timeline()
+      : id("")
+      , resource("")
+      , tokens()
+    {}
 
     string get_id();
     string get_resource();
@@ -113,29 +127,38 @@ class Timeline {
     void insert_token(Token t, Token prev, Token next);
 };
 
-class Plan {
-   protected:
+class Plan
+{
+  protected:
     vector<Timeline> timelines;
 
-   public:
-    Plan() : timelines() {}
+  public:
+    Plan()
+      : timelines()
+    {}
 
     string to_string() const;
     void add_timeline(Timeline t);
     vector<Timeline> get_timelines();
-    Timeline *get_timelines(string id);
-    Timeline *get_timelines(string id, string resource);
+    Timeline* get_timelines(string id);
+    Timeline* get_timelines(string id, string resource);
 };
 
-struct task_vertex {
+struct task_vertex
+{
     Token tk;
     string id;
     shared_ptr<task_vertex> parent;
 
-   public:
-    task_vertex() : tk(), id(""), parent(nullptr) {}
+  public:
+    task_vertex()
+      : tk()
+      , id("")
+      , parent(nullptr)
+    {}
 
-    task_vertex(Token _tk, string _id, shared_ptr<task_vertex> _parent) {
+    task_vertex(Token _tk, string _id, shared_ptr<task_vertex> _parent)
+    {
         tk = _tk;
         id = _id;
         parent = _parent;
@@ -144,15 +167,15 @@ struct task_vertex {
     string to_string() const;
 };
 
-typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS,
-                              task_vertex, edge>
-    task_adj_list;
+typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS, task_vertex, edge>
+  task_adj_list;
 typedef boost::graph_traits<task_adj_list>::edge_iterator task_edge_it;
 typedef boost::graph_traits<task_adj_list>::vertex_iterator task_vertex_it;
 typedef boost::graph_traits<task_adj_list>::vertex_descriptor task_vertex_t;
 typedef boost::graph_traits<task_adj_list>::out_edge_iterator task_out_edge_it;
 
-struct task_network {
+struct task_network
+{
     string id;
     task_adj_list adj_list;
 
@@ -171,32 +194,45 @@ const string contains_constraint = "_contains_";
 const string sequencing_constraint = "_sequencing_";
 const string dependent_meets_constraint = "_dep_meets_";
 
-Plan instantiate_plan();
-task_vertex_t get_vertex(string id, task_network G);
-Timeline instantiate_timeline(string id, string resource);
-void add_sync_constraints(method m, vector<Token> tokens);
-void add_contains_constraints(method m, Token parent, vector<Token> children);
-void add_literals(task_vertex_t node_t, shared_ptr<task_vertex> parent,
-                  task_network *tn);
-Token instantiate_token(string name, string resource, string request_id = "",
-                        double duration = 0);
+Plan
+instantiate_plan();
+task_vertex_t
+get_vertex(string id, task_network G);
+Timeline
+instantiate_timeline(string id, string resource);
+void
+add_sync_constraints(method m, vector<Token> tokens);
+void
+add_contains_constraints(method m, Token parent, vector<Token> children);
+void
+add_literals(task_vertex_t node_t, shared_ptr<task_vertex> parent, task_network* tn);
+Token
+instantiate_token(string name, string resource, string request_id = "", double duration = 0);
 
-Token instantiate_token(string name, string resource, STN *stn,
-                        string request_id = "", double duration = 0);
+Token
+instantiate_token(string name,
+                  string resource,
+                  STN* stn,
+                  string request_id = "",
+                  double duration = 0);
 
-task_network assign_open_variables(map<string, arg_and_type> var_assign_map,
-                                   task_network r_tree);
+task_network
+assign_open_variables(map<string, arg_and_type> var_assign_map, task_network r_tree);
 
-bool check_compatibility_of_argument(string arg, vector<arg_and_type> vars,
-                                     set<arg_and_type> args);
+bool
+check_compatibility_of_argument(string arg, vector<arg_and_type> vars, set<arg_and_type> args);
 
-bool check_compatibility_of_literals(literal l, vector<arg_and_type> vars,
-                                     set<arg_and_type> args);
+bool
+check_compatibility_of_literals(literal l, vector<arg_and_type> vars, set<arg_and_type> args);
 
-vector<Token> expand(search_vertex t, shared_ptr<task_vertex> parent,
-                     task_network *graph, set<search_vertex> vert, request r);
+vector<Token>
+expand(search_vertex t,
+       shared_ptr<task_vertex> parent,
+       task_network* graph,
+       set<search_vertex> vert,
+       request r);
 
-pair<task_network, vector<arg_and_type> > instantiate_task_network(
-    search_vertex *root, set<search_vertex> vert, request r);
+pair<task_network, vector<arg_and_type>>
+instantiate_task_network(search_vertex* root, set<search_vertex> vert, request r);
 
 #endif

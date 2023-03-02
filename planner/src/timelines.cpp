@@ -32,6 +32,27 @@ Token::to_string() const
 }
 
 bool
+operator<(const Token& lhs, const Token& rhs)
+{
+    string l_start = lhs.get_start();
+    string l_end = lhs.get_end();
+    string l_name = lhs.get_name();
+    bool l_external = lhs.is_external();
+    string l_resource = lhs.get_resource();
+    string l_request_id = lhs.get_request_id();
+
+    string r_start = rhs.get_start();
+    string r_end = rhs.get_end();
+    string r_name = rhs.get_name();
+    bool r_external = rhs.is_external();
+    string r_resource = rhs.get_resource();
+    string r_request_id = rhs.get_request_id();
+
+    return tie(l_start, l_end, l_name, l_resource, l_external, l_request_id) <
+           tie(r_start, r_end, r_name, r_resource, r_external, r_request_id);
+}
+
+bool
 operator==(const Token& lhs, const Token& rhs)
 {
     string l_start = lhs.get_start();
