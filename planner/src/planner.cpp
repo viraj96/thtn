@@ -698,6 +698,7 @@ tuple<bool, bool, bool>
 del_and_add_sequencing_constraint(Token* prev, Token* curr, Token* next, STN* stn, bool submit)
 {
     string to_del = prev->get_end() + sequencing_constraint + next->get_start();
+    constraint del = stn->get_constraint(to_del);
     bool succ0 = stn->del_constraint(to_del);
 
     string c1_name = prev->get_end() + sequencing_constraint + curr->get_start();
@@ -717,14 +718,14 @@ del_and_add_sequencing_constraint(Token* prev, Token* curr, Token* next, STN* st
             return make_tuple(succ0, false, false);
 
         bool succ1 = stn->add_constraint(c1_name, c1);
-        if (!succ1) {
+        if (!succ1 && get<0>(del) != "" && get<1>(del) != "") {
             assert(stn->add_constraint(to_del,
                                        make_tuple(prev->get_end(), next->get_start(), zero, inf)));
             return make_tuple(succ0, succ1, false);
         }
 
         bool succ2 = stn->add_constraint(c2_name, c2);
-        if (!succ2) {
+        if (!succ2 && get<0>(del) != "" && get<1>(del) != "") {
             assert(stn->del_constraint(c1_name));
             assert(stn->add_constraint(to_del,
                                        make_tuple(prev->get_end(), next->get_start(), zero, inf)));
@@ -1724,8 +1725,10 @@ commit_slots(Plan* p, pq* solution)
             if (s.tk.get_resource() == "robot") {
                 // Special case when the robot token of one type needs to connect to another robot
                 // token of another type. This is required for the "clear" case.
-                if (main_tk.is_external() && s.tk.is_external() && main_tl != s.tl_id)
+                if (main_tk.is_external() && s.tk.is_external() &&
+                    main_tl != slot_to_commit.robot_assignment) {
                     assert(add_meets_constraint(&main_tk, &s.tk, &stn));
+                }
 
                 main_tk = s.tk;
                 main_tl = s.tl_id;
@@ -1977,8 +1980,6 @@ find_feasible_slots(task_network tree, Plan p, string robot_assignment, int atte
     // -1 attempts means that we need automatic scaling of the number of attempts
     if (attempts == -1)
         attempts = p.num_tasks_robot[robot_assignment] + 1;
-
-    PLOGD << "Total attempts = " << attempts << endl;
 
     for (int plan_id = 0; plan_id < attempts; plan_id++) {
         double value = 0.0;
