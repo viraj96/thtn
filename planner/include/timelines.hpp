@@ -133,6 +133,8 @@ class Plan
     vector<Timeline> timelines;
 
   public:
+    map<string, int> num_tasks_robot;
+
     Plan()
       : timelines()
     {}
@@ -141,6 +143,8 @@ class Plan
     void add_timeline(Timeline t);
     vector<Timeline> get_timelines();
     Timeline* get_timelines(string id);
+    int get_num_tasks_robot(string robot);
+    void update_num_tasks_robot(string robot);
     Timeline* get_timelines(string id, string resource);
 };
 

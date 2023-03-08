@@ -69,12 +69,14 @@ struct tasknetwork_solution
     int plan_id;
     string request_id;
     double metric_value;
+    string robot_assignment;
     vector<primitive_solution> solution;
 
     tasknetwork_solution()
     {
         plan_id = 0;
         request_id = "";
+        robot_assignment = "";
         metric_value = std::numeric_limits<double>::infinity();
         solution = vector<primitive_solution>();
     }
@@ -82,10 +84,12 @@ struct tasknetwork_solution
     tasknetwork_solution(int _plan_id,
                          string _request_id,
                          double _metric_value,
+                         string robot_assignment,
                          vector<primitive_solution>* _solution)
       : plan_id(_plan_id)
       , request_id(_request_id)
       , metric_value(_metric_value)
+      , robot_assignment(robot_assignment)
       , solution(*_solution)
     {}
 
@@ -162,7 +166,11 @@ arg_and_type
 evaluate(arg_and_type argument, set<arg_and_type> knowns, world_state* current_state);
 
 pq
-find_feasible_slots(task_network tree, Plan p, int attempts = 1, string metric = "makespan");
+find_feasible_slots(task_network tree,
+                    Plan p,
+                    string robot_assignment,
+                    int attempts = 1,
+                    string metric = "makespan");
 
 tuple<bool, bool, bool>
 del_and_add_sequencing_constraint(Token* prev,
