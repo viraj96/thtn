@@ -98,7 +98,7 @@ find_plan_for_request(request r, Plan* p, bool* plan_found, string metric)
             task_network test_net = assign_open_variables(all_assignments, r_net);
 
             // Try to schedule this network and find the first feasible plan
-            pq sol = find_feasible_slots(test_net, *p, attempts, metric);
+            pq sol = find_feasible_slots(test_net, *p, assign[0], attempts, metric);
             if ((int)sol.size() > 0)
                 solutions.push(sol.top());
         }

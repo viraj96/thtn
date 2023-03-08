@@ -118,6 +118,9 @@ Plan::to_string() const
     for (Timeline t : timelines) {
         result += "\t\t " + t.to_string() + "\n";
     }
+    result += "\n\t Number of assignments to each robot = \n";
+    for (pair<string, int> num : num_tasks_robot)
+        result += "\t\t" + num.first + " = " + std::to_string(num.second) + "\n";
 
     return result;
 }

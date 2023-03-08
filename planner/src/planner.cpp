@@ -40,6 +40,7 @@ tasknetwork_solution::to_string() const
     string result = "TaskNetwork Solution: \n";
     result += "\t Plan Id =  " + std::to_string(plan_id) + "\n";
     result += "\t Request Id = " + request_id + "\n";
+    result += "\t Robot Assignment = " + robot_assignment + "\n";
     result += "\t Metric Value = " + std::to_string(metric_value) + "\n";
     result += "\t Solution =  \n";
     for (primitive_solution ps : solution)
@@ -1684,6 +1685,7 @@ void
 commit_slots(Plan* p, pq* solution)
 {
     tasknetwork_solution slot_to_commit = solution->top();
+    p->num_tasks_robot[slot_to_commit.robot_assignment]++;
 
     int counter = 0;
     for (int i = 0; i < (int)slot_to_commit.solution.size(); i++) {
@@ -1934,7 +1936,7 @@ commit_slots(Plan* p, pq* solution)
 /* } */
 
 pq
-find_feasible_slots(task_network tree, Plan p, int attempts, string metric)
+find_feasible_slots(task_network tree, Plan p, string robot_assignment, int attempts, string metric)
 {
     pq ret = pq();
 
@@ -1946,11 +1948,19 @@ find_feasible_slots(task_network tree, Plan p, int attempts, string metric)
             leafs.push_back(tree.adj_list[*vi]);
 
     vector<slot> explored_slots = vector<slot>();
+
+    // -1 attempts means that we need automatic scaling of the number of attempts
+    if (attempts == -1)
+        attempts = p.num_tasks_robot[robot_assignment] + 1;
+
+    PLOGD << "Total attempts = " << attempts << endl;
+
     for (int plan_id = 0; plan_id < attempts; plan_id++) {
         double value = 0.0;
         tasknetwork_solution sol = tasknetwork_solution();
         sol.plan_id = plan_id;
         sol.request_id = tree.id;
+        sol.robot_assignment = robot_assignment;
         vector<primitive_solution> solution = vector<primitive_solution>();
         map<string, constraint> pre_stn_constraints = stn.get_constraints();
 
