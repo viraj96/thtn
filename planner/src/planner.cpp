@@ -797,14 +797,17 @@ satisfy_precondition(literal* precondition,
         for (arg_and_type k : satisfying_knowns)
             tk.add_knowns(k);
 
-        bool succ1 = true;
-        if (prev->get_name() != "head" && prev->get_request_id() == tk.get_request_id())
-            succ1 = add_meets_constraint(prev, &tk, stn);
-        bool succ2 = add_meets_constraint(&tk, failing_tk, stn);
-        if (!succ1 || !succ2) {
-            stn->del_timepoint(tk.get_start());
-            stn->del_timepoint(tk.get_end());
-            return make_pair(scheduled, vector<slot>());
+        if (precondition->temp_qual == temporal_qualifier_type::AT &&
+            precondition->timed == timed_type::START) {
+            bool succ1 = true;
+            if (prev->get_name() != "head" && prev->get_request_id() == tk.get_request_id())
+                succ1 = add_meets_constraint(prev, &tk, stn);
+            bool succ2 = add_meets_constraint(&tk, failing_tk, stn);
+            if (!succ1 || !succ2) {
+                stn->del_timepoint(tk.get_start());
+                stn->del_timepoint(tk.get_end());
+                return make_pair(scheduled, vector<slot>());
+            }
         }
 
         pair<bool, vector<slot>> ret = schedule_token(&tk, explored, p, stn, depth + 1);
@@ -891,34 +894,53 @@ satisfy_precondition(literal* precondition,
             assert(add_meets_constraint(&curr, &next, stn));
         }
 
-        string failing_timeline = "", new_timeline = "";
-        for (arg_and_type a : failing_tk->get_arguments())
-            if (a.second == "robot")
-                for (arg_and_type k : failing_tk->get_knowns())
-                    if (a.first == k.first)
-                        failing_timeline = k.second;
+        if (precondition->temp_qual == temporal_qualifier_type::AT &&
+            precondition->timed == timed_type::START) {
 
-        for (arg_and_type var : tasks_to_do[0].first.vars)
-            if (var.second == "robot")
-                for (arg_and_type k : tasks_to_do[0].second.vars)
-                    if (var.first == k.first)
-                        new_timeline = k.second;
+            string failing_timeline = "", new_timeline = "";
+            for (arg_and_type a : failing_tk->get_arguments())
+                if (a.second == "robot")
+                    for (arg_and_type k : failing_tk->get_knowns())
+                        if (a.first == k.first)
+                            failing_timeline = k.second;
 
-        if (failing_timeline == new_timeline) {
-            bool succ1 = true;
-            // Change where theis meets constraint is going to be added.
-            if (prev->get_request_id() == satisfying_tokens[0].get_request_id())
-                succ1 = add_meets_constraint(prev, &satisfying_tokens[0], stn);
+            for (arg_and_type var : tasks_to_do[0].first.vars)
+                if (var.second == "robot")
+                    for (arg_and_type k : tasks_to_do[0].second.vars)
+                        if (var.first == k.first)
+                            new_timeline = k.second;
+            // If the failing timeline and the procedural tokens belong to the same timeline then
+            // you can connect them in a chain
+            if (failing_timeline == new_timeline) {
+                bool succ1 = true;
+                if (prev->get_request_id() == satisfying_tokens[0].get_request_id())
+                    succ1 = add_meets_constraint(prev, &satisfying_tokens[0], stn);
 
-            bool succ2 = add_meets_constraint(
-              &satisfying_tokens[satisfying_tokens.size() - 1], failing_tk, stn);
+                bool succ2 = add_meets_constraint(
+                  &satisfying_tokens[satisfying_tokens.size() - 1], failing_tk, stn);
 
-            if (!succ1 || !succ2) {
-                for (Token tk : satisfying_tokens) {
-                    stn->del_timepoint(tk.get_start());
-                    stn->del_timepoint(tk.get_end());
+                if (!succ1 || !succ2) {
+                    for (Token tk : satisfying_tokens) {
+                        stn->del_timepoint(tk.get_start());
+                        stn->del_timepoint(tk.get_end());
+                    }
+                    return make_pair(false, vector<slot>());
                 }
-                return make_pair(false, vector<slot>());
+            } else {
+                // If the timeline of the procedural tokens and the failing token belong to separate
+                // timelines then we need to connect the last end-timepoint of the procedural tokens
+                // to the start-timepoint of the failing token to ensure that the effect of the
+                // procedural tokens gets reflected when we check the preconditions of the failing
+                // token while validating the plan
+                bool succ = add_meets_constraint(
+                  &satisfying_tokens[satisfying_tokens.size() - 1], failing_tk, stn);
+                if (!succ) {
+                    for (Token tk : satisfying_tokens) {
+                        stn->del_timepoint(tk.get_start());
+                        stn->del_timepoint(tk.get_end());
+                    }
+                    return make_pair(false, vector<slot>());
+                }
             }
         }
 
@@ -1683,7 +1705,10 @@ schedule_leafs(vector<task_vertex> leafs,
 void
 commit_slots(Plan* p, pq* solution)
 {
+
+    PLOGD << "Commit Slots now\n";
     tasknetwork_solution slot_to_commit = solution->top();
+    PLOGD << slot_to_commit.to_string() << endl;
 
     int counter = 0;
     for (int i = 0; i < (int)slot_to_commit.solution.size(); i++) {
@@ -1691,12 +1716,20 @@ commit_slots(Plan* p, pq* solution)
         vector<slot> leaf_slots = leaf_solution.token_slots;
         assert(leaf_slots.size() > 0);
 
+        string main_tl = "";
         double main_dur = 0.0;
         Token main_tk = Token();
 
         for (slot s : leaf_slots) {
             if (s.tk.get_resource() == "robot") {
+                PLOGD << "Main token " << s.tk.to_string() << endl;
+                // Special case when the robot token of one type needs to connect to another robot
+                // token of another type. This is required for the "clear" case.
+                if (main_tk.is_external() && s.tk.is_external() && main_tl != s.tl_id)
+                    assert(add_meets_constraint(&main_tk, &s.tk, &stn));
+
                 main_tk = s.tk;
+                main_tl = s.tl_id;
 
                 for (task t : primitive_tasks)
                     if (s.tk.get_name() == t.name)
@@ -1710,6 +1743,7 @@ commit_slots(Plan* p, pq* solution)
                                             main_dur,
                                             main_dur);
                 assert(stn.add_constraint(dur_name, dur));
+                PLOGD << "Added constraint " << dur_name << endl;
 
                 for (string dep_meets : s.dependent_ends) {
                     map<string, constraint> current_stn_constraints = stn.get_constraints();
@@ -1721,16 +1755,13 @@ commit_slots(Plan* p, pq* solution)
                     string meets_name = s.tk.get_end() + dependent_meets_constraint + dep_meets;
                     constraint meets = make_tuple(s.tk.get_end(), dep_meets, zero, inf);
                     assert(stn.add_constraint(meets_name, meets));
+                    PLOGD << "Added constraint " << meets_name << endl;
                 }
             }
 
             Timeline* t = p->get_timelines(s.tl_id);
-            del_and_add_sequencing_constraint(&s.prev,
-                                              &s.tk,
-                                              &s.next,
-                                              &stn,
-
-                                              true);
+            del_and_add_sequencing_constraint(&s.prev, &s.tk, &s.next, &stn, true);
+            PLOGD << "Added sequencing constraint\n";
 
             if (s.tk.get_name() != main_tk.get_name()) {
                 string dur_name = s.tk.get_start() + duration_constraint + s.tk.get_end();
@@ -1739,11 +1770,16 @@ commit_slots(Plan* p, pq* solution)
 
                 assert(stn.add_constraint(dur_name, dur));
                 assert(add_meets_constraint(&main_tk, &s.tk, &stn));
+                PLOGD << "Added constraint " << dur_name << endl;
+                PLOGD << "Added meets constraint between " << main_tk.get_end() << ", "
+                      << s.tk.get_start() << endl;
             }
 
             if ((s.prev.is_external() || s.tk.is_external()) && counter != 0 &&
                 s.prev.get_request_id() == s.tk.get_request_id()) {
                 assert(add_meets_constraint(&s.prev, &s.tk, &stn));
+                PLOGD << "Added meets constraint between " << s.prev.get_end() << ", "
+                      << s.tk.get_start() << endl;
             }
 
             t->insert_token(s.tk, s.prev, s.next);

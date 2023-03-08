@@ -11,7 +11,7 @@
 		)
         (:object-instants
             ur5A {block = blockA, st = home, grasp = empty}
-    		ur5B {block = blockE, st = home, grasp = empty}
+    		ur5B {block = blockC, st = home, grasp = empty}
 			box1 {loc = box1_pick_loc}
 			box2 {loc = box2_pick_loc}
 			requestA {release_time = 0, due_date = 10000, demand = [move_item box1 box1_drop_loc]}
