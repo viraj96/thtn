@@ -1707,7 +1707,6 @@ void
 commit_slots(Plan* p, pq* solution)
 {
 
-    PLOGD << "Commit Slots now\n";
     tasknetwork_solution slot_to_commit = solution->top();
     p->num_tasks_robot[slot_to_commit.robot_assignment]++;
 
@@ -1723,7 +1722,6 @@ commit_slots(Plan* p, pq* solution)
 
         for (slot s : leaf_slots) {
             if (s.tk.get_resource() == "robot") {
-                PLOGD << "Main token " << s.tk.to_string() << endl;
                 // Special case when the robot token of one type needs to connect to another robot
                 // token of another type. This is required for the "clear" case.
                 if (main_tk.is_external() && s.tk.is_external() && main_tl != s.tl_id)
@@ -1744,7 +1742,6 @@ commit_slots(Plan* p, pq* solution)
                                             main_dur,
                                             main_dur);
                 assert(stn.add_constraint(dur_name, dur));
-                PLOGD << "Added constraint " << dur_name << endl;
 
                 for (string dep_meets : s.dependent_ends) {
                     map<string, constraint> current_stn_constraints = stn.get_constraints();
@@ -1756,13 +1753,11 @@ commit_slots(Plan* p, pq* solution)
                     string meets_name = s.tk.get_end() + dependent_meets_constraint + dep_meets;
                     constraint meets = make_tuple(s.tk.get_end(), dep_meets, zero, inf);
                     assert(stn.add_constraint(meets_name, meets));
-                    PLOGD << "Added constraint " << meets_name << endl;
                 }
             }
 
             Timeline* t = p->get_timelines(s.tl_id);
             del_and_add_sequencing_constraint(&s.prev, &s.tk, &s.next, &stn, true);
-            PLOGD << "Added sequencing constraint\n";
 
             if (s.tk.get_name() != main_tk.get_name()) {
                 string dur_name = s.tk.get_start() + duration_constraint + s.tk.get_end();
@@ -1771,16 +1766,11 @@ commit_slots(Plan* p, pq* solution)
 
                 assert(stn.add_constraint(dur_name, dur));
                 assert(add_meets_constraint(&main_tk, &s.tk, &stn));
-                PLOGD << "Added constraint " << dur_name << endl;
-                PLOGD << "Added meets constraint between " << main_tk.get_end() << ", "
-                      << s.tk.get_start() << endl;
             }
 
             if ((s.prev.is_external() || s.tk.is_external()) && counter != 0 &&
                 s.prev.get_request_id() == s.tk.get_request_id()) {
                 assert(add_meets_constraint(&s.prev, &s.tk, &stn));
-                PLOGD << "Added meets constraint between " << s.prev.get_end() << ", "
-                      << s.tk.get_start() << endl;
             }
 
             t->insert_token(s.tk, s.prev, s.next);
