@@ -1783,6 +1783,19 @@ commit_slots(Plan* p, pq* solution)
     }
 }
 
+/* void */
+/* patch_plan(Plan p, Token* failing_tk, world_state current_state) */
+/* { */
+
+/*     // Assumption: The plan can only fail to be validated at the external rail move tokens for
+ * now */
+/*     assert(failing_tk.is_external()); */
+
+/*     // Cases */
+/*     // 1. Rq1 - RMs - Rq2 */
+
+/* } */
+
 /* pair<bool, Plan> */
 /* patch_plan(Plan p, Token* failing_tk, vector<ground_literal>* init) */
 /* { */

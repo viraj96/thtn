@@ -1,5 +1,19 @@
 #include "utils.hpp"
 
+string
+validation_state::to_string() const
+{
+    string result = "Validation State: ";
+    result += "\t Token = " failing_token.to_string() + "\n";
+    result += "\t Source vertex = " + source.to_string() + "\n";
+    result += "\t Sink vertex = " + target.to_string() + "\n";
+    result += "\t World State = ";
+    for (pair<string, object_state> ws : current_state)
+        result += "\t\t" + ws.second.to_string() + "\n";
+    result += "\t Status = " + status + "\n";
+    return result;
+}
+
 double
 compute_makespan(Plan* p)
 {
@@ -49,7 +63,7 @@ compute_metrics(Plan* p)
 // 2. If the plan validator fails then we nede to repair the plan. We can either repair it as each
 // request gets processed or at the very end. Leaning towards the first option
 
-pair<bool, Token>
+validation_state
 plan_validator(Plan* p)
 {
 
@@ -93,6 +107,7 @@ plan_validator(Plan* p)
                     if (tk.get_name() == "head" || tk.get_name() == "tail")
                         continue;
 
+                    vertex source = vertex(), sink = vertex();
                     stn_bounds tk_start_bounds = stn.get_feasible_values(tk.get_start());
                     stn_bounds tk_end_bounds = stn.get_feasible_values(tk.get_end());
 
@@ -104,7 +119,6 @@ plan_validator(Plan* p)
                         // an edge between the source and sink vertex of the rail_move operator
                         // inside the graph. This part computes the source vertex. After updating
                         // the robot state we compute the sink vertex and the check for the edge
-                        vertex source = vertex(), sink = vertex();
                         if (tk.get_name() == "rail_move") {
 
                             for (arg_and_type as : current_state[t.get_id()].attribute_states.vars)
@@ -169,9 +183,17 @@ plan_validator(Plan* p)
                                 vertex_t s = get_vertex(source.id, rail_network);
 
                                 if (!boost::edge(s, t, rail_network.adj_list).second)
-                                    return make_pair(false, tk);
+                                    return validation_state(&tk,
+                                                            &source,
+                                                            &sink,
+                                                            &current_state,
+                                                            validation_exception::EDGE_SKIP);
                             } else {
-                                return make_pair(false, tk);
+                                return validation_state(&tk,
+                                                        &source,
+                                                        &sink,
+                                                        &current_state,
+                                                        validation_exception::VERTEX_SAME);
                             }
                         }
                     }
@@ -193,7 +215,11 @@ plan_validator(Plan* p)
                                     bool succ =
                                       check_precondition(&prec, &tk_knowns, &current_state, &init);
                                     if (!succ)
-                                        return make_pair(false, tk);
+                                        return validation_state(&tk,
+                                                                &source,
+                                                                &sink,
+                                                                &current_state,
+                                                                validation_exception::PREC_FAIL);
                                 }
                             }
                         }
@@ -212,7 +238,11 @@ plan_validator(Plan* p)
                                     bool succ =
                                       check_precondition(&prec, &tk_knowns, &current_state, &init);
                                     if (!succ)
-                                        return make_pair(false, tk);
+                                        return validation_state(&tk,
+                                                                &source,
+                                                                &sink,
+                                                                &current_state,
+                                                                validation_exception::PREC_FAIL);
                                 }
                             }
                         }
@@ -232,8 +262,10 @@ plan_validator(Plan* p)
         }
 
         if (robots.size() != occupied_blocks.size())
-            return make_pair(false, Token());
+            return validation_state(
+              &Token(), &vertex(), &vertex(), &current_state, validation_exception::MULTI_BLOCK);
     }
 
-    return make_pair(true, Token());
+    return validation_state(
+      &Token(), &vertex(), &vertex(), &world_state(), validation_exception::NO_EXCEPTION);
 }

@@ -290,7 +290,7 @@ main(int argc, char** argv)
                 auto end = chrono::steady_clock::now();
                 auto diff = end - start;
                 if (plan_found) {
-                    pair<bool, Token> validation = plan_validator(&p);
+                    pair<validation_exception, Token> validation = plan_validator(&p);
                     if (validation.first) {
                         pair<double, double> metric_vals = compute_metrics(&p);
                         if (metric == "actions")
