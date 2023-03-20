@@ -4,8 +4,11 @@
 
 #include <plog/Log.h>
 
+#include "domain.hpp"
 #include "planner.hpp"
 #include "timelines.hpp"
+
+extern world_state initial_state;
 
 enum validation_exception
 {
@@ -15,7 +18,7 @@ enum validation_exception
     PREC_FAIL = 3,    // When a precondition of a token fails against the current state of the world
     MULTI_BLOCK = 4,  // When a robot is occupying multiple rail blocks at a time
     UNKNOWN = 5       // Completely unknown error
-}
+};
 
 struct validation_state
 {
@@ -35,13 +38,13 @@ struct validation_state
     }
 
     validation_state(Token* failing_token,
-                     vertex* source,
-                     vertex* sink,
+                     vertex source,
+                     vertex sink,
                      world_state* current_state,
-                     validation_status status)
+                     validation_exception status)
       : failing_token(*failing_token)
-      , source(*source)
-      , sink(*sink)
+      , source(source)
+      , sink(sink)
       , current_state(*current_state)
       , status(status)
     {}

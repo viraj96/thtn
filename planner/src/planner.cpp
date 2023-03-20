@@ -1693,6 +1693,18 @@ schedule_leafs(vector<task_vertex> leafs,
         }
     }
 
+    // Once a feasible solution has been found for the given task then we need to check that it can
+    // be validated which if failed needs to be recitifed via the patching process
+    validation_state state = plan_validator(&p);
+    if (state.status != validation_exception::NO_EXCEPTION) {
+        bool success = patch_plan(&p, solution, &state);
+        if (!success) {
+            PLOGE << "Patching failed! Please refer to the following exception state: "
+                  << state.to_string() << endl;
+            assert(false);
+        }
+    }
+
     double best_metric = -1.0 * std::numeric_limits<double>::infinity();
     if (metric == "makespan") {
         best_metric = compute_makespan(&p);
@@ -1783,18 +1795,39 @@ commit_slots(Plan* p, pq* solution)
     }
 }
 
-/* void */
-/* patch_plan(Plan p, Token* failing_tk, world_state current_state) */
-/* { */
+bool
+patch_plan(Plan* p, vector<primitive_solution>* solution, validation_state* exception_state)
+{
 
-/*     // Assumption: The plan can only fail to be validated at the external rail move tokens for
- * now */
-/*     assert(failing_tk.is_external()); */
+    // Assumption: The plan can only fail to be validated at the external rail move tokens for now
+    assert(exception_state->failing_token.is_external());
 
-/*     // Cases */
-/*     // 1. Rq1 - RMs - Rq2 */
+    switch (exception_state->status) {
 
-/* } */
+        case validation_exception::NO_EXCEPTION:
+            break;
+        case validation_exception::UNKNOWN:
+            PLOGE << "Fatal error! Plan validation failed due to unknown reasons\n";
+        case validation_exception::EDGE_SKIP:
+            // The edge required does not exist so we have to add additional tokens to make it
+            // happen
+            PLOGD << exception_state->to_string() << endl;
+            break;
+        case validation_exception::VERTEX_SAME:
+            // We are already at the vertex where we want to go so no need for additional task as
+            // this is essentially a no-op
+            break;
+        case validation_exception::PREC_FAIL:
+            // If the failed precondition is due to a rail move operation then that can be tried to
+            // be fixed
+            break;
+        default:
+            break;
+    }
+
+    // Need to change this later
+    return true;
+}
 
 /* pair<bool, Plan> */
 /* patch_plan(Plan p, Token* failing_tk, vector<ground_literal>* init) */

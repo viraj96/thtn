@@ -290,8 +290,8 @@ main(int argc, char** argv)
                 auto end = chrono::steady_clock::now();
                 auto diff = end - start;
                 if (plan_found) {
-                    pair<validation_exception, Token> validation = plan_validator(&p);
-                    if (validation.first) {
+                    validation_state state = plan_validator(&p);
+                    if (state.status == validation_exception::NO_EXCEPTION) {
                         pair<double, double> metric_vals = compute_metrics(&p);
                         if (metric == "actions")
                             metric_values.insert(make_pair(permute_counter, metric_vals.first));
@@ -303,11 +303,25 @@ main(int argc, char** argv)
 
                         PLOGE << "Permute Counter = " << permute_counter << endl;
                         PLOGE << "PLAN WAS FOUND BUT VALIDATION FAILED!!\n";
-                        if (validation.second == Token())
-                            PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
-                        else
-                            PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
-                                  << validation.second.to_string() << endl;
+                        switch (state.status) {
+                            case validation_exception::EDGE_SKIP:
+                            case validation_exception::VERTEX_SAME:
+                            case validation_exception::MULTI_BLOCK:
+                                PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (state.status) {
+                            case validation_exception::EDGE_SKIP:
+                            case validation_exception::VERTEX_SAME:
+                            case validation_exception::PREC_FAIL:
+                                PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
+                                      << state.failing_token.to_string() << endl;
+                                break;
+                            default:
+                                break;
+                        }
                         PLOGE << "The whole plan is - \n" << p.to_string() << endl;
                         stn.destroy();
                         assert(false);
@@ -330,8 +344,8 @@ main(int argc, char** argv)
                 auto end = chrono::steady_clock::now();
                 auto diff = end - start;
                 if (plan_found) {
-                    pair<bool, Token> validation = plan_validator(&p);
-                    if (validation.first) {
+                    validation_state state = plan_validator(&p);
+                    if (state.status == validation_exception::NO_EXCEPTION) {
                         pair<double, double> metric_vals = compute_metrics(&p);
                         if (metric == "actions")
                             metric_values.insert(make_pair(permute_counter, metric_vals.first));
@@ -344,11 +358,25 @@ main(int argc, char** argv)
                         PLOGE << "Counter = " << counter << endl;
                         PLOGE << "Permute Counter = " << permute_counter << endl;
                         PLOGE << "PLAN WAS FOUND BUT VALIDATION FAILED!!\n";
-                        if (validation.second == Token())
-                            PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
-                        else
-                            PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
-                                  << validation.second.to_string() << endl;
+                        switch (state.status) {
+                            case validation_exception::EDGE_SKIP:
+                            case validation_exception::VERTEX_SAME:
+                            case validation_exception::MULTI_BLOCK:
+                                PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (state.status) {
+                            case validation_exception::EDGE_SKIP:
+                            case validation_exception::VERTEX_SAME:
+                            case validation_exception::PREC_FAIL:
+                                PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
+                                      << state.failing_token.to_string() << endl;
+                                break;
+                            default:
+                                break;
+                        }
                         PLOGE << "The whole plan is - \n" << p.to_string() << endl;
                         stn.destroy();
                         assert(false);
@@ -372,8 +400,8 @@ main(int argc, char** argv)
         auto end = chrono::steady_clock::now();
         auto diff = end - start;
         if (plan_found) {
-            pair<bool, Token> validation = plan_validator(&p);
-            if (validation.first) {
+            validation_state state = plan_validator(&p);
+            if (state.status == validation_exception::NO_EXCEPTION) {
                 PLOGV << p.to_string();
                 pair<double, double> metric_values = compute_metrics(&p);
                 cout << flush;
@@ -382,11 +410,25 @@ main(int argc, char** argv)
                 cout << "Makespan: " << metric_values.second << "\n";
             } else {
                 PLOGE << "PLAN WAS FOUND BUT VALIDATION FAILED!!\n";
-                if (validation.second == Token())
-                    PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
-                else
-                    PLOGE << "\t[REASON]: OFFENDING TOKEN -> " << validation.second.to_string()
-                          << endl;
+                switch (state.status) {
+                    case validation_exception::EDGE_SKIP:
+                    case validation_exception::VERTEX_SAME:
+                    case validation_exception::MULTI_BLOCK:
+                        PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
+                        break;
+                    default:
+                        break;
+                }
+                switch (state.status) {
+                    case validation_exception::EDGE_SKIP:
+                    case validation_exception::VERTEX_SAME:
+                    case validation_exception::PREC_FAIL:
+                        PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
+                              << state.failing_token.to_string() << endl;
+                        break;
+                    default:
+                        break;
+                }
                 PLOGE << "The whole plan is - \n" << p.to_string() << endl;
                 stn.destroy();
                 assert(false);

@@ -13,6 +13,7 @@
 #include "graph.hpp"
 #include "parsetree.hpp"
 #include "timelines.hpp"
+#include "utils.hpp"
 
 using namespace std;
 
@@ -114,7 +115,6 @@ typedef priority_queue<tasknetwork_solution, vector<tasknetwork_solution>, Compa
 
 extern int attempts;
 extern int max_recursive_depth;
-extern world_state initial_state;
 
 bool
 is_resource(string type);
@@ -133,12 +133,12 @@ add_meets_constraint(Token* first, Token* second, STN* stn);
 Token
 gen_token(arg_and_type argument, Token* causal_token, STN* stn);
 
-pair<bool, Plan>
-patch_plan(Plan p, Token* failing_tk, vector<ground_literal>* init);
+// patch plan does not need to be called in the main because we are going to call if after each
+// successful attempt
+bool
+patch_plan(Plan* p, vector<primitive_solution>* solution, validation_state* state);
 set<string>
 get_literal_args_and_types(literal* lit, set<arg_and_type>* arguments);
-pair<bool, Token>
-plan_validator(Plan* p);
 pair<bool, vector<slot>>
 schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn, int depth = 0);
 
