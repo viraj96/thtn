@@ -96,10 +96,13 @@ plan_validator(Plan* p)
         }
     }
 
-    for (double time = 0; time <= makespan; time++) {
+    for (double time = 0; time <= makespan; time += globalMinDuration) {
         // Going to use earliest start and finish times for maintaining world state and checking
         // preconditions against that world state
 
+        int robot_counter = 0;
+        vector<string> robot_locations = vector<string>();
+        robot_locations.resize((int)robots.size());
         // First we update the current state of the world til the current timestep
         for (Timeline t : tls) {
             if (t.get_resource() == "robot") {
@@ -112,6 +115,18 @@ plan_validator(Plan* p)
                     // If the EFT of the token is same as the current time then we need to update
                     // the world state of the robot by applying the effects of this token
                     if (abs(get<0>(tk_end_bounds)) == time) {
+
+                        // Check to ensure that the source - sink movement is correct i.e there is
+                        // an edge between the source and sink vertex of the rail_move operator
+                        // inside the graph. This part computes the source vertex. After updating
+                        // the robot state we compute the sink vertex and the check for the edge
+                        if (tk.get_name() == "rail_move") {
+
+                            for (arg_and_type as : current_state[t.get_id()].attribute_states.vars)
+                                if (as.first == rail_block_attribute_name)
+                                    robot_locations[robot_counter] = as.second;
+                        }
+
                         // Need to change the state of the other resources as well
                         for (literal eff : tk.get_effects())
                             if (eff.predicate == dummy_equal_literal &&
@@ -158,11 +173,13 @@ plan_validator(Plan* p)
                         current_state[t.get_id()] = rs;
                     }
                 }
+                robot_counter++;
             }
         }
 
         // Now we check the preconditions and rail block constraints against the current state of
         // the world
+        robot_counter = 0;
         for (Timeline t : tls) {
             if (t.get_resource() == "robot") {
                 vector<Token> tks = t.get_tokens();
@@ -178,20 +195,11 @@ plan_validator(Plan* p)
                     // the world state of the robot by applying the effects of this token
                     if (abs(get<0>(tk_end_bounds)) == time) {
 
-                        vertex source = vertex(), sink = vertex();
-                        // Check to ensure that the source - sink movement is correct i.e there is
-                        // an edge between the source and sink vertex of the rail_move operator
-                        // inside the graph. This part computes the source vertex. After updating
-                        // the robot state we compute the sink vertex and the check for the edge
-                        if (tk.get_name() == "rail_move") {
-
-                            for (arg_and_type as : current_state[t.get_id()].attribute_states.vars)
-                                if (as.first == rail_block_attribute_name)
-                                    source.id = as.second;
-                        }
-
                         // This completes the check for the rail_blocks case as described before
                         if (tk.get_name() == "rail_move") {
+
+                            vertex source = vertex(), sink = vertex();
+                            source.id = robot_locations[robot_counter];
 
                             for (arg_and_type as : current_state[t.get_id()].attribute_states.vars)
                                 if (as.first == rail_block_attribute_name)
@@ -267,6 +275,7 @@ plan_validator(Plan* p)
                         }
                     }
                 }
+                robot_counter++;
             }
         }
 

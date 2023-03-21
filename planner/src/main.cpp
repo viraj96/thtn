@@ -28,6 +28,7 @@ STN stn = STN();
 int attempts = 1;
 graph rail_network = graph();
 int max_recursive_depth = 2;
+int globalMinDuration = INT_MAX;
 string domain_name = dummy_domain_name;
 string problem_name = dummy_problem_name;
 world_state initial_state = world_state();
@@ -274,6 +275,10 @@ main(int argc, char** argv)
     assign_func_impl(fp, fm1);
     assign_func_impl(fm2);
 
+    for (task t : primitive_tasks)
+        if (t.name.find(method_precondition_action_name) == string::npos)
+            globalMinDuration = min(globalMinDuration, (int)t.duration);
+
     map<int, double> time_values = map<int, double>();
     map<int, double> metric_values = map<int, double>();
     if (permute) {
@@ -429,6 +434,7 @@ main(int argc, char** argv)
                     default:
                         break;
                 }
+                PLOGE << state.to_string() << endl;
                 PLOGE << "The whole plan is - \n" << p.to_string() << endl;
                 stn.destroy();
                 assert(false);

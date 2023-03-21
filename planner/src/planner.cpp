@@ -1419,7 +1419,7 @@ rewiring_check_phase(slot* to_explore,
                     // meets constraint in its place from the
                     // same dependent token's end timepoint to
                     // the current token's end timepoint.
-
+                    //
                     assert(stn->del_constraint(second_meets_name));
                     string c_name = tk->get_end() + dependent_meets_constraint + t.get_end();
                     constraint c = make_tuple(tk->get_end(), t.get_end(), zero, inf);
@@ -1811,15 +1811,18 @@ patch_plan(Plan* p, vector<primitive_solution>* solution, validation_state* exce
         case validation_exception::EDGE_SKIP:
             // The edge required does not exist so we have to add additional tokens to make it
             // happen
+            PLOGE << "EDGE SKIP\n\n";
             PLOGD << exception_state->to_string() << endl;
             break;
         case validation_exception::VERTEX_SAME:
             // We are already at the vertex where we want to go so no need for additional task as
             // this is essentially a no-op
+
             break;
         case validation_exception::PREC_FAIL:
             // If the failed precondition is due to a rail move operation then that can be tried to
             // be fixed
+            PLOGE << "PRECONDITION FAILED\n\n";
             break;
         default:
             break;

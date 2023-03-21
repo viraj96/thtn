@@ -4,10 +4,13 @@
 
 #include <plog/Log.h>
 
+struct validation_state; // forward declaration of this struct
+
 #include "domain.hpp"
 #include "planner.hpp"
 #include "timelines.hpp"
 
+extern int globalMinDuration;
 extern world_state initial_state;
 
 enum validation_exception

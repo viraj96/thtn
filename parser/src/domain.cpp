@@ -1,7 +1,7 @@
-#include <cassert>
-#include <iostream>
 #include <algorithm>
+#include <cassert>
 #include <functional>
+#include <iostream>
 
 #include "cwa.hpp"
 #include "domain.hpp"
@@ -11,9 +11,11 @@ using namespace std;
 
 map<string, int> sort_visi = map<string, int>();
 string GUARD_PREDICATE = "multi_stage_execution_guard";
-map<string, set<string> > sort_adj = map<string, set<string> >();
+map<string, set<string>> sort_adj = map<string, set<string>>();
 
-string var_declaration::to_string() const {
+string
+var_declaration::to_string() const
+{
     string result = "Var Declaration: ";
     result += "\n\t Vars = \n";
     for (arg_and_type arg : vars)
@@ -22,11 +24,15 @@ string var_declaration::to_string() const {
     return result;
 }
 
-bool operator<(const var_declaration &left, const var_declaration &right) {
+bool
+operator<(const var_declaration& left, const var_declaration& right)
+{
     return (left.vars.size() < right.vars.size());
 }
 
-string object_state::to_string() const {
+string
+object_state::to_string() const
+{
     string result = "Object State: ";
     result += "\n\t Name = " + object_name;
     result += "\n\t Parent = " + parent;
@@ -37,7 +43,9 @@ string object_state::to_string() const {
     return result;
 }
 
-string literal::to_string() const {
+string
+literal::to_string() const
+{
     string result = "Literal: ";
 
     result += "\n\t Positive = ";
@@ -69,35 +77,41 @@ string literal::to_string() const {
     result += "\t Predicate = " + predicate + "\n";
 
     result += "\t Arguments = \n";
-    for (string arg : arguments) result += "\t\t " + arg + "\n";
+    for (string arg : arguments)
+        result += "\t\t " + arg + "\n";
 
     return result;
 }
 
-bool operator<(const literal &left, const literal &right) {
-    return tie(left.positive, left.timed, left.predicate, left.arguments,
-               left.temp_qual) < tie(right.positive, right.timed,
-                                     right.predicate, right.arguments,
-                                     right.temp_qual);
+bool
+operator<(const literal& left, const literal& right)
+{
+    return tie(left.positive, left.timed, left.predicate, left.arguments, left.temp_qual) <
+           tie(right.positive, right.timed, right.predicate, right.arguments, right.temp_qual);
 }
 
-bool operator==(const literal &left, const literal &right) {
-    return tie(left.positive, left.timed, left.predicate, left.arguments,
-               left.temp_qual) == tie(right.positive, right.timed,
-                                      right.predicate, right.arguments,
-                                      right.temp_qual);
+bool
+operator==(const literal& left, const literal& right)
+{
+    return tie(left.positive, left.timed, left.predicate, left.arguments, left.temp_qual) ==
+           tie(right.positive, right.timed, right.predicate, right.arguments, right.temp_qual);
 }
 
-string conditional_effect::to_string() const {
+string
+conditional_effect::to_string() const
+{
     string result = "Conditional Effect: ";
     result += "\n\t Effect = " + effect.to_string() + "\n";
     result += "\t Condition = \n";
-    for (literal cond : condition) result += "\t\t " + cond.to_string() + "\n";
+    for (literal cond : condition)
+        result += "\t\t " + cond.to_string() + "\n";
 
     return result;
 }
 
-string task::to_string() const {
+string
+task::to_string() const
+{
     string result = "Task: ";
 
     result += "\n\t Name = " + name + "\n";
@@ -109,14 +123,15 @@ string task::to_string() const {
     else
         result += "false\n";
 
-    result += "\t Number of original vars = " +
-              std::to_string(number_of_original_vars) + "\n";
+    result += "\t Number of original vars = " + std::to_string(number_of_original_vars) + "\n";
 
     result += "\t Effect = \n";
-    for (literal e : eff) result += "\t\t" + e.to_string() + "\n";
+    for (literal e : eff)
+        result += "\t\t" + e.to_string() + "\n";
 
     result += "\t Precondition = \n";
-    for (literal p : prec) result += "\t\t" + p.to_string() + "\n";
+    for (literal p : prec)
+        result += "\t\t" + p.to_string() + "\n";
 
     result += "\t Vars = \n";
     for (arg_and_type arg : vars)
@@ -127,7 +142,8 @@ string task::to_string() const {
         result += "\t\t " + cons.to_string() + "\n";
 
     result += "\t Cost Expression = \n";
-    for (literal ce : costExpression) result += "\t\t " + ce.to_string() + "\n";
+    for (literal ce : costExpression)
+        result += "\t\t " + ce.to_string() + "\n";
 
     result += "\t Conditional Effects = \n";
     for (conditional_effect ce : ceff)
@@ -136,25 +152,34 @@ string task::to_string() const {
     return result;
 }
 
-bool operator<(const task &left, const task &right) {
+bool
+operator<(const task& left, const task& right)
+{
     return (left.name < right.name);
 }
 
-string plan_step::to_string() const {
+string
+plan_step::to_string() const
+{
     string result = "Plan Step: ";
     result += "\n\t Id = " + id + "\n";
     result += "\t Task = " + task + "\n";
     result += "\t Arguments = \n";
-    for (string arg : args) result += "\t\t " + arg + "\n";
+    for (string arg : args)
+        result += "\t\t " + arg + "\n";
 
     return result;
 }
 
-bool operator<(const plan_step &left, const plan_step &right) {
+bool
+operator<(const plan_step& left, const plan_step& right)
+{
     return (left.id < right.id);
 }
 
-string sync_constraints::to_string() const {
+string
+sync_constraints::to_string() const
+{
     string result = "Synchronization Constraints: ";
 
     result += "\n\t Task 1 = " + task1 + "\n";
@@ -172,7 +197,9 @@ string sync_constraints::to_string() const {
     return result;
 }
 
-string method::to_string() const {
+string
+method::to_string() const
+{
     string result = "Method: ";
 
     result += "\n\t Abtract Task = " + at + "\n";
@@ -185,10 +212,12 @@ string method::to_string() const {
         result += "false\n";
 
     result += "\t Plan Steps = \n";
-    for (plan_step p : ps) result += "\t\t " + p.to_string() + "\n";
+    for (plan_step p : ps)
+        result += "\t\t " + p.to_string() + "\n";
 
     result += "\t Abstract Task Arguments = \n";
-    for (string arg : atargs) result += "\t\t " + arg + "\n";
+    for (string arg : atargs)
+        result += "\t\t " + arg + "\n";
 
     result += "\t Vars = \n";
     for (arg_and_type arg : vars)
@@ -209,19 +238,24 @@ string method::to_string() const {
     return result;
 }
 
-string request::to_string() const {
+string
+request::to_string() const
+{
     string result = "Request: ";
     result += "\n\t Id " + id + "\n";
     result += "\t Task = " + demand.to_string() + "\n";
     result += "\t Due Date = " + std::to_string(due_date) + "\n";
     result += "\t Release Time = " + std::to_string(release_time) + "\n";
     result += "\t Arguments = \n";
-    for (string arg : arguments) result += "\t\t " + arg + "\n";
+    for (string arg : arguments)
+        result += "\t\t " + arg + "\n";
 
     return result;
 }
 
-void expansion_dfs(string sort) {
+void
+expansion_dfs(string sort)
+{
     if (sort_visi[sort] == 1) {
         cout << "Sort hierarchy contains a cycle ... " << endl;
         exit(3);
@@ -230,79 +264,92 @@ void expansion_dfs(string sort) {
     sort_visi[sort] = 1;
     for (string subsort : sort_adj[sort]) {
         // If not black
-        if (sort_visi[sort] != 2) expansion_dfs(subsort);
+        if (sort_visi[sort] != 2)
+            expansion_dfs(subsort);
 
         // Add constants to myself
-        for (string subelem : sorts[subsort]) sorts[sort].insert(subelem);
+        for (string subelem : sorts[subsort])
+            sorts[sort].insert(subelem);
     }
 
     sort_visi[sort] = 2;
 }
 
-void expand_sorts() {
+void
+expand_sorts()
+{
     for (sort_definition def : sort_definitions) {
-        if (def.has_parent_sort) sorts[def.parent_sort].size();
+        if (def.has_parent_sort)
+            sorts[def.parent_sort].size();
 
         for (string subsort : def.declared_sorts) {
             // Touch to ensure it is contained in the map
             sorts[subsort].size();
-            if (def.has_parent_sort) sort_adj[def.parent_sort].insert(subsort);
+            if (def.has_parent_sort)
+                sort_adj[def.parent_sort].insert(subsort);
         }
 
         for (arg_and_type v : def.vars.vars) {
-            if (sorts.count(v.second) > 0) sort_adj[v.second].insert(v.first);
+            if (sorts.count(v.second) > 0)
+                sort_adj[v.second].insert(v.first);
         }
     }
 
-    for (pair<string, set<string> > s : sorts) expansion_dfs(s.first);
+    for (pair<string, set<string>> s : sorts)
+        expansion_dfs(s.first);
 }
 
-void add_to_method_as_last(method &m, plan_step ps) {
-    for (plan_step &ops : m.ps) m.ordering.push_back(make_pair(ops.id, ps.id));
+void
+add_to_method_as_last(method& m, plan_step ps)
+{
+    for (plan_step& ops : m.ps)
+        m.ordering.push_back(make_pair(ops.id, ps.id));
     m.ps.push_back(ps);
 }
 
-void addPrimitiveTask(task &t) {
+void
+addPrimitiveTask(task& t)
+{
     primitive_tasks.push_back(t);
     task_name_map[t.name] = t;
 }
 
-void addAbstractTask(task &t) {
+void
+addAbstractTask(task& t)
+{
     abstract_tasks.push_back(t);
     task_name_map[t.name] = t;
 }
 
-pair<task, bool> flatten_primitive_task(
-    parsed_task &a, bool compileConditionalEffects,
-    bool linearConditionalEffectExpansion,
-    bool encodeDisjunctivePreconditionsInMethods, bool isArtificial) {
+pair<task, bool>
+flatten_primitive_task(parsed_task& a,
+                       bool compileConditionalEffects,
+                       bool linearConditionalEffectExpansion,
+                       bool encodeDisjunctivePreconditionsInMethods,
+                       bool isArtificial)
+{
     // First check whether this primitive as a disjunctive precondition
     bool disjunctivePreconditionForHTN =
-        encodeDisjunctivePreconditionsInMethods && a.prec->isDisjunctive();
+      encodeDisjunctivePreconditionsInMethods && a.prec->isDisjunctive();
 
     // Expand effects and preconditions if necessary and possible
-    vector<pair<
-        pair<vector<variant<literal, conditional_effect> >, vector<literal> >,
-        additional_variables> >
-        elist = a.eff->expand(compileConditionalEffects);
+    vector<pair<pair<vector<variant<literal, conditional_effect>>, vector<literal>>,
+                additional_variables>>
+      elist = a.eff->expand(compileConditionalEffects);
 
-    vector<pair<
-        pair<vector<variant<literal, conditional_effect> >, vector<literal> >,
-        additional_variables> >
-        plist = vector<pair<pair<vector<variant<literal, conditional_effect> >,
-                                 vector<literal> >,
-                            additional_variables> >();
+    vector<pair<pair<vector<variant<literal, conditional_effect>>, vector<literal>>,
+                additional_variables>>
+      plist = vector<pair<pair<vector<variant<literal, conditional_effect>>, vector<literal>>,
+                          additional_variables>>();
 
     // Precondition cannot contain conditional effects
     if (!disjunctivePreconditionForHTN)
         plist = a.prec->expand(false);
     else {
-        pair<pair<vector<variant<literal, conditional_effect> >,
-                  vector<literal> >,
+        pair<pair<vector<variant<literal, conditional_effect>>, vector<literal>>,
              additional_variables>
-            _temp = pair<pair<vector<variant<literal, conditional_effect> >,
-                              vector<literal> >,
-                         additional_variables>();
+          _temp = pair<pair<vector<variant<literal, conditional_effect>>, vector<literal>>,
+                       additional_variables>();
         plist.push_back(_temp);
     }
 
@@ -331,7 +378,8 @@ pair<task, bool> flatten_primitive_task(
             // Sort out the constraints
             for (variant<literal, conditional_effect> pl : p.first.first) {
                 // Precondition cannot have conditional effects in it
-                if (!holds_alternative<literal>(pl)) assert(false);
+                if (!holds_alternative<literal>(pl))
+                    assert(false);
 
                 /* if (get<literal>(pl).predicate ==  dummy_equal_literal) */
                 /*     t.constraints.push_back(get<literal>(pl)); */
@@ -358,8 +406,7 @@ pair<task, bool> flatten_primitive_task(
                     // TODO: State dependent action costs.
                     // This is very complicated.
                     // Ask Robert Mattmüller how to do it.
-                    if (get<conditional_effect>(eff)
-                            .effect.isCostChangeExpression)
+                    if (get<conditional_effect>(eff).effect.isCostChangeExpression)
                         assert(false);
 
                     // Conditional effect
@@ -377,7 +424,8 @@ pair<task, bool> flatten_primitive_task(
             // Gather the additional variables
             additional_variables addVars = p.second;
 
-            for (arg_and_type elem : e.second) addVars.insert(elem);
+            for (arg_and_type elem : e.second)
+                addVars.insert(elem);
 
             for (arg_and_type v : addVars) {
                 // Check whether this variable actually occurs anywhere
@@ -398,20 +446,18 @@ pair<task, bool> flatten_primitive_task(
                             contained |= v.first == arg;
                 }
 
-                if (!contained) continue;
+                if (!contained)
+                    continue;
                 t.vars.push_back(v);
             }
 
-            if (plist.size() > 1 || elist.size() > 1 ||
-                expansionHasConditionalEffect ||
+            if (plist.size() > 1 || elist.size() > 1 || expansionHasConditionalEffect ||
                 disjunctivePreconditionForHTN) {
                 // Helper functions
-                auto create_predicate_and_literal = [&](string prefix,
-                                                        task ce_at) {
+                auto create_predicate_and_literal = [&](string prefix, task ce_at) {
                     // Build three predicates, one for telling that something
                     // has to be checked still
-                    predicate_definition argument_predicate =
-                        predicate_definition();
+                    predicate_definition argument_predicate = predicate_definition();
                     argument_predicate.name = prefix + ce_at.name;
 
                     literal argument_literal = literal();
@@ -431,8 +477,7 @@ pair<task, bool> flatten_primitive_task(
                     return make_pair(argument_predicate, argument_literal);
                 };
 
-                auto create_task = [&](string prefix,
-                                       vector<arg_and_type> vars) {
+                auto create_task = [&](string prefix, vector<arg_and_type> vars) {
                     task tt = task();
                     tt.vars = vars;
                     tt.artificial = false;
@@ -458,8 +503,7 @@ pair<task, bool> flatten_primitive_task(
                     return m_ce;
                 };
 
-                auto create_singleton_method = [&](task at, task sub,
-                                                   string prefix) {
+                auto create_singleton_method = [&](task at, task sub, string prefix) {
                     method m_ce = create_method(at, prefix);
 
                     plan_step ps = plan_step();
@@ -489,7 +533,8 @@ pair<task, bool> flatten_primitive_task(
                     p.id = prefix;
                     p.args.clear();
                     p.task = tt.name;
-                    for (arg_and_type v : tt.vars) p.args.push_back(v.first);
+                    for (arg_and_type v : tt.vars)
+                        p.args.push_back(v.first);
 
                     return p;
                 };
@@ -497,7 +542,8 @@ pair<task, bool> flatten_primitive_task(
                 if (plist.size() > 1 || elist.size() > 1)
                     t.name += "|instance_" + to_string(i);
 
-                if (expansionHasConditionalEffect) t.name += "|ce_base_action";
+                if (expansionHasConditionalEffect)
+                    t.name += "|ce_base_action";
 
                 if (disjunctivePreconditionForHTN)
                     t.name += "|disjunctive_prec";
@@ -522,160 +568,143 @@ pair<task, bool> flatten_primitive_task(
                     // using the HTN structure
                     int globalFCounter = 0;
 
-                    function<void(task &, general_formula *, var_declaration)>
-                        generate_formula_HTN;
+                    function<void(task&, general_formula*, var_declaration)> generate_formula_HTN;
 
-                    generate_formula_HTN =
-                        [&](task &current_task, general_formula *f,
-                            var_declaration current_vars) -> void {
+                    generate_formula_HTN = [&](task& current_task,
+                                               general_formula* f,
+                                               var_declaration current_vars) -> void {
                         // Do different things based on formula type
                         int fcounter = globalFCounter++;
 
                         if (f->type == EMPTY) {
-                            method m = create_method(
-                                current_task,
-                                "__formula_empty_" + to_string(fcounter));
+                            method m =
+                              create_method(current_task, "__formula_empty_" + to_string(fcounter));
                             m.check_integrity();
                             methods.push_back(m);
 
-                        } else if (f->type == ATOM || f->type == NOTATOM ||
-                                   f->type == EQUAL || f->type == NOTEQUAL) {
+                        } else if (f->type == ATOM || f->type == NOTATOM || f->type == EQUAL ||
+                                   f->type == NOTEQUAL) {
                             string typ = "eq";
-                            if (f->type == NOTEQUAL) typ = "neq";
-                            if (f->type == ATOM) typ = "atom_" + f->predicate;
+                            if (f->type == NOTEQUAL)
+                                typ = "neq";
+                            if (f->type == ATOM)
+                                typ = "atom_" + f->predicate;
                             if (f->type == NOTATOM)
                                 typ = "not_atom_" + f->predicate;
 
-                            task check = create_task(
-                                "__formula_" + typ + "_" + to_string(fcounter),
-                                current_vars.vars);
+                            task check = create_task("__formula_" + typ + "_" + to_string(fcounter),
+                                                     current_vars.vars);
                             literal l = (f->type == ATOM || f->type == NOTATOM)
-                                            ? f->atomLiteral()
-                                            : f->equalsLiteral();
+                                          ? f->atomLiteral()
+                                          : f->equalsLiteral();
 
                             check.prec.push_back(l);
                             addPrimitiveTask(check);
 
                             create_singleton_method(
-                                current_task, check,
-                                "__formula_" + typ + "_" + to_string(fcounter));
+                              current_task, check, "__formula_" + typ + "_" + to_string(fcounter));
 
                         } else if (f->type == OR) {
                             int subCounter = 0;
-                            for (general_formula *sub : f->subformulae) {
+                            for (general_formula* sub : f->subformulae) {
                                 // Determine variables relevant for sub formula
                                 var_declaration subVars = var_declaration();
                                 set<string> occuringVariables =
-                                    sub->occuringUnQuantifiedVariables();
+                                  sub->occuringUnQuantifiedVariables();
 
                                 for (arg_and_type var_decl : current_vars.vars)
                                     if (occuringVariables.count(var_decl.first))
                                         subVars.vars.push_back(var_decl);
 
-                                task subTask = create_task(
-                                    "__formula_or_" + to_string(fcounter) +
-                                        "_" + to_string(subCounter) + "_",
-                                    subVars.vars);
+                                task subTask = create_task("__formula_or_" + to_string(fcounter) +
+                                                             "_" + to_string(subCounter) + "_",
+                                                           subVars.vars);
                                 addAbstractTask(subTask);
 
                                 // Create the method
-                                create_singleton_method(
-                                    current_task, subTask,
-                                    "__formula_or_" + to_string(fcounter) +
-                                        "_" + to_string(subCounter) + "_");
+                                create_singleton_method(current_task,
+                                                        subTask,
+                                                        "__formula_or_" + to_string(fcounter) +
+                                                          "_" + to_string(subCounter) + "_");
 
                                 generate_formula_HTN(subTask, sub, subVars);
                                 subCounter++;
                             }
 
-                        } else if (f->type == WHEN || f->type == VALUE ||
-                                   f->type == COST_CHANGE || f->type == COST ||
-                                   f->type == SYNC) {
+                        } else if (f->type == WHEN || f->type == VALUE || f->type == COST_CHANGE ||
+                                   f->type == COST || f->type == SYNC) {
                             // Not allowed
                             assert(false);
 
                         } else if (f->type == FORALL) {
-                            auto [var_replace, additional_vars] =
-                                f->forallVariableReplacement();
+                            auto [var_replace, additional_vars] = f->forallVariableReplacement();
 
-                            map<string, string> newVarTypes =
-                                map<string, string>();
+                            map<string, string> newVarTypes = map<string, string>();
                             for (auto [var, type] : additional_vars)
                                 newVarTypes[var] = type;
 
                             // We get new variables from the quantification,
                             // but some might already be there
                             set<string> existing_variables = set<string>();
-                            for (auto &[var, _] : current_vars.vars) {
+                            for (auto& [var, _] : current_vars.vars) {
                                 (void)_;
                                 existing_variables.insert(var);
                             }
 
                             // All of the forall instantiations go into one
                             // method
-                            method m = create_method(
-                                current_task,
-                                "__formula_forall_" + to_string(fcounter));
+                            method m = create_method(current_task,
+                                                     "__formula_forall_" + to_string(fcounter));
 
                             int sub = 0;
-                            for (map<string, string> replacement :
-                                 var_replace) {
+                            for (map<string, string> replacement : var_replace) {
                                 var_declaration sub_vars = current_vars;
-                                for (auto &[qvar, newVar] : replacement) {
+                                for (auto& [qvar, newVar] : replacement) {
                                     (void)qvar;
                                     if (existing_variables.count(newVar))
                                         assert(false);
                                     else {
                                         string type = newVarTypes[newVar];
-                                        sub_vars.vars.push_back(
-                                            make_pair(newVar, type));
-                                        m.vars.push_back(
-                                            make_pair(newVar, type));
+                                        sub_vars.vars.push_back(make_pair(newVar, type));
+                                        m.vars.push_back(make_pair(newVar, type));
                                     }
                                 }
 
-                                task subTask = create_task(
-                                    "__formula_forall_" + to_string(fcounter) +
-                                        "_" + to_string(sub) + "_",
-                                    sub_vars.vars);
+                                task subTask =
+                                  create_task("__formula_forall_" + to_string(fcounter) + "_" +
+                                                to_string(sub) + "_",
+                                              sub_vars.vars);
                                 addAbstractTask(subTask);
                                 add_to_method_as_last(
-                                    m, create_plan_step(
-                                           subTask, "id" + to_string(sub++)));
+                                  m, create_plan_step(subTask, "id" + to_string(sub++)));
 
                                 // Generate an HTN for the subtask
                                 generate_formula_HTN(
-                                    subTask,
-                                    f->subformulae[0]->copyReplace(replacement),
-                                    sub_vars);
+                                  subTask, f->subformulae[0]->copyReplace(replacement), sub_vars);
                             }
 
                             m.check_integrity();
                             methods.push_back(m);
 
                         } else if (f->type == AND) {
-                            method m = create_method(
-                                current_task,
-                                "__formula_and_" + to_string(fcounter));
+                            method m =
+                              create_method(current_task, "__formula_and_" + to_string(fcounter));
 
                             int subCounter = 0;
-                            for (general_formula *sub : f->subformulae) {
+                            for (general_formula* sub : f->subformulae) {
                                 var_declaration subVars = var_declaration();
                                 set<string> occuringVariables =
-                                    sub->occuringUnQuantifiedVariables();
+                                  sub->occuringUnQuantifiedVariables();
                                 for (arg_and_type var_decl : current_vars.vars)
                                     if (occuringVariables.count(var_decl.first))
                                         subVars.vars.push_back(var_decl);
 
-                                task subTask = create_task(
-                                    "__formula_and_" + to_string(fcounter) +
-                                        "_" + to_string(subCounter) + "_",
-                                    subVars.vars);
+                                task subTask = create_task("__formula_and_" + to_string(fcounter) +
+                                                             "_" + to_string(subCounter) + "_",
+                                                           subVars.vars);
                                 addAbstractTask(subTask);
                                 add_to_method_as_last(
-                                    m, create_plan_step(
-                                           subTask,
-                                           "id" + to_string(subCounter++)));
+                                  m, create_plan_step(subTask, "id" + to_string(subCounter++)));
 
                                 // Generate an HTN for the subtask
                                 generate_formula_HTN(subTask, sub, subVars);
@@ -685,75 +714,65 @@ pair<task, bool> flatten_primitive_task(
                             methods.push_back(m);
 
                         } else if (f->type == EXISTS) {
-                            map<string, string> var_replace =
-                                f->existsVariableReplacement();
+                            map<string, string> var_replace = f->existsVariableReplacement();
 
                             // We get new variables from the quantification,
                             // but some might already be there
                             set<string> existing_variables = set<string>();
-                            for (auto &[var, _] : current_vars.vars) {
+                            for (auto& [var, _] : current_vars.vars) {
                                 (void)_;
                                 existing_variables.insert(var);
                             }
 
                             var_declaration sub_vars = current_vars;
-                            for (auto &[qvar, type] : f->qvariables.vars) {
+                            for (auto& [qvar, type] : f->qvariables.vars) {
                                 string newVar = var_replace[qvar];
                                 if (existing_variables.count(newVar))
                                     assert(false);
                                 else {
-                                    sub_vars.vars.push_back(
-                                        make_pair(newVar, type));
+                                    sub_vars.vars.push_back(make_pair(newVar, type));
                                     m.vars.push_back(make_pair(newVar, type));
                                 }
                             }
 
                             task subTask = create_task(
-                                "__formula_exists_" + to_string(fcounter) + "_",
-                                sub_vars.vars);
+                              "__formula_exists_" + to_string(fcounter) + "_", sub_vars.vars);
                             addAbstractTask(subTask);
 
-                            create_singleton_method(current_task, subTask,
-                                                    "__formula_exists_" +
-                                                        to_string(fcounter) +
-                                                        "_");
+                            create_singleton_method(current_task,
+                                                    subTask,
+                                                    "__formula_exists_" + to_string(fcounter) +
+                                                      "_");
                             generate_formula_HTN(
-                                subTask,
-                                f->subformulae[0]->copyReplace(var_replace),
-                                sub_vars);
+                              subTask, f->subformulae[0]->copyReplace(var_replace), sub_vars);
                         }
                     };
 
                     // Determine initially needed variables
                     var_declaration initialVariables = var_declaration();
-                    set<string> occuringVariables =
-                        a.prec->occuringUnQuantifiedVariables();
+                    set<string> occuringVariables = a.prec->occuringUnQuantifiedVariables();
 
                     for (arg_and_type var_decl : t.vars)
                         if (occuringVariables.count(var_decl.first))
                             initialVariables.vars.push_back(var_decl);
 
-                    for (arg_and_type vars_for_consts :
-                         a.prec->variables_for_constants()) {
+                    for (arg_and_type vars_for_consts : a.prec->variables_for_constants()) {
                         initialVariables.vars.push_back(vars_for_consts);
                         m.vars.push_back(vars_for_consts);
                     }
 
                     // Create a carrier task
                     task formula_carrier_root =
-                        create_task("__formula-root", initialVariables.vars);
+                      create_task("__formula-root", initialVariables.vars);
                     formula_carrier_root.check_integrity();
                     addAbstractTask(formula_carrier_root);
-                    add_to_method_as_last(
-                        m,
-                        create_plan_step(formula_carrier_root, "id_prec_root"));
+                    add_to_method_as_last(m,
+                                          create_plan_step(formula_carrier_root, "id_prec_root"));
 
-                    generate_formula_HTN(formula_carrier_root, a.prec,
-                                         initialVariables);
+                    generate_formula_HTN(formula_carrier_root, a.prec, initialVariables);
                 }
 
-                if (linearConditionalEffectExpansion ||
-                    disjunctivePreconditionForHTN) {
+                if (linearConditionalEffectExpansion || disjunctivePreconditionForHTN) {
                     // Construct action applying the conditional effect
                     literal guard_literal = literal();
                     guard_literal.timed = START;
@@ -766,14 +785,14 @@ pair<task, bool> flatten_primitive_task(
 
                     t.prec.push_back(guard_literal);
 
-                    vector<pair<bool, plan_step> > steps_with_effects =
-                        vector<pair<bool, plan_step> >();
+                    vector<pair<bool, plan_step>> steps_with_effects =
+                      vector<pair<bool, plan_step>>();
 
                     // Effects of the main task need to be performed AFTER
                     // splitting
                     vector<literal> add_effects = vector<literal>(),
                                     del_effects = vector<literal>();
-                    for (literal &el : t.eff)
+                    for (literal& el : t.eff)
                         if (el.positive)
                             add_effects.push_back(el);
                         else
@@ -781,35 +800,32 @@ pair<task, bool> flatten_primitive_task(
                     t.eff.clear();
 
                     auto [main_arguments, main_literal] =
-                        create_predicate_and_literal("doing_action_", t);
+                      create_predicate_and_literal("doing_action_", t);
                     (void)main_arguments;
                     t.eff.push_back(main_literal);
                     guard_literal.positive = true;
                     t.eff.push_back(guard_literal);
 
                     int j = 0;
-                    for (conditional_effect &ceff : t.ceff) {
+                    for (conditional_effect& ceff : t.ceff) {
                         // PHASE 1 check conditions
-                        task ce_at = create_task(
-                            "__ce_check_" + to_string(j) + "_", t.vars);
+                        task ce_at = create_task("__ce_check_" + to_string(j) + "_", t.vars);
                         ce_at.check_integrity();
                         addAbstractTask(ce_at);
 
-                        plan_step ce_at_ps = create_plan_step(
-                            ce_at, "id_ce_prec_" + to_string(j));
+                        plan_step ce_at_ps = create_plan_step(ce_at, "id_ce_prec_" + to_string(j));
                         add_to_method_as_last(m, ce_at_ps);
 
                         auto [apply_predicate, apply_literal] =
-                            create_predicate_and_literal("do_apply_", ce_at);
+                          create_predicate_and_literal("do_apply_", ce_at);
                         (void)apply_predicate;
                         auto [not_apply_predicate, not_apply_literal] =
-                            create_predicate_and_literal("not_apply_", ce_at);
+                          create_predicate_and_literal("not_apply_", ce_at);
                         (void)not_apply_predicate;
 
                         // Add methods for this task, first the one that
                         // actually apply the CE
-                        task ce_yes = create_task(
-                            "__ce_yes_" + to_string(j) + "_", t.vars);
+                        task ce_yes = create_task("__ce_yes_" + to_string(j) + "_", t.vars);
                         ce_yes.prec = ceff.condition;
 
                         // Additional preconditions
@@ -820,17 +836,15 @@ pair<task, bool> flatten_primitive_task(
                         ce_yes.check_integrity();
                         addPrimitiveTask(ce_yes);
 
-                        create_singleton_method(ce_at, ce_yes,
-                                                "_method_for_ce_yes_");
+                        create_singleton_method(ce_at, ce_yes, "_method_for_ce_yes_");
 
                         // For every condition of the CE add one possible
                         // negation
                         int noCount = 0;
                         for (literal precL : ceff.condition) {
-                            task ce_no = create_task(
-                                "__ce_no_" + to_string(j) + "_cond_" +
-                                    to_string(noCount) + "_",
-                                t.vars);
+                            task ce_no = create_task("__ce_no_" + to_string(j) + "_cond_" +
+                                                       to_string(noCount) + "_",
+                                                     t.vars);
 
                             precL.positive = !precL.positive;
                             ce_no.prec.push_back(precL);
@@ -844,25 +858,21 @@ pair<task, bool> flatten_primitive_task(
                             addPrimitiveTask(ce_no);
 
                             create_singleton_method(
-                                ce_at, ce_no,
-                                "_method_for_ce_no_" + to_string(noCount++));
+                              ce_at, ce_no, "_method_for_ce_no_" + to_string(noCount++));
                         }
 
                         // PHASE 2 apply the effect
-                        task ce_apply = create_task(
-                            "__ce_apply_if_applicable_" + to_string(j) + "_",
-                            t.vars);
+                        task ce_apply =
+                          create_task("__ce_apply_if_applicable_" + to_string(j) + "_", t.vars);
                         ce_apply.check_integrity();
                         addAbstractTask(ce_apply);
 
-                        plan_step ce_apply_ps = create_plan_step(
-                            ce_apply, "id_ce_eff_" + to_string(j));
-                        steps_with_effects.push_back(
-                            make_pair(ceff.effect.positive, ce_apply_ps));
+                        plan_step ce_apply_ps =
+                          create_plan_step(ce_apply, "id_ce_eff_" + to_string(j));
+                        steps_with_effects.push_back(make_pair(ceff.effect.positive, ce_apply_ps));
 
                         // A task that applies the effect if necessary
-                        task ce_do = create_task(
-                            "__ce_apply_" + to_string(j) + "_", t.vars);
+                        task ce_do = create_task("__ce_apply_" + to_string(j) + "_", t.vars);
                         ce_do.eff.push_back(ceff.effect);
                         apply_literal.positive = true;
                         ce_do.prec.push_back(apply_literal);
@@ -870,20 +880,19 @@ pair<task, bool> flatten_primitive_task(
                         ce_do.eff.push_back(apply_literal);
                         ce_do.check_integrity();
                         addPrimitiveTask(ce_do);
-                        create_singleton_method(ce_apply, ce_do,
-                                                "_method_for_ce_do_apply_");
+                        create_singleton_method(ce_apply, ce_do, "_method_for_ce_do_apply_");
 
                         // A task that does not apply the effect if necessary
-                        task ce_not_do = create_task(
-                            "__ce_not_apply_" + to_string(j) + "_", t.vars);
+                        task ce_not_do =
+                          create_task("__ce_not_apply_" + to_string(j) + "_", t.vars);
                         not_apply_literal.positive = true;
                         ce_not_do.prec.push_back(not_apply_literal);
                         not_apply_literal.positive = false;
                         ce_not_do.eff.push_back(not_apply_literal);
                         ce_not_do.check_integrity();
                         addPrimitiveTask(ce_not_do);
-                        create_singleton_method(ce_apply, ce_not_do,
-                                                "_method_for_ce_not_do_apply_");
+                        create_singleton_method(
+                          ce_apply, ce_not_do, "_method_for_ce_not_do_apply_");
 
                         // Increment
                         j++;
@@ -894,8 +903,7 @@ pair<task, bool> flatten_primitive_task(
 
                     // Apply delete effects
                     if (del_effects.size()) {
-                        task main_deletes =
-                            create_task("_main_delete_", t.vars);
+                        task main_deletes = create_task("_main_delete_", t.vars);
                         main_literal.positive = true;
                         main_deletes.prec.push_back(main_literal);
                         main_deletes.eff = del_effects;
@@ -903,15 +911,14 @@ pair<task, bool> flatten_primitive_task(
                         main_deletes.check_integrity();
                         addPrimitiveTask(main_deletes);
 
-                        plan_step main_deletes_ps =
-                            create_plan_step(main_deletes, "id_main_del");
+                        plan_step main_deletes_ps = create_plan_step(main_deletes, "id_main_del");
                         add_to_method_as_last(m, main_deletes_ps);
                     }
 
                     // First apply the deleting then the adding effects!
                     // Else we break basic STRIPS rules
                     sort(steps_with_effects.begin(), steps_with_effects.end());
-                    for (auto &[_, ps] : steps_with_effects) {
+                    for (auto& [_, ps] : steps_with_effects) {
                         (void)_;
                         add_to_method_as_last(m, ps);
                     }
@@ -929,8 +936,7 @@ pair<task, bool> flatten_primitive_task(
                     main_add.check_integrity();
                     addPrimitiveTask(main_add);
 
-                    plan_step main_add_ps =
-                        create_plan_step(main_add, "id_main_add");
+                    plan_step main_add_ps = create_plan_step(main_add, "id_main_add");
                     add_to_method_as_last(m, main_add_ps);
                 }
 
@@ -968,17 +974,18 @@ pair<task, bool> flatten_primitive_task(
     return make_pair(mainTask, mainTaskIsPrimitive);
 }
 
-void flatten_tasks(bool compileConditionalEffects,
-                   bool linearConditionalEffectExpansion,
-                   bool encodeDisjunctivePreconditionsInMethods) {
+void
+flatten_tasks(bool compileConditionalEffects,
+              bool linearConditionalEffectExpansion,
+              bool encodeDisjunctivePreconditionsInMethods)
+{
     bool artificialUnitCosts = false;
     if (metric_target == dummy_function_type) {
         metric_target = "method_precondition_cost";
         artificialUnitCosts = true;
     }
 
-    if (linearConditionalEffectExpansion ||
-        encodeDisjunctivePreconditionsInMethods) {
+    if (linearConditionalEffectExpansion || encodeDisjunctivePreconditionsInMethods) {
         predicate_definition guardPredicate = predicate_definition();
         guardPredicate.functional = false;
         guardPredicate.name = GUARD_PREDICATE;
@@ -987,25 +994,25 @@ void flatten_tasks(bool compileConditionalEffects,
     }
 
     // Flatten the primitives
-    for (parsed_task &a : parsed_primitive) {
+    for (parsed_task& a : parsed_primitive) {
         if (artificialUnitCosts) {
-            general_formula *cost_f = new general_formula();
+            general_formula* cost_f = new general_formula();
             cost_f->type = COST;
             cost_f->predicate = metric_target;
             cost_f->functional = cost_f->isFunctional();
 
-            general_formula *cost_v = new general_formula();
+            general_formula* cost_v = new general_formula();
             cost_v->type = VALUE;
             cost_v->functional = false;
             cost_v->value = 1;
 
-            general_formula *cost_form = new general_formula();
+            general_formula* cost_form = new general_formula();
             cost_form->type = COST_CHANGE;
             cost_form->functional = false;
             cost_form->subformulae.push_back(cost_f);
             cost_form->subformulae.push_back(cost_v);
 
-            general_formula *fullEff = new general_formula();
+            general_formula* fullEff = new general_formula();
             fullEff->type = AND;
             fullEff->functional = false;
             fullEff->subformulae.push_back(a.eff);
@@ -1014,12 +1021,14 @@ void flatten_tasks(bool compileConditionalEffects,
             a.eff = fullEff;
         }
 
-        pair<task, bool> res = flatten_primitive_task(
-            a, compileConditionalEffects, linearConditionalEffectExpansion,
-            encodeDisjunctivePreconditionsInMethods, false);
+        pair<task, bool> res = flatten_primitive_task(a,
+                                                      compileConditionalEffects,
+                                                      linearConditionalEffectExpansion,
+                                                      encodeDisjunctivePreconditionsInMethods,
+                                                      false);
     }
 
-    for (parsed_task &a : parsed_abstract) {
+    for (parsed_task& a : parsed_abstract) {
         task at = task();
         at.name = a.name;
         at.vars = a.arguments->vars;
@@ -1031,11 +1040,13 @@ void flatten_tasks(bool compileConditionalEffects,
     }
 }
 
-void parsed_method_to_data_structures(
-    bool compileConditionalEffects, bool linearConditionalEffectExpansion,
-    bool encodeDisjunctivePreconditionsInMethods) {
+void
+parsed_method_to_data_structures(bool compileConditionalEffects,
+                                 bool linearConditionalEffectExpansion,
+                                 bool encodeDisjunctivePreconditionsInMethods)
+{
     int i = 0;
-    for (pair<string, vector<parsed_method> > e : parsed_methods)
+    for (pair<string, vector<parsed_method>> e : parsed_methods)
         for (parsed_method pm : e.second) {
             i++;
             method m = method();
@@ -1045,16 +1056,15 @@ void parsed_method_to_data_structures(
             m.functional = pm.functional;
 
             set<string> mVarSet = set<string>();
-            for (arg_and_type v : m.vars) mVarSet.insert(v.first);
+            for (arg_and_type v : m.vars)
+                mVarSet.insert(v.first);
 
             // Add variables needed due to constants in the arguments of the
             // abstract task
             map<string, string> at_arg_additional_vars = map<string, string>();
             for (arg_and_type av : pm.newVarForAT) {
-                at_arg_additional_vars[av.first] =
-                    av.first + "_" + to_string(i++);
-                m.vars.push_back(
-                    make_pair(at_arg_additional_vars[av.first], av.second));
+                at_arg_additional_vars[av.first] = av.first + "_" + to_string(i++);
+                m.vars.push_back(make_pair(at_arg_additional_vars[av.first], av.second));
             }
 
             // Compute arguments of the abstract task
@@ -1069,7 +1079,7 @@ void parsed_method_to_data_structures(
 
             if (!m.functional) {
                 // Subtasks
-                for (sub_task *st : pm.tn->tasks) {
+                for (sub_task* st : pm.tn->tasks) {
                     plan_step ps = plan_step();
                     ps.id = st->id;
                     ps.task = st->task;
@@ -1077,8 +1087,7 @@ void parsed_method_to_data_structures(
                     // Add new variables for artificial variables of the subtask
                     for (arg_and_type av : st->arguments->newVar) {
                         arg_replace[av.first] = av.first + "_" + to_string(i++);
-                        m.vars.push_back(
-                            make_pair(arg_replace[av.first], av.second));
+                        m.vars.push_back(make_pair(arg_replace[av.first], av.second));
                     }
 
                     for (string v : st->arguments->vars)
@@ -1091,16 +1100,15 @@ void parsed_method_to_data_structures(
                     // account for constants in them. We have to add them here.
                     task psTask = task_name_map[ps.task];
                     if (psTask.name != ps.task) {
-                        cerr << "There is no declaration of the subtask "
-                             << ps.task << " in the input" << endl;
+                        cerr << "There is no declaration of the subtask " << ps.task
+                             << " in the input" << endl;
                     }
 
                     // Ensure that we have found one
                     assert(psTask.name == ps.task);
-                    for (unsigned int j = st->arguments->vars.size();
-                         j < psTask.vars.size(); j++) {
-                        string v = psTask.vars[j].first + "_method_" + m.name +
-                                   "_instance_" + to_string(i++);
+                    for (unsigned int j = st->arguments->vars.size(); j < psTask.vars.size(); j++) {
+                        string v = psTask.vars[j].first + "_method_" + m.name + "_instance_" +
+                                   to_string(i++);
                         // Add var to set of vars
                         m.vars.push_back(make_pair(v, psTask.vars[j].second));
                         ps.args.push_back(v);
@@ -1118,23 +1126,23 @@ void parsed_method_to_data_structures(
             if (metric_target == dummy_function_type)
                 metric_target = "method_precondition_cost";
 
-            general_formula *cost_f = new general_formula();
+            general_formula* cost_f = new general_formula();
             cost_f->type = COST;
             cost_f->predicate = metric_target;
             cost_f->functional = cost_f->isFunctional();
 
-            general_formula *cost_v = new general_formula();
+            general_formula* cost_v = new general_formula();
             cost_v->type = VALUE;
             cost_v->functional = false;
             cost_v->value = 0;
 
-            general_formula *cost_form = new general_formula();
+            general_formula* cost_form = new general_formula();
             cost_form->type = COST_CHANGE;
             cost_form->functional = false;
             cost_form->subformulae.push_back(cost_f);
             cost_form->subformulae.push_back(cost_v);
 
-            general_formula *fullEff = new general_formula();
+            general_formula* fullEff = new general_formula();
             fullEff->type = AND;
             fullEff->functional = false;
             fullEff->subformulae.push_back(pm.eff);
@@ -1155,24 +1163,29 @@ void parsed_method_to_data_structures(
                     if (s == var.first || s.substr(0, s.find(".")) == var.first)
                         add = true;
 
-                if (add) mPrec_task.arguments->vars.push_back(var);
+                if (add)
+                    mPrec_task.arguments->vars.push_back(var);
             }
 
-            auto [mPrec, isPrimitive] = flatten_primitive_task(
-                mPrec_task, compileConditionalEffects,
-                linearConditionalEffectExpansion,
-                encodeDisjunctivePreconditionsInMethods, !m.functional);
-            if (!m.functional) mPrec.artificial = true;
+            auto [mPrec, isPrimitive] =
+              flatten_primitive_task(mPrec_task,
+                                     compileConditionalEffects,
+                                     linearConditionalEffectExpansion,
+                                     encodeDisjunctivePreconditionsInMethods,
+                                     !m.functional);
+            if (!m.functional)
+                mPrec.artificial = true;
 
-            for (size_t newVar = mPrec_task.arguments->vars.size();
-                 newVar < mPrec.vars.size(); newVar++)
+            for (size_t newVar = mPrec_task.arguments->vars.size(); newVar < mPrec.vars.size();
+                 newVar++)
                 m.vars.push_back(mPrec.vars[newVar]);
 
             // Edge case: The precondition might only have contained constraints
-            if (isPrimitive && mPrec.prec.size() == 0 &&
-                mPrec.eff.size() == 0 && mPrec.ceff.size() == 0) {
+            if (isPrimitive && mPrec.prec.size() == 0 && mPrec.eff.size() == 0 &&
+                mPrec.ceff.size() == 0) {
                 // Has only constraints
-                for (literal l : mPrec.constraints) m.constraints.push_back(l);
+                for (literal l : mPrec.constraints)
+                    m.constraints.push_back(l);
 
                 // Remove the task
                 primitive_tasks.pop_back();
@@ -1197,10 +1210,10 @@ void parsed_method_to_data_structures(
 
             if (!m.functional) {
                 // Ordering
-                for (arg_and_type *o : pm.tn->ordering)
+                for (arg_and_type* o : pm.tn->ordering)
                     m.ordering.push_back(*o);
 
-                for (general_formula *s : pm.tn->synchronize_constraints) {
+                for (general_formula* s : pm.tn->synchronize_constraints) {
                     sync_constraints sc = sync_constraints();
                     sc.lower_bound = s->lb;
                     sc.upper_bound = s->ub;
@@ -1211,18 +1224,16 @@ void parsed_method_to_data_structures(
                 }
 
                 // Constraints
-                vector<pair<pair<vector<variant<literal, conditional_effect> >,
-                                 vector<literal> >,
-                            additional_variables> >
-                    exconstraints = pm.tn->constraint->expand(false);
+                vector<pair<pair<vector<variant<literal, conditional_effect>>, vector<literal>>,
+                            additional_variables>>
+                  exconstraints = pm.tn->constraint->expand(false);
                 // Constraints cannot contain conditional effects
                 assert(exconstraints.size() == 1);
                 // No additional vars due to constraints
                 assert(exconstraints[0].second.size() == 0);
                 // No conditional effects
                 assert(exconstraints[0].first.second.size() == 0);
-                for (variant<literal, conditional_effect> l :
-                     exconstraints[0].first.first)
+                for (variant<literal, conditional_effect> l : exconstraints[0].first.first)
                     if (holds_alternative<literal>(l))
                         m.constraints.push_back(get<literal>(l));
                     else
@@ -1235,7 +1246,9 @@ void parsed_method_to_data_structures(
         }
 }
 
-void reduce_constraints() {
+void
+reduce_constraints()
+{
     int ns_count = 0;
     vector<method> oldm = methods;
     methods.clear();
@@ -1247,7 +1260,8 @@ void reduce_constraints() {
         vector<literal> oldC = m.constraints;
         m.constraints.clear();
         map<string, string> sorts_of_vars = map<string, string>();
-        for (arg_and_type pp : m.vars) sorts_of_vars[pp.first] = pp.second;
+        for (arg_and_type pp : m.vars)
+            sorts_of_vars[pp.first] = pp.second;
 
         for (literal l : oldC)
             if (l.predicate == dummy_equal_literal)
@@ -1259,10 +1273,12 @@ void reduce_constraints() {
                 vector<string> forbidden = vector<string>();
                 if (l.positive) {
                     for (string s : currentVals)
-                        if (sortElems.count(s) == 0) forbidden.push_back(s);
+                        if (sortElems.count(s) == 0)
+                            forbidden.push_back(s);
 
                 } else {
-                    for (string s : sortElems) forbidden.push_back(s);
+                    for (string s : sortElems)
+                        forbidden.push_back(s);
                 }
                 for (string f : forbidden) {
                     literal nl = literal();
@@ -1292,7 +1308,8 @@ void reduce_constraints() {
 
         bool removeMethod = false;
         map<string, string> vSort = map<string, string>();
-        for (arg_and_type x : m.vars) vSort[x.first] = x.second;
+        for (arg_and_type x : m.vars)
+            vSort[x.first] = x.second;
 
         for (literal l : oldC) {
             if (l.arguments[1][0] == '?' && l.arguments[0][0] != '?') {
@@ -1319,7 +1336,8 @@ void reduce_constraints() {
             string c = l.arguments[1];
 
             // v != c and c is not in the sort of v
-            if (!l.positive && !sorts[vSort[v]].count(c)) continue;
+            if (!l.positive && !sorts[vSort[v]].count(c))
+                continue;
 
             // Recompute sort
             set<string> vals = sorts[vSort[v]];
@@ -1335,8 +1353,7 @@ void reduce_constraints() {
                 vals.erase(c);
 
             if (vals != sorts[vSort[v]]) {
-                string ns = vSort[v] + "_constraint_propagated_" +
-                            to_string(++ns_count);
+                string ns = vSort[v] + "_constraint_propagated_" + to_string(++ns_count);
                 vSort[v] = ns;
                 sorts[ns] = vals;
             }
@@ -1363,7 +1380,8 @@ void reduce_constraints() {
 
         bool removeTask = false;
         map<string, string> vSort = map<string, string>();
-        for (arg_and_type x : t.vars) vSort[x.first] = x.second;
+        for (arg_and_type x : t.vars)
+            vSort[x.first] = x.second;
 
         for (literal l : oldC) {
             if (l.arguments[1][0] == '?' && l.arguments[0][0] != '?') {
@@ -1390,7 +1408,8 @@ void reduce_constraints() {
             string c = l.arguments[1];
 
             // v != c and c is not in the sort of v
-            if (!l.positive && !sorts[vSort[v]].count(c)) continue;
+            if (!l.positive && !sorts[vSort[v]].count(c))
+                continue;
 
             // Recompute sort
             set<string> vals = sorts[vSort[v]];
@@ -1405,8 +1424,7 @@ void reduce_constraints() {
                 vals.erase(c);
 
             if (vals != sorts[vSort[v]]) {
-                string ns = vSort[v] + "_constraint_propagated_" +
-                            to_string(++ns_count);
+                string ns = vSort[v] + "_constraint_propagated_" + to_string(++ns_count);
                 vSort[v] = ns;
                 sorts[ns] = vals;
             }
@@ -1417,11 +1435,14 @@ void reduce_constraints() {
         for (arg_and_type x : nt.vars)
             nvar.push_back(make_pair(x.first, vSort[x.first]));
         nt.vars = nvar;
-        if (!removeTask) primitive_tasks.push_back(nt);
+        if (!removeTask)
+            primitive_tasks.push_back(nt);
     }
 }
 
-void clean_up_sorts() {
+void
+clean_up_sorts()
+{
     // Reduce the number of sorts
     map<set<string>, string> elems_to_sort = map<set<string>, string>();
 
@@ -1432,7 +1453,8 @@ void clean_up_sorts() {
         vector<arg_and_type> nvar = vector<arg_and_type>();
         for (arg_and_type x : nt.vars) {
             set<string> elems = sorts[x.second];
-            if (!elems_to_sort.count(elems)) elems_to_sort[elems] = x.second;
+            if (!elems_to_sort.count(elems))
+                elems_to_sort[elems] = x.second;
             nvar.push_back(make_pair(x.first, elems_to_sort[elems]));
         }
 
@@ -1448,7 +1470,8 @@ void clean_up_sorts() {
         vector<arg_and_type> nvar = vector<arg_and_type>();
         for (arg_and_type x : nt.vars) {
             set<string> elems = sorts[x.second];
-            if (!elems_to_sort.count(elems)) elems_to_sort[elems] = x.second;
+            if (!elems_to_sort.count(elems))
+                elems_to_sort[elems] = x.second;
             nvar.push_back(make_pair(x.first, elems_to_sort[elems]));
         }
 
@@ -1464,7 +1487,8 @@ void clean_up_sorts() {
         vector<arg_and_type> nvar = vector<arg_and_type>();
         for (arg_and_type x : nm.vars) {
             set<string> elems = sorts[x.second];
-            if (!elems_to_sort.count(elems)) elems_to_sort[elems] = x.second;
+            if (!elems_to_sort.count(elems))
+                elems_to_sort[elems] = x.second;
             nvar.push_back(make_pair(x.first, elems_to_sort[elems]));
         }
 
@@ -1480,7 +1504,8 @@ void clean_up_sorts() {
         vector<string> nvar = vector<string>();
         for (string x : np.argument_sorts) {
             set<string> elems = sorts[x];
-            if (!elems_to_sort.count(elems)) elems_to_sort[elems] = x;
+            if (!elems_to_sort.count(elems))
+                elems_to_sort[elems] = x;
             nvar.push_back(elems_to_sort[elems]);
         }
 
@@ -1488,29 +1513,37 @@ void clean_up_sorts() {
         predicate_definitions.push_back(np);
     }
 
-    for (pair<string, set<map<string, var_declaration> > > c : csorts) {
+    for (pair<string, set<map<string, var_declaration>>> c : csorts) {
         set<string> elems = set<string>();
         for (map<string, var_declaration> s : c.second)
-            for (pair<string, var_declaration> m : s) elems.insert(m.first);
+            for (pair<string, var_declaration> m : s)
+                elems.insert(m.first);
 
-        if (!elems_to_sort.count(elems)) elems_to_sort[elems] = c.first;
+        if (!elems_to_sort.count(elems))
+            elems_to_sort[elems] = c.first;
     }
 
     sorts.clear();
-    for (pair<set<string>, string> x : elems_to_sort) sorts[x.second] = x.first;
+    for (pair<set<string>, string> x : elems_to_sort)
+        sorts[x.second] = x.first;
 }
 
-void remove_unnecessary_predicates() {
+void
+remove_unnecessary_predicates()
+{
     set<string> occuring_preds = set<string>();
     for (task t : primitive_tasks)
-        for (literal l : t.prec) occuring_preds.insert(l.predicate);
+        for (literal l : t.prec)
+            occuring_preds.insert(l.predicate);
 
     // Conditions of conditional effects also occur
     for (task t : primitive_tasks)
         for (conditional_effect ceff : t.ceff)
-            for (literal l : ceff.condition) occuring_preds.insert(l.predicate);
+            for (literal l : ceff.condition)
+                occuring_preds.insert(l.predicate);
 
-    for (ground_literal gl : goal) occuring_preds.insert(gl.predicate);
+    for (ground_literal gl : goal)
+        occuring_preds.insert(gl.predicate);
 
     vector<predicate_definition> old = predicate_definitions;
     predicate_definitions.clear();
@@ -1532,7 +1565,8 @@ void remove_unnecessary_predicates() {
         vector<literal> np = vector<literal>();
         // Filter effects
         for (literal l : nt.eff)
-            if (!removed_predicates.count(l.predicate)) np.push_back(l);
+            if (!removed_predicates.count(l.predicate))
+                np.push_back(l);
         nt.eff = np;
         nt.check_integrity();
         primitive_tasks.push_back(nt);
@@ -1541,17 +1575,21 @@ void remove_unnecessary_predicates() {
     // Remove useless predicates from init
     vector<ground_literal> ni = vector<ground_literal>();
     for (ground_literal l : init)
-        if (!removed_predicates.count(l.predicate)) ni.push_back(l);
+        if (!removed_predicates.count(l.predicate))
+            ni.push_back(l);
     init = ni;
 
     // Remove useless predicates from goal
     vector<ground_literal> ng = vector<ground_literal>();
     for (ground_literal l : goal)
-        if (!removed_predicates.count(l.predicate)) ng.push_back(l);
+        if (!removed_predicates.count(l.predicate))
+            ng.push_back(l);
     goal = ng;
 }
 
-void compile_requests() {
+void
+compile_requests()
+{
     for (string v : parsed_requests)
         for (map<string, var_declaration> s : csorts["request"])
             for (pair<string, var_declaration> m : s)
@@ -1575,8 +1613,7 @@ void compile_requests() {
 
                             while ((pos = v.second.find(" ")) != string::npos) {
                                 if (!skip)
-                                    incoming_request.arguments.push_back(
-                                        v.second.substr(0, pos));
+                                    incoming_request.arguments.push_back(v.second.substr(0, pos));
                                 else
                                     for (task t : abstract_tasks)
                                         if (t.name == v.second.substr(0, pos))
@@ -1594,20 +1631,23 @@ void compile_requests() {
                 }
 }
 
-void task::check_integrity() {
+void
+task::check_integrity()
+{
     // Variables must have a sort
-    for (arg_and_type v : this->vars) assert(v.second.size() != 0);
+    for (arg_and_type v : this->vars)
+        assert(v.second.size() != 0);
 
     assert(number_of_original_vars <= int(vars.size()));
 
     for (literal l : this->prec) {
         bool hasPred = false;
         for (predicate_definition p : predicate_definitions)
-            if (p.name == l.predicate) hasPred = true;
+            if (p.name == l.predicate)
+                hasPred = true;
 
         if (!hasPred) {
-            cerr << "Task " << this->name << " has the predicate \""
-                 << l.predicate
+            cerr << "Task " << this->name << " has the predicate \"" << l.predicate
                  << "\" in its precondition, which is not declared." << endl;
             assert(hasPred);
         }
@@ -1615,9 +1655,11 @@ void task::check_integrity() {
         for (string v : l.arguments) {
             bool hasVar = false;
             for (arg_and_type mv : this->vars) {
-                if (mv.first == v) hasVar = true;
-                if (mv.first == v.substr(0, v.find("."))) hasVar = true;
-                for (pair<string, set<string> > m : constants)
+                if (mv.first == v)
+                    hasVar = true;
+                if (mv.first == v.substr(0, v.find(".")))
+                    hasVar = true;
+                for (pair<string, set<string>> m : constants)
                     for (string s : m.second)
                         if (v == s) {
                             hasVar = true;
@@ -1625,8 +1667,8 @@ void task::check_integrity() {
                         }
             }
             if (!hasVar) {
-                cerr << "Task " << this->name << " has the predicate \""
-                     << l.predicate << "\" in its precondition, which has the \
+                cerr << "Task " << this->name << " has the predicate \"" << l.predicate
+                     << "\" in its precondition, which has the \
                     argument \""
                      << v << "\", which is unknown." << endl;
                 assert(hasVar);
@@ -1637,21 +1679,23 @@ void task::check_integrity() {
     for (literal l : this->eff) {
         bool hasPred = false;
         for (predicate_definition p : predicate_definitions)
-            if (p.name == l.predicate) hasPred = true;
+            if (p.name == l.predicate)
+                hasPred = true;
 
         if (!hasPred) {
-            cerr << "Task " << this->name << " has the predicate \""
-                 << l.predicate << "\" in its effects, which is not declared."
-                 << endl;
+            cerr << "Task " << this->name << " has the predicate \"" << l.predicate
+                 << "\" in its effects, which is not declared." << endl;
             assert(hasPred);
         }
 
         for (string v : l.arguments) {
             bool hasVar = false;
             for (arg_and_type mv : this->vars) {
-                if (mv.first == v) hasVar = true;
-                if (mv.first == v.substr(0, v.find("."))) hasVar = true;
-                for (pair<string, set<string> > m : constants)
+                if (mv.first == v)
+                    hasVar = true;
+                if (mv.first == v.substr(0, v.find(".")))
+                    hasVar = true;
+                for (pair<string, set<string>> m : constants)
                     for (string s : m.second) {
                         if (v == s) {
                             hasVar = true;
@@ -1661,8 +1705,7 @@ void task::check_integrity() {
             }
 
             if (!hasVar) {
-                cerr << "Task " << this->name << " has the predicate \""
-                     << l.predicate
+                cerr << "Task " << this->name << " has the predicate \"" << l.predicate
                      << "\" in its effects, which has the argument \
                     \""
                      << v << "\", which is unknown." << endl;
@@ -1672,7 +1715,9 @@ void task::check_integrity() {
     }
 }
 
-void method::check_integrity() {
+void
+method::check_integrity()
+{
     set<string> varnames = set<string>();
     for (arg_and_type v : this->vars) {
         varnames.insert(v.first);
@@ -1689,20 +1734,20 @@ void method::check_integrity() {
         ids.insert(ps.id);
         task t = task_name_map[ps.task];
         if (ps.args.size() != t.vars.size()) {
-            cerr << "Method " << this->name << " has the subtask (" << ps.id
-                 << ") " << ps.task << ". The task is declared with "
-                 << t.vars.size() << " parameters, but " << ps.args.size()
-                 << " are given in the method." << endl;
+            cerr << "Method " << this->name << " has the subtask (" << ps.id << ") " << ps.task
+                 << ". The task is declared with " << t.vars.size() << " parameters, but "
+                 << ps.args.size() << " are given in the method." << endl;
             assert(false);
         }
 
         for (string v : ps.args) {
             bool found = false;
-            for (arg_and_type vd : this->vars) found |= vd.first == v;
+            for (arg_and_type vd : this->vars)
+                found |= vd.first == v;
             if (!found) {
-                cerr << "Method " << this->name << " has the subtask (" << ps.id
-                     << ") " << ps.task << ". It has a parameter " << v
-                     << " which is not declared in the method." << endl;
+                cerr << "Method " << this->name << " has the subtask (" << ps.id << ") " << ps.task
+                     << ". It has a parameter " << v << " which is not declared in the method."
+                     << endl;
             }
             assert(found);
         }
@@ -1722,8 +1767,9 @@ void method::check_integrity() {
     }
 }
 
-bool method::is_sub_group(set<string> &sset, set<string> &beforeID,
-                          set<string> &afterID) {
+bool
+method::is_sub_group(set<string>& sset, set<string>& beforeID, set<string>& afterID)
+{
     if (sset.size() == 1) {
         string id = *sset.begin();
         for (auto [b, a] : this->ordering)
@@ -1739,62 +1785,77 @@ bool method::is_sub_group(set<string> &sset, set<string> &beforeID,
     beforeID.clear();
     afterID.clear();
 
-    for (plan_step &k : this->ps) {
-        if (sset.count(k.id)) continue;
+    for (plan_step& k : this->ps) {
+        if (sset.count(k.id))
+            continue;
 
         // 1 is unord, 2 is before k , 3 is after k
         int myrel = 0;
-        for (const string &s : sset) {
+        for (const string& s : sset) {
             if (this->adj_matrix[s].count(k.id)) {
-                if (myrel != 0 && myrel != 2) return false;
+                if (myrel != 0 && myrel != 2)
+                    return false;
                 myrel = 2;
 
             } else if (this->adj_matrix[k.id].count(s)) {
-                if (myrel != 0 && myrel != 3) return false;
+                if (myrel != 0 && myrel != 3)
+                    return false;
                 myrel = 3;
 
             } else {
                 // Unrelated task, but set relation
-                if (myrel > 1) return false;
+                if (myrel > 1)
+                    return false;
                 myrel = 1;
             }
         }
 
-        if (myrel == 2) afterID.insert(k.id);
-        if (myrel == 3) beforeID.insert(k.id);
+        if (myrel == 2)
+            afterID.insert(k.id);
+        if (myrel == 3)
+            beforeID.insert(k.id);
     }
 
     return true;
 }
 
-void method::compute_adj_matrix() {
-    if (this->adj_matrix_computed) return;
+void
+method::compute_adj_matrix()
+{
+    if (this->adj_matrix_computed)
+        return;
     this->adj_matrix_computed = true;
     this->adj_matrix.clear();
 
-    for (auto [t1, t2] : this->ordering) this->adj_matrix[t1].insert(t2);
+    for (auto [t1, t2] : this->ordering)
+        this->adj_matrix[t1].insert(t2);
 
-    for (plan_step &k : this->ps)
-        for (plan_step &i : this->ps)
-            for (plan_step &j : this->ps)
-                if (this->adj_matrix[i.id].count(k.id) &&
-                    this->adj_matrix[k.id].count(j.id))
+    for (plan_step& k : this->ps)
+        for (plan_step& i : this->ps)
+            for (plan_step& j : this->ps)
+                if (this->adj_matrix[i.id].count(k.id) && this->adj_matrix[k.id].count(j.id))
                     this->adj_matrix[i.id].insert(j.id);
 }
 
-void add_consts_to_set(general_formula *f, set<string> &const_set) {
-    if (!f) return;
+void
+add_consts_to_set(general_formula* f, set<string>& const_set)
+{
+    if (!f)
+        return;
     if (f->type == EQUAL || f->type == NOTEQUAL) {
-        if (f->arg1[0] != '?') const_set.insert(f->arg1);
-        if (f->arg2[0] != '?') const_set.insert(f->arg2);
+        if (f->arg1[0] != '?')
+            const_set.insert(f->arg1);
+        if (f->arg2[0] != '?')
+            const_set.insert(f->arg2);
     }
 
-    for (general_formula *sub : f->subformulae)
+    for (general_formula* sub : f->subformulae)
         add_consts_to_set(sub, const_set);
 }
 
-void add_consts_to_set(additional_variables additionalVars,
-                       set<string> &const_set) {
+void
+add_consts_to_set(additional_variables additionalVars, set<string>& const_set)
+{
     for (arg_and_type varDecl : additionalVars) {
         // Determine const of this sort
         assert(sorts[varDecl.second].size() == 1);
@@ -1802,17 +1863,18 @@ void add_consts_to_set(additional_variables additionalVars,
     }
 }
 
-set<string> compute_constants_in_domain() {
+set<string>
+compute_constants_in_domain()
+{
     // Determine which constants need to be declared in the domain
     set<string> constants_in_domain = set<string>();
-    for (parsed_task &at : parsed_abstract) {
-        for (parsed_method &method : parsed_methods[at.name]) {
+    for (parsed_task& at : parsed_abstract) {
+        for (parsed_method& method : parsed_methods[at.name]) {
             // Determine which variables are actually constants
             add_consts_to_set(method.newVarForAT, constants_in_domain);
             if (!method.functional) {
-                for (sub_task *st : method.tn->tasks)
-                    add_consts_to_set(st->arguments->newVar,
-                                      constants_in_domain);
+                for (sub_task* st : method.tn->tasks)
+                    add_consts_to_set(st->arguments->newVar, constants_in_domain);
 
                 add_consts_to_set(method.tn->constraint, constants_in_domain);
             }
@@ -1823,10 +1885,8 @@ set<string> compute_constants_in_domain() {
 
     // Constants in primitives
     for (parsed_task prim : parsed_primitive) {
-        add_consts_to_set(prim.prec->variables_for_constants(),
-                          constants_in_domain);
-        add_consts_to_set(prim.eff->variables_for_constants(),
-                          constants_in_domain);
+        add_consts_to_set(prim.prec->variables_for_constants(), constants_in_domain);
+        add_consts_to_set(prim.eff->variables_for_constants(), constants_in_domain);
     }
 
     return constants_in_domain;
