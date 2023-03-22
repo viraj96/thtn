@@ -115,6 +115,7 @@ typedef priority_queue<tasknetwork_solution, vector<tasknetwork_solution>, Compa
 
 extern int attempts;
 extern int max_recursive_depth;
+extern map<string, tasknetwork_solution> request_solutions;
 
 bool
 is_resource(string type);
@@ -133,10 +134,6 @@ add_meets_constraint(Token* first, Token* second, STN* stn);
 Token
 gen_token(arg_and_type argument, Token* causal_token, STN* stn);
 
-// patch plan does not need to be called in the main because we are going to call if after each
-// successful attempt
-bool
-patch_plan(Plan* p, vector<primitive_solution>* solution, validation_state* state);
 set<string>
 get_literal_args_and_types(literal* lit, set<arg_and_type>* arguments);
 pair<bool, vector<slot>>
@@ -158,6 +155,14 @@ bool
 check_functional_predicate(literal* precondition,
                            set<arg_and_type> knowns,
                            world_state current_state);
+
+// patch plan does not need to be called in the main because we are going to call if after each
+// successful attempt
+bool
+patch_plan(Plan* p,
+           tasknetwork_solution* old_request_solution,
+           vector<primitive_solution>* current_solution,
+           validation_state* state);
 
 bool
 check_equal_predicate(literal* precondition, set<arg_and_type> knowns, world_state current_state);

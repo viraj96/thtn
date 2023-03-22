@@ -46,6 +46,7 @@ map<string, set<string>> constants = map<string, set<string>>();
 vector<sort_definition> sort_definitions = vector<sort_definition>();
 vector<predicate_definition> predicate_definitions = vector<predicate_definition>();
 map<string, vector<parsed_method>> parsed_methods = map<string, vector<parsed_method>>();
+map<string, tasknetwork_solution> request_solutions = map<string, tasknetwork_solution>();
 vector<pair<predicate_definition, string>> parsed_functions =
   vector<pair<predicate_definition, string>>();
 map<string, set<map<string, var_declaration>>> csorts =

@@ -1693,11 +1693,32 @@ schedule_leafs(vector<task_vertex> leafs,
         }
     }
 
+    vector<tuple<int, int, slot>> main = vector<tuple<int, int, slot>>();
+    vector<tuple<int, int, slot>> dependents = vector<tuple<int, int, slot>>();
+
+    for (int i = 0; i < (int)solution->size(); i++)
+        for (int j = 0; j < (int)(*solution)[i].token_slots.size(); j++)
+            if ((*solution)[i].token_slots[j].tk.get_resource() == "robot")
+                main.push_back(make_tuple(i, j, (*solution)[i].token_slots[j]));
+            else
+                dependents.push_back(make_tuple(i, j, (*solution)[i].token_slots[j]));
+
+    map<string, constraint> post_stn_constraints = stn.get_constraints();
+    for (tuple<int, int, slot> os : main) {
+        string dep_meets_substr = get<2>(os).tk.get_end() + dependent_meets_constraint;
+        for (pair<string, constraint> post_stn_c : post_stn_constraints)
+            if (strstr(post_stn_c.first.c_str(), dep_meets_substr.c_str())) {
+                (*solution)[get<0>(os)].token_slots[get<1>(os)].dependent_ends.push_back(
+                  get<1>(post_stn_c.second));
+            }
+    }
+
     // Once a feasible solution has been found for the given task then we need to check that it can
     // be validated which if failed needs to be recitifed via the patching process
     validation_state state = plan_validator(&p);
     if (state.status != validation_exception::NO_EXCEPTION) {
-        bool success = patch_plan(&p, solution, &state);
+        bool success = patch_plan(
+          &p, &request_solutions[state.failing_token.get_request_id()], solution, &state);
         if (!success) {
             PLOGE << "Patching failed! Please refer to the following exception state: "
                   << state.to_string() << endl;
@@ -1721,6 +1742,7 @@ commit_slots(Plan* p, pq* solution)
 {
 
     tasknetwork_solution slot_to_commit = solution->top();
+    request_solutions.insert(make_pair(slot_to_commit.request_id, slot_to_commit));
     p->num_tasks_robot[slot_to_commit.robot_assignment]++;
 
     int counter = 0;
@@ -1796,7 +1818,10 @@ commit_slots(Plan* p, pq* solution)
 }
 
 bool
-patch_plan(Plan* p, vector<primitive_solution>* solution, validation_state* exception_state)
+patch_plan(Plan* p,
+           tasknetwork_solution* old_request_solution,
+           vector<primitive_solution>* current_solution,
+           validation_state* exception_state)
 {
 
     // Assumption: The plan can only fail to be validated at the external rail move tokens for now
@@ -1814,11 +1839,79 @@ patch_plan(Plan* p, vector<primitive_solution>* solution, validation_state* exce
             PLOGE << "EDGE SKIP\n\n";
             PLOGD << exception_state->to_string() << endl;
             break;
-        case validation_exception::VERTEX_SAME:
+        case validation_exception::VERTEX_SAME: {
             // We are already at the vertex where we want to go so no need for additional task as
             // this is essentially a no-op
 
+            // Find the affected tokens that need to be deleted
+            /* vector<Token> affected_tokens = vector<Token>(); */
+            /* affected_tokens.push_back(exception_state->failing_token); */
+
+            /* int ps_counter = 0; */
+            /* Token previous_token = Token(); */
+            /* primitive_solution new_ps = primitive_solution(); */
+            /* for (primitive_solution ps : old_request_solution->solution) { */
+            /*     new_ps = ps; */
+            /*     int ts_counter = 0; */
+            /*     bool found = false; */
+            /*     for (slot ts : ps.token_slots) { */
+            /*         string c_name = exception_state->failing_token.get_end() + meets_constraint +
+             */
+            /*                         ts.tk.get_start(); */
+            /*         if (ts.tk.get_resource() != exception_state->failing_token.get_resource() &&
+             */
+            /*             get<0>(stn.get_constraint(c_name)) != "") { */
+            /*             affected_tokens.push_back(ts.tk); */
+            /*             new_ps.token_slots.erase( */
+            /*               std::remove(new_ps.token_slots.begin(), new_ps.token_slots.end(), ts),
+             */
+            /*               new_ps.token_slots.end()); */
+
+            /*         } else if (ts.prev.get_start() == exception_state->failing_token.get_start())
+             * { */
+            /*             ptrdiff_t pos = std::distance( */
+            /*               new_ps.token_slots.begin(), */
+            /*               std::find(new_ps.token_slots.begin(), new_ps.token_slots.end(), ts));
+             */
+            /*             new_ps.token_slots[pos].prev = previous_token; */
+            /*         } */
+            /*         if (!found && ts.tk.get_start() ==
+             * exception_state->failing_token.get_start()) { */
+            /*             found = true; */
+            /*             new_ps.token_slots.erase( */
+            /*               std::remove(new_ps.token_slots.begin(), new_ps.token_slots.end(), ts),
+             */
+            /*               new_ps.token_slots.end()); */
+            /*             previous_token = ts.prev; */
+            /*         } */
+            /*         ts_counter++; */
+            /*     } */
+            /*     if (found) */
+            /*         break; */
+            /*     ps_counter++; */
+            /* } */
+
+            /* // Update the original solution slots by deleting the unneeded slots */
+            /* old_request_solution->solution[ps_counter] = new_ps; */
+
+            /* PLOGE << "Old Solution\n"; */
+            /* PLOGD << old_request_solution->to_string() << endl; */
+
+            /* PLOGE << "Current Solution\n"; */
+            /* for (primitive_solution ps : (*current_solution)) */
+            /*     PLOGD << ps.to_string() << endl; */
+
+            /* map<string, constraint> constraints = stn.get_constraints(); */
+            /* for (Token tk : affected_tokens) */
+            /*     for (pair<string, constraint> c : constraints) { */
+            /*         if (c.first.find(tk.get_start()) != string::npos || */
+            /*             c.first.find(tk.get_end()) != string::npos) { */
+            /*             PLOGD << "Constraint: " << get<0>(c.second) << " " << get<1>(c.second) */
+            /*                   << " " << get<2>(c.second) << " " << get<3>(c.second) << endl; */
+            /*         } */
+            /*     } */
             break;
+        }
         case validation_exception::PREC_FAIL:
             // If the failed precondition is due to a rail move operation then that can be tried to
             // be fixed
@@ -2042,25 +2135,6 @@ find_feasible_slots(task_network tree, Plan p, string robot_assignment, int atte
         bool success = schedule_leafs(leafs, &solution, p, &explored_slots, &value, metric);
 
         if (success) {
-            vector<tuple<int, int, slot>> main = vector<tuple<int, int, slot>>();
-            vector<tuple<int, int, slot>> dependents = vector<tuple<int, int, slot>>();
-
-            for (int i = 0; i < (int)solution.size(); i++)
-                for (int j = 0; j < (int)solution[i].token_slots.size(); j++)
-                    if (solution[i].token_slots[j].tk.get_resource() == "robot")
-                        main.push_back(make_tuple(i, j, solution[i].token_slots[j]));
-                    else
-                        dependents.push_back(make_tuple(i, j, solution[i].token_slots[j]));
-
-            map<string, constraint> post_stn_constraints = stn.get_constraints();
-            for (tuple<int, int, slot> os : main) {
-                string dep_meets_substr = get<2>(os).tk.get_end() + dependent_meets_constraint;
-                for (pair<string, constraint> post_stn_c : post_stn_constraints)
-                    if (strstr(post_stn_c.first.c_str(), dep_meets_substr.c_str())) {
-                        solution[get<0>(os)].token_slots[get<1>(os)].dependent_ends.push_back(
-                          get<1>(post_stn_c.second));
-                    }
-            }
 
             for (int i = 0; i < (int)solution.size(); i++)
                 for (slot s : solution[i].token_slots) {
