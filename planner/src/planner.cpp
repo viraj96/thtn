@@ -1661,7 +1661,8 @@ schedule_leafs(vector<task_vertex> leafs,
                Plan p,
                vector<slot>* explored_slots,
                double* value,
-               string metric)
+               string metric,
+               string robot_assignment)
 {
     int leaf_id = 0, num_actions = 0;
     for (task_vertex leaf : leafs) {
@@ -1688,7 +1689,7 @@ schedule_leafs(vector<task_vertex> leafs,
                     stn.del_timepoint(s.tk.get_end());
                 }
             *value = std::numeric_limits<double>::infinity();
-
+            PLOGD << "Failed this attempt\n";
             return false;
         }
     }
@@ -1717,13 +1718,149 @@ schedule_leafs(vector<task_vertex> leafs,
     // be validated which if failed needs to be recitifed via the patching process
     validation_state state = plan_validator(&p);
     if (state.status != validation_exception::NO_EXCEPTION) {
-        bool success = patch_plan(
-          &p, &request_solutions[state.failing_token.get_request_id()], solution, &state);
-        if (!success) {
-            PLOGE << "Patching failed! Please refer to the following exception state: "
-                  << state.to_string() << endl;
-            assert(false);
+        /* bool success = patch_plan( */
+        /*   &p, &request_solutions[state.failing_token.get_request_id()], solution, &state); */
+        /* if (!success) { */
+        /*     PLOGE << "Patching failed! Please refer to the following exception state: " */
+        /*           << state.to_string() << endl; */
+        /*     assert(false); */
+        /* } */
+        PLOGE << "This attempt failed. More details -> " << state.to_string() << endl;
+
+    } else {
+
+        // The solution found was validated so now we ca gather data about this attempt
+        string task_id = leafs[0].tk.get_request_id();
+        string start_location, end_location, pickup_location, dropoff_location;
+        double est, lst, eft, lft, duration, clear_path_mag, makespan;
+        world_state current_state = initial_state;
+
+        for (slot s : (*solution)[0].token_slots) {
+
+            vector<Token> tl_tokens = p.get_timelines(s.tl_id)->get_tokens();
+            for (Token tk : tl_tokens) {
+                if (tk == s.tk)
+                    break;
+
+                if (s.tk.get_resource() != "rail_block") {
+                    object_state obj = current_state.at(s.tl_id);
+                    update_object_state(&obj, &tk);
+                    current_state[s.tl_id] = obj;
+                }
+            }
+            if (s.tl_id == robot_assignment) {
+                stn_bounds first_tk_start_bounds = stn.get_feasible_values(s.tk.get_start());
+                est = abs(get<0>(first_tk_start_bounds));
+                lst = abs(get<1>(first_tk_start_bounds));
+
+                for (arg_and_type v : current_state[s.tl_id].attribute_states.vars)
+                    if (v.first == "block") {
+                        start_location = v.second;
+                        break;
+                    }
+
+                break;
+            }
         }
+
+        int robot_moves = 0, other_robot_moves = 0;
+        for (slot s : (*solution)[0].token_slots) {
+            if (s.tl_id.find("box") != string::npos)
+                for (arg_and_type v : current_state[s.tl_id].attribute_states.vars) {
+                    if (v.first == "loc") {
+                        pickup_location = v.second;
+                        for (ground_literal g : init) {
+                            if (g.predicate == "reachable" &&
+                                std::find(g.args.begin(), g.args.end(), pickup_location) !=
+                                  g.args.end()) {
+                                pickup_location = g.args[0];
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            else if (s.tl_id == robot_assignment && s.tk.get_name() == "rail_move")
+                robot_moves += 1;
+            else if (s.tl_id != robot_assignment && s.tk.get_name() == "rail_move")
+                other_robot_moves += 1;
+        }
+
+        for (slot s : (*solution)[(int)leafs.size() - 1].token_slots) {
+
+            vector<Token> tl_tokens = p.get_timelines(s.tl_id)->get_tokens();
+            for (Token tk : tl_tokens) {
+                if (tk == s.tk)
+                    break;
+                if (s.tk.get_resource() != "rail_block") {
+                    object_state obj = current_state.at(s.tl_id);
+                    update_object_state(&obj, &tk);
+                    current_state[s.tl_id] = obj;
+                }
+            }
+            if (s.tl_id == robot_assignment) {
+                stn_bounds last_tk_start_bounds = stn.get_feasible_values(s.tk.get_start());
+                eft = abs(get<0>(last_tk_start_bounds));
+                lft = abs(get<1>(last_tk_start_bounds));
+
+                for (arg_and_type v : current_state[s.tl_id].attribute_states.vars)
+                    if (v.first == "block") {
+                        end_location = v.second;
+                        break;
+                    }
+
+                break;
+            }
+        }
+        for (slot s : (*solution)[(int)leafs.size() - 2].token_slots) {
+
+            if (s.tk.get_name() == "release") {
+                task tk_task = task();
+                for (task t : primitive_tasks)
+                    if (t.name == s.tk.get_name()) {
+                        tk_task = t;
+                        break;
+                    }
+                for (arg_and_type k : s.tk.get_knowns())
+                    for (arg_and_type tk_var : tk_task.vars)
+                        if (tk_var.first == k.first && k.second.find("drop_loc") != string::npos) {
+                            dropoff_location = k.second;
+                            for (ground_literal g : init) {
+                                if (g.predicate == "reachable" &&
+                                    std::find(g.args.begin(), g.args.end(), dropoff_location) !=
+                                      g.args.end()) {
+                                    dropoff_location = g.args[0];
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+            } else if (s.tl_id == robot_assignment && s.tk.get_name() == "rail_move")
+                robot_moves += 1;
+            else if (s.tl_id != robot_assignment && s.tk.get_name() == "rail_move")
+                other_robot_moves += 1;
+        }
+
+        duration = robot_moves * 20;
+        clear_path_mag = other_robot_moves * 20;
+        makespan = compute_makespan(&p);
+
+        ofstream metric_file;
+        metric_file.open("data.csv", std::ios::out | std::ios::app);
+        metric_file << task_id << "," << est << "," << eft << "," << lst << "," << lft << ","
+                    << start_location << "," << end_location << "," << pickup_location << ","
+                    << dropoff_location << "," << duration << "," << clear_path_mag << ","
+                    << makespan << endl;
+        metric_file.close();
+        PLOGD << "Metrics about this attempt:\n";
+        PLOGD << "\tTask ID: " << task_id << "\n\tSlot EST: " << est << "\n\tSlot EFT: " << eft
+              << "\n\tSlot LST: " << lst << "\n\tSlot LFT: " << lft
+              << "\n\tStart location: " << start_location << "\n\tEnd location: " << end_location
+              << "\n\tPickup location: " << pickup_location
+              << "\n\tDropoff location: " << dropoff_location << "\n\tDuration: " << duration
+              << "\n\tClear Path magnitude: " << clear_path_mag << "\n\tMakespan: " << makespan
+              << endl;
+        PLOGD << "\n\n\n";
     }
 
     double best_metric = -1.0 * std::numeric_limits<double>::infinity();
@@ -2123,6 +2260,8 @@ find_feasible_slots(task_network tree, Plan p, string robot_assignment, int atte
     if (attempts == -1)
         attempts = p.num_tasks_robot[robot_assignment] + 1;
 
+    PLOGD << "Total attempts for this network and robot assignmen is: " << attempts << endl;
+
     for (int plan_id = 0; plan_id < attempts; plan_id++) {
         double value = 0.0;
         tasknetwork_solution sol = tasknetwork_solution();
@@ -2132,7 +2271,8 @@ find_feasible_slots(task_network tree, Plan p, string robot_assignment, int atte
         vector<primitive_solution> solution = vector<primitive_solution>();
         map<string, constraint> pre_stn_constraints = stn.get_constraints();
 
-        bool success = schedule_leafs(leafs, &solution, p, &explored_slots, &value, metric);
+        bool success =
+          schedule_leafs(leafs, &solution, p, &explored_slots, &value, metric, robot_assignment);
 
         if (success) {
 
