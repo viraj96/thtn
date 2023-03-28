@@ -27,6 +27,7 @@ struct validation_state
 {
 
     Token failing_token;
+    literal precondition;
     vertex source, sink;
     world_state current_state;
     validation_exception status;
@@ -36,16 +37,19 @@ struct validation_state
         failing_token = Token();
         source = vertex();
         sink = vertex();
+        precondition = literal();
         current_state = initial_state;
         status = validation_exception::NO_EXCEPTION;
     }
 
     validation_state(Token* failing_token,
+                     literal precondition,
                      vertex source,
                      vertex sink,
                      world_state* current_state,
                      validation_exception status)
       : failing_token(*failing_token)
+      , precondition(precondition)
       , source(source)
       , sink(sink)
       , current_state(*current_state)

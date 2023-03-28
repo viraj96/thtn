@@ -1,6 +1,7 @@
 #include "planner.hpp"
 
 #include <boost/range/adaptor/indexed.hpp>
+#include <chrono>
 #include <filesystem>
 #include <tuple>
 
@@ -1664,6 +1665,8 @@ schedule_leafs(vector<task_vertex> leafs,
                string metric,
                string robot_assignment)
 {
+
+    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     int leaf_id = 0, num_actions = 0;
     for (task_vertex leaf : leafs) {
         primitive_solution leaf_sol = primitive_solution();
@@ -1729,6 +1732,10 @@ schedule_leafs(vector<task_vertex> leafs,
 
     } else {
 
+        std::chrono::high_resolution_clock::time_point t2 =
+          std::chrono::high_resolution_clock::now();
+        double comp_time =
+          std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
         // The solution found was validated so now we ca gather data about this attempt
         string task_id = leafs[0].tk.get_request_id();
         string start_location, end_location, pickup_location, dropoff_location;
@@ -1850,7 +1857,7 @@ schedule_leafs(vector<task_vertex> leafs,
         metric_file << task_id << "," << est << "," << eft << "," << lst << "," << lft << ","
                     << start_location << "," << end_location << "," << pickup_location << ","
                     << dropoff_location << "," << duration << "," << clear_path_mag << ","
-                    << makespan << endl;
+                    << makespan << "," << comp_time << endl;
         metric_file.close();
         PLOGD << "Metrics about this attempt:\n";
         PLOGD << "\tTask ID: " << task_id << "\n\tSlot EST: " << est << "\n\tSlot EFT: " << eft

@@ -48,6 +48,6 @@
 			(over all (reachable blockD box4_pick_loc))
 			(over all (reachable blockB box4_drop_loc))
 			(over all (reachable blockF box5_pick_loc))
-			(over all (reachable blockB box5_drop_loc))
+			(over all (reachable blockC box5_drop_loc))
 		)
 )

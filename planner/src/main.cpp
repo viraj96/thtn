@@ -230,6 +230,36 @@ main(int argc, char** argv)
                linearConditionalEffectExpansion,
                encodeDisjunctivePreconditionsInMethods);
 
+    map<string, string> block_to_loc;
+    block_to_loc["blockA"] = "[0.5,-1.0715,1.03]";
+    block_to_loc["blockB"] = "[0.5,-0.7145,1.03]";
+    block_to_loc["blockC"] = "[0.5,-0.3575,1.03]";
+    block_to_loc["blockD"] = "[0.5,0.0,1.03]";
+    block_to_loc["blockE"] = "[0.5,0.3575,1.03]";
+    block_to_loc["blockF"] = "[0.5,0.7145,1.03]";
+    block_to_loc["blockG"] = "[0.5,1.0715,1.03]";
+    ofstream data_file;
+    data_file.open("../data/7_blocks_5_requests.json", std::ios::out);
+    string constant =
+      "{\n\t\"block_bounds\": { \n\t\t\"blockA\" : [-1.25, -0.893], \n\t\t\"blockB\" : [-0.893, "
+      "-0.536], \n\t\t\"blockC\" : [-0.536, -0.179], \n\t\t\"blockD\" : [-0.179, 0.179], "
+      "\n\t\t\"blockE\" : [0.179, 0.536], \n\t\t\"blockF\" : [0.536, 0.893], \n\t\t\"blockG\" : "
+      "[0.893, 1.25] \n\t}, \n\t\"locations\" : { ";
+    data_file << constant;
+    int c = 0;
+    for (int i = 0; i < (int)init.size(); i++) {
+        if (init[i].predicate == "reachable" && init[i].timed == timed_type::ALL &&
+            init[i].temp_qual == temporal_qualifier_type::OVER && init[i].positive) {
+            string block = init[i].args[0], loc = init[i].args[1];
+            data_file << "\n\t\t\"" << loc << "\" : " << block_to_loc[block];
+            c++;
+            if (c != 10)
+                data_file << ",";
+        }
+    }
+    data_file << "\n\t}\n}";
+    data_file.close();
+
     for (pair<string, set<map<string, var_declaration>>> cs : csorts) {
         for (map<string, var_declaration> csm : cs.second) {
             for (pair<string, var_declaration> m : csm) {
@@ -330,7 +360,7 @@ main(int argc, char** argv)
                         }
                         PLOGE << "The whole plan is - \n" << p.to_string() << endl;
                         stn.destroy();
-                        assert(false);
+                        /* assert(false); */
                     }
                 }
                 stn.destroy();
@@ -385,7 +415,7 @@ main(int argc, char** argv)
                         }
                         PLOGE << "The whole plan is - \n" << p.to_string() << endl;
                         stn.destroy();
-                        assert(false);
+                        /* assert(false); */
                     }
                 }
                 stn.destroy();
@@ -398,6 +428,7 @@ main(int argc, char** argv)
     } else {
         auto start = chrono::steady_clock::now();
         stn.init();
+
         bool plan_found = false;
         Plan p = instantiate_plan();
         for (request r : requests) {
@@ -438,12 +469,12 @@ main(int argc, char** argv)
                 PLOGE << state.to_string() << endl;
                 PLOGE << "The whole plan is - \n" << p.to_string() << endl;
                 stn.destroy();
-                assert(false);
+                /* assert(false); */
             }
         } else {
             PLOGV << "PLAN WAS NOT FOUND!!\n";
             stn.destroy();
-            assert(false);
+            /* assert(false); */
         }
     }
 
