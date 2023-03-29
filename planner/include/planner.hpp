@@ -50,17 +50,14 @@ struct primitive_solution
 {
     Token primitive_token;
     vector<slot> token_slots;
+    stack<constraint> search_constraints;
 
     primitive_solution()
     {
         primitive_token = Token();
         token_slots = vector<slot>();
+        search_constraints = stack<constraint>();
     }
-
-    primitive_solution(Token* _primitive_token, vector<slot>* _token_slots)
-      : primitive_token(*_primitive_token)
-      , token_slots(*_token_slots)
-    {}
 
     string to_string() const;
 };
@@ -130,14 +127,23 @@ check_temporal_bounds(slot* to_explore, STN* stn);
 void
 update_object_state(object_state* obj, Token* prev);
 bool
-add_meets_constraint(Token* first, Token* second, STN* stn);
+add_meets_constraint(Token* first,
+                     Token* second,
+                     STN* stn,
+                     stack<constraint>* search_history = nullptr,
+                     bool submit = false);
 Token
-gen_token(arg_and_type argument, Token* causal_token, STN* stn);
+gen_token(arg_and_type argument, Token* causal_token, stack<constraint>* search_history, STN* stn);
 
 set<string>
 get_literal_args_and_types(literal* lit, set<arg_and_type>* arguments);
 pair<bool, vector<slot>>
-schedule_token(Token* tk, vector<slot>* explored, Plan* p, STN* stn, int depth = 0);
+schedule_token(Token* tk,
+               vector<slot>* explored,
+               Plan* p,
+               stack<constraint>* search_history,
+               STN* stn,
+               int depth = 0);
 
 bool
 add_contains_constraint(Token* first, Token* second, STN* stn, bool submit = false);
@@ -182,6 +188,7 @@ del_and_add_sequencing_constraint(Token* prev,
                                   Token* curr,
                                   Token* next,
                                   STN* stn,
+                                  stack<constraint>* search_history = nullptr,
                                   bool submit = false);
 
 bool
@@ -211,6 +218,7 @@ local_stn_check_phase(Timeline* r,
                       bool satisfied_once,
                       pair<bool, vector<slot>>* return_slots,
                       Plan* p,
+                      stack<constraint>* search_history,
                       STN* stn);
 
 bool
@@ -238,6 +246,7 @@ rewiring_check_phase(slot* to_explore,
                      world_state* current_state,
                      pair<bool, vector<slot>>* return_slots,
                      Plan* p,
+                     stack<constraint>* search_history,
                      STN* stn);
 
 pair<bool, vector<slot>>
@@ -246,6 +255,7 @@ satisfy_precondition(literal* precondition,
                      Token* prev,
                      world_state* current_state,
                      Plan* p,
+                     stack<constraint>* search_history,
                      STN* stn,
                      vector<slot>* explored,
                      int depth = 0);
@@ -277,6 +287,7 @@ precondition_check_phase(Token* tk,
                          vector<slot>* explored,
                          pair<bool, vector<slot>>* return_slots,
                          Plan p,
+                         stack<constraint>* search_history,
                          STN* stn);
 
 // Functional Predicates

@@ -564,7 +564,7 @@ STN::cleanup()
 }
 
 void
-STN::del_timepoint(string x)
+STN::del_timepoint(string x, stack<constraint>* search_history)
 {
     if (verbose_1)
         cout << "Deleting timepoint: " << x << endl;
@@ -615,7 +615,7 @@ STN::del_timepoint(string x)
 
     while (e != nullptr) {
         y_node = graph[e->id];
-        y_node->edges_in = del_all_edges(y_node->edges_in, x_node->id, true);
+        y_node->edges_in = del_all_edges(y_node->edges_in, x_node->id, true, search_history);
         p = e->next;
         e = p;
     }
@@ -625,7 +625,7 @@ STN::del_timepoint(string x)
 
     while (e != nullptr) {
         y_node = graph[e->id];
-        y_node->edges_out = del_all_edges(y_node->edges_out, x_node->id, true);
+        y_node->edges_out = del_all_edges(y_node->edges_out, x_node->id, true, search_history);
         p = e->next;
         e = p;
     }
@@ -645,7 +645,7 @@ STN::del_timepoint(string x)
 }
 
 bool
-STN::add_constraint(string s, constraint c)
+STN::add_constraint(string s, constraint c, stack<constraint>* search_history)
 {
     if (verbose_1)
         cout << "Adding constraint " << s << endl;
@@ -681,8 +681,14 @@ STN::add_constraint(string s, constraint c)
             cout << "Constraint with that name already exists\n";
         return true;
 
-    } else
+    } else {
         constraints[s] = c;
+        if (search_history != nullptr) {
+            cout << "Pushing " << get<0>(c) << ", " << get<1>(c) << ", " << get<2>(c) << ", "
+                 << get<3>(c) << endl;
+            search_history->push(c);
+        }
+    }
 
     u = graph[x_id];
     v = graph[y_id];
@@ -705,6 +711,12 @@ STN::add_constraint(string s, constraint c)
         del_edge(x_id, y_id, s);
         del_edge(y_id, x_id, s);
         constraints.erase(s);
+        if (search_history != nullptr && !search_history->empty()) {
+            constraint c = search_history->top();
+            cout << "Popping " << get<0>(c) << ", " << get<1>(c) << ", " << get<2>(c) << ", "
+                 << get<3>(c) << endl;
+            search_history->pop();
+        }
     }
 
     return f;
@@ -849,7 +861,7 @@ STN::invalidate_nodes(int x_id, int y_id)
 }
 
 bool
-STN::del_constraint(string s)
+STN::del_constraint(string s, stack<constraint>* search_history)
 {
     if (verbose_1)
         cout << "Deleting constraint: " << s << endl;
@@ -901,24 +913,44 @@ STN::del_constraint(string s)
 
     bool f = propagation(-1, -1, &q);
     constraints.erase(s);
+    if (search_history != nullptr && !search_history->empty()) {
+        constraint c = search_history->top();
+        cout << "Popping " << get<0>(c) << ", " << get<1>(c) << ", " << get<2>(c) << ", "
+             << get<3>(c) << endl;
+        search_history->pop();
+    }
 
     return f;
 }
 
 shared_ptr<Edge>
-STN::del_all_edges(shared_ptr<Edge> e, int y, bool del_name)
+STN::del_all_edges(shared_ptr<Edge> e, int y, bool del_name, stack<constraint>* search_history)
 {
     shared_ptr<Edge> head = e;
     while (e != nullptr && e->id == y) {
-        if (del_name)
+        if (del_name) {
             constraints.erase(e->c_id);
+            if (search_history != nullptr && !search_history->empty()) {
+                constraint c = search_history->top();
+                cout << "Popping " << get<0>(c) << ", " << get<1>(c) << ", " << get<2>(c) << ", "
+                     << get<3>(c) << endl;
+                search_history->pop();
+            }
+        }
         e = e->next;
     }
 
     while (head->next != nullptr) {
         if (head->next->id == y) {
-            if (del_name)
+            if (del_name) {
                 constraints.erase(head->next->c_id);
+                if (search_history != nullptr && !search_history->empty()) {
+                    constraint c = search_history->top();
+                    cout << "Popping " << get<0>(c) << ", " << get<1>(c) << ", " << get<2>(c)
+                         << ", " << get<3>(c) << endl;
+                    search_history->pop();
+                }
+            }
             shared_ptr<Edge> tmp = head->next;
             head->next = head->next->next;
 

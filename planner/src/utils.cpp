@@ -5,6 +5,7 @@ validation_state::to_string() const
 {
     string result = "Validation State: ";
     result += "\t Token = " + failing_token.to_string() + "\n";
+    result += "\t Literal = " + precondition.to_string() + "\n";
     result += "\t Source vertex = " + source.to_string() + "\n";
     result += "\t Sink vertex = " + sink.to_string() + "\n";
     result += "\t World State = ";
@@ -211,12 +212,14 @@ plan_validator(Plan* p)
 
                                 if (!boost::edge(s, t, rail_network.adj_list).second)
                                     return validation_state(&tk,
+                                                            literal(),
                                                             source,
                                                             sink,
                                                             &current_state,
                                                             validation_exception::EDGE_SKIP);
                             } else {
                                 return validation_state(&tk,
+                                                        literal(),
                                                         source,
                                                         sink,
                                                         &current_state,
@@ -243,6 +246,7 @@ plan_validator(Plan* p)
                                       check_precondition(&prec, &tk_knowns, &current_state, &init);
                                     if (!succ)
                                         return validation_state(&tk,
+                                                                prec,
                                                                 vertex(),
                                                                 vertex(),
                                                                 &current_state,
@@ -266,6 +270,7 @@ plan_validator(Plan* p)
                                       check_precondition(&prec, &tk_knowns, &current_state, &init);
                                     if (!succ)
                                         return validation_state(&tk,
+                                                                prec,
                                                                 vertex(),
                                                                 vertex(),
                                                                 &current_state,
@@ -291,8 +296,12 @@ plan_validator(Plan* p)
 
         Token dummy_token = Token();
         if (robots.size() != occupied_blocks.size())
-            return validation_state(
-              &dummy_token, vertex(), vertex(), &current_state, validation_exception::MULTI_BLOCK);
+            return validation_state(&dummy_token,
+                                    literal(),
+                                    vertex(),
+                                    vertex(),
+                                    &current_state,
+                                    validation_exception::MULTI_BLOCK);
     }
 
     return validation_state();
