@@ -679,6 +679,11 @@ STN::add_constraint(string s, constraint c, stack<constraint>* search_history)
     if (get<0>(temp) != "") {
         if (verbose_1)
             cout << "Constraint with that name already exists\n";
+        if (search_history != nullptr) {
+            cout << "Pushing " << get<0>(c) << ", " << get<1>(c) << ", " << get<2>(c) << ", "
+                 << get<3>(c) << endl;
+            search_history->push(c);
+        }
         return true;
 
     } else {

@@ -1272,6 +1272,7 @@ local_stn_check_phase(Timeline* r,
         if (s.tk.get_name() != main_tk.get_name()) {
             PLOGD << "meets between " << main_tk.get_end() << " " << s.tk.get_start() << endl;
             bool succ1 = add_meets_constraint(&main_tk, &s.tk, stn, search_history);
+            PLOGD << "succ1 = " << succ1 << endl;
 
             if (!succ1) {
                 local_check = false;
