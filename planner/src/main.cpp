@@ -44,19 +44,17 @@ vector<parsed_task> parsed_primitive = vector<parsed_task>();
 map<string, set<string>> sorts = map<string, set<string>>();
 map<string, set<string>> constants = map<string, set<string>>();
 vector<sort_definition> sort_definitions = vector<sort_definition>();
-vector<predicate_definition> predicate_definitions =
-    vector<predicate_definition>();
-map<string, vector<parsed_method>> parsed_methods =
-    map<string, vector<parsed_method>>();
-map<string, tasknetwork_solution> request_solutions =
-    map<string, tasknetwork_solution>();
+vector<predicate_definition> predicate_definitions = vector<predicate_definition>();
+map<string, vector<parsed_method>> parsed_methods = map<string, vector<parsed_method>>();
+map<string, tasknetwork_solution> request_solutions = map<string, tasknetwork_solution>();
 vector<pair<predicate_definition, string>> parsed_functions =
-    vector<pair<predicate_definition, string>>();
+  vector<pair<predicate_definition, string>>();
 map<string, set<map<string, var_declaration>>> csorts =
-    map<string, set<map<string, var_declaration>>>();
+  map<string, set<map<string, var_declaration>>>();
 
-void find_plan_for_request(request r, Plan *p, bool *plan_found,
-                           string metric) {
+void
+find_plan_for_request(request r, Plan* p, bool* plan_found, string metric)
+{
   if (task_name_map.find(r.demand.name) == task_name_map.end()) {
     PLOGV << "Request " << r.id << " cannot be met!\n";
   }
@@ -73,13 +71,11 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
 
     search_vertex root = search_vertex();
     for (search_vertex s : candidate) {
-      if (s.parent == nullptr ||
-          (s.parent->or_node && s.parent->parent == nullptr))
+      if (s.parent == nullptr || (s.parent->or_node && s.parent->parent == nullptr))
         root = s;
     }
 
-    pair<task_network, vector<arg_and_type>> ret =
-        instantiate_task_network(&root, candidate, r);
+    pair<task_network, vector<arg_and_type>> ret = instantiate_task_network(&root, candidate, r);
     task_network r_net = ret.first;
     vector<arg_and_type> open = ret.second;
 
@@ -98,8 +94,7 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
 
     for (vector<string> assign : assignments) {
       assert(assign.size() == 1); // assigning only robots for now
-      map<string, arg_and_type> all_assignments =
-          find_assignments(assign[0], open);
+      map<string, arg_and_type> all_assignments = find_assignments(assign[0], open);
 
       task_network test_net = assign_open_variables(all_assignments, r_net);
 
@@ -109,8 +104,7 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
         solutions.push(sol.top());
     }
 
-    if (solutions.top().metric_value !=
-        std::numeric_limits<double>::infinity()) {
+    if (solutions.top().metric_value != std::numeric_limits<double>::infinity()) {
       commit_slots(p, &solutions);
       *(plan_found) = true;
     }
@@ -120,7 +114,9 @@ void find_plan_for_request(request r, Plan *p, bool *plan_found,
   }
 }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char** argv)
+{
 
   int dfile = -1;
   int pfile = -1;
@@ -135,16 +131,16 @@ int main(int argc, char **argv) {
 
   struct option options[] = {
 
-      {"metric", required_argument, NULL, 'm'},
-      {"severity", required_argument, NULL, 'd'},
-      {"attempts", required_argument, NULL, 't'},
-      {"properties", optional_argument, NULL, 'p'},
-      {"permute_benchmark", no_argument, NULL, 'b'},
-      {"keep-conditional-effects", no_argument, NULL, 'k'},
-      {"max-recursive-depth", required_argument, NULL, 'r'},
-      {"linear-conditional-effect", no_argument, NULL, 'L'},
-      {"encode-disjunctive_preconditions-in-htn", no_argument, NULL, 'D'},
-      {NULL, 0, NULL, 0},
+    { "metric", required_argument, NULL, 'm' },
+    { "severity", required_argument, NULL, 'd' },
+    { "attempts", required_argument, NULL, 't' },
+    { "properties", optional_argument, NULL, 'p' },
+    { "permute_benchmark", no_argument, NULL, 'b' },
+    { "keep-conditional-effects", no_argument, NULL, 'k' },
+    { "max-recursive-depth", required_argument, NULL, 'r' },
+    { "linear-conditional-effect", no_argument, NULL, 'L' },
+    { "encode-disjunctive_preconditions-in-htn", no_argument, NULL, 'D' },
+    { NULL, 0, NULL, 0 },
 
   };
 
@@ -210,8 +206,8 @@ int main(int argc, char **argv) {
   plog::init(severity, &consoleAppender);
 
   // Open c-style file handle
-  FILE *domain_file = fopen(argv[dfile], "r");
-  FILE *problem_file = fopen(argv[pfile], "r");
+  FILE* domain_file = fopen(argv[dfile], "r");
+  FILE* problem_file = fopen(argv[pfile], "r");
 
   if (!domain_file) {
     cout << "Can't open " << argv[dfile] << "!" << endl;
@@ -224,8 +220,12 @@ int main(int argc, char **argv) {
   }
 
   /* cout << "Running the parser on the given domain and problem files!\n"; */
-  run_parser(domain_file, problem_file, argv[dfile], argv[pfile],
-             showProperties, compileConditionalEffects,
+  run_parser(domain_file,
+             problem_file,
+             argv[dfile],
+             argv[pfile],
+             showProperties,
+             compileConditionalEffects,
              linearConditionalEffectExpansion,
              encodeDisjunctivePreconditionsInMethods);
 
@@ -243,19 +243,17 @@ int main(int argc, char **argv) {
 
   ofstream data_file;
   data_file.open("../data/10_blocks_5_requests.json", std::ios::out);
-  string constant =
-      "{\n\t\"block_bounds\": { \n\t\t\"blockA\" : [-1.25, -1.0], "
-      "\n\t\t\"blockB\" : [-1.0, -0.75], \n\t\t\"blockC\" : [-0.75, -0.5], "
-      "\n\t\t\"blockD\" : [-0.5, -0.25], \n\t\t\"blockE\" : [-0.25, 0.0], "
-      "\n\t\t\"blockF\" : [0.0, 0.25], \n\t\t\"blockG\" : [0.25, 0.5], "
-      "\n\t\t\"blockH\" : [0.5, 0.75], \n\t\t\"blockI\" : [0.75, 1.0], "
-      "\n\t\t\"blockJ\" : [1.0, 1.25] \n\t}, \n\t\"locations\" : { ";
+  string constant = "{\n\t\"block_bounds\": { \n\t\t\"blockA\" : [-1.25, -1.0], "
+                    "\n\t\t\"blockB\" : [-1.0, -0.75], \n\t\t\"blockC\" : [-0.75, -0.5], "
+                    "\n\t\t\"blockD\" : [-0.5, -0.25], \n\t\t\"blockE\" : [-0.25, 0.0], "
+                    "\n\t\t\"blockF\" : [0.0, 0.25], \n\t\t\"blockG\" : [0.25, 0.5], "
+                    "\n\t\t\"blockH\" : [0.5, 0.75], \n\t\t\"blockI\" : [0.75, 1.0], "
+                    "\n\t\t\"blockJ\" : [1.0, 1.25] \n\t}, \n\t\"locations\" : { ";
   data_file << constant;
   int c = 0;
   for (int i = 0; i < (int)init.size(); i++) {
     if (init[i].predicate == "reachable" && init[i].timed == timed_type::ALL &&
-        init[i].temp_qual == temporal_qualifier_type::OVER &&
-        init[i].positive) {
+        init[i].temp_qual == temporal_qualifier_type::OVER && init[i].positive) {
       string block = init[i].args[0], loc = init[i].args[1];
       data_file << "\n\t\t\"" << loc << "\" : " << block_to_loc[block];
       c++;
@@ -270,19 +268,17 @@ int main(int argc, char **argv) {
     for (map<string, var_declaration> csm : cs.second) {
       for (pair<string, var_declaration> m : csm) {
         object_state obj = object_state();
-        obj.parent = cs.first;     // type information
-        obj.object_name = m.first; // object name
-        obj.attribute_states =
-            m.second; // object attributes defined under parent type
+        obj.parent = cs.first;                   // type information
+        obj.object_name = m.first;               // object name
+        obj.attribute_states = m.second;         // object attributes defined under parent type
         obj.attribute_types = var_declaration(); // object attribute types
         for (sort_definition sd : sort_definitions)
-          if (find(sd.declared_sorts.begin(), sd.declared_sorts.end(),
-                   obj.parent) != sd.declared_sorts.end())
+          if (find(sd.declared_sorts.begin(), sd.declared_sorts.end(), obj.parent) !=
+              sd.declared_sorts.end())
             for (arg_and_type s_types : sd.vars.vars)
               for (arg_and_type s_states : obj.attribute_states.vars)
                 if (s_types.first.substr(1) == s_states.first)
-                  obj.attribute_types.vars.push_back(
-                      make_pair(s_states.first, s_types.second));
+                  obj.attribute_types.vars.push_back(make_pair(s_states.first, s_types.second));
 
         initial_state.insert(make_pair(obj.object_name, obj));
       }
@@ -299,17 +295,17 @@ int main(int argc, char **argv) {
         else if (args.first == "edges")
           edges = args.second.substr(1, args.second.size() - 2);
         else
-          cerr << "Do not identify attribute " << args.first
-               << " for object type " << states.second.parent << "\n";
+          cerr << "Do not identify attribute " << args.first << " for object type "
+               << states.second.parent << "\n";
       }
       rail_network = construct_network(vertices, edges);
       rail_network.id = states.first;
     }
   }
 
-  map<string, fmethod> fm1 = {{"m_clear_and_move", &clear_and_move}};
-  map<string, fmethod> fm2 = {{"m_reachable_location", &reachable_location}};
-  map<string, fpredicate> fp = {{"clear", &clear}};
+  map<string, fmethod> fm1 = { { "m_clear_and_move", &clear_and_move } };
+  map<string, fmethod> fm2 = { { "m_reachable_location", &reachable_location } };
+  map<string, fpredicate> fp = { { "clear", &clear } };
   assign_func_impl(fp, fm1);
   assign_func_impl(fm2);
 
@@ -337,35 +333,32 @@ int main(int argc, char **argv) {
           if (state.status == validation_exception::NO_EXCEPTION) {
             pair<double, double> metric_vals = compute_metrics(&p);
             if (metric == "actions")
-              metric_values.insert(
-                  make_pair(permute_counter, metric_vals.first));
+              metric_values.insert(make_pair(permute_counter, metric_vals.first));
             else
-              metric_values.insert(
-                  make_pair(permute_counter, metric_vals.second));
-            time_values.insert(make_pair(
-                permute_counter, chrono::duration<double>(diff).count()));
+              metric_values.insert(make_pair(permute_counter, metric_vals.second));
+            time_values.insert(make_pair(permute_counter, chrono::duration<double>(diff).count()));
           } else {
 
             PLOGE << "Permute Counter = " << permute_counter << endl;
             PLOGE << "PLAN WAS FOUND BUT VALIDATION FAILED!!\n";
             switch (state.status) {
-            case validation_exception::EDGE_SKIP:
-            case validation_exception::VERTEX_SAME:
-            case validation_exception::MULTI_BLOCK:
-              PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
-              break;
-            default:
-              break;
+              case validation_exception::EDGE_SKIP:
+              case validation_exception::VERTEX_SAME:
+              case validation_exception::MULTI_BLOCK:
+                PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
+                break;
+              default:
+                break;
             }
             switch (state.status) {
-            case validation_exception::EDGE_SKIP:
-            case validation_exception::VERTEX_SAME:
-            case validation_exception::PREC_FAIL:
-              PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
-                    << state.failing_token.to_string() << endl;
-              break;
-            default:
-              break;
+              case validation_exception::EDGE_SKIP:
+              case validation_exception::VERTEX_SAME:
+              case validation_exception::PREC_FAIL:
+                PLOGE << "\t[REASON]: OFFENDING TOKEN -> " << state.failing_token.to_string()
+                      << endl;
+                break;
+              default:
+                break;
             }
             PLOGE << "The whole plan is - \n" << p.to_string() << endl;
             stn.destroy();
@@ -374,9 +367,9 @@ int main(int argc, char **argv) {
         }
         stn.destroy();
         permute_counter++;
-      } while (
-          next_permutation(requests_copy.begin(), requests_copy.end(),
-                           [](request a, request b) { return a.id < b.id; }));
+      } while (next_permutation(requests_copy.begin(),
+                                requests_copy.end(),
+                                [](request a, request b) { return a.id < b.id; }));
     } else {
       int counter = 0, permute_counter = 0;
       do {
@@ -393,36 +386,33 @@ int main(int argc, char **argv) {
           if (state.status == validation_exception::NO_EXCEPTION) {
             pair<double, double> metric_vals = compute_metrics(&p);
             if (metric == "actions")
-              metric_values.insert(
-                  make_pair(permute_counter, metric_vals.first));
+              metric_values.insert(make_pair(permute_counter, metric_vals.first));
             else
-              metric_values.insert(
-                  make_pair(permute_counter, metric_vals.second));
-            time_values.insert(make_pair(
-                permute_counter, chrono::duration<double>(diff).count()));
+              metric_values.insert(make_pair(permute_counter, metric_vals.second));
+            time_values.insert(make_pair(permute_counter, chrono::duration<double>(diff).count()));
             counter++;
           } else {
             PLOGE << "Counter = " << counter << endl;
             PLOGE << "Permute Counter = " << permute_counter << endl;
             PLOGE << "PLAN WAS FOUND BUT VALIDATION FAILED!!\n";
             switch (state.status) {
-            case validation_exception::EDGE_SKIP:
-            case validation_exception::VERTEX_SAME:
-            case validation_exception::MULTI_BLOCK:
-              PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
-              break;
-            default:
-              break;
+              case validation_exception::EDGE_SKIP:
+              case validation_exception::VERTEX_SAME:
+              case validation_exception::MULTI_BLOCK:
+                PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
+                break;
+              default:
+                break;
             }
             switch (state.status) {
-            case validation_exception::EDGE_SKIP:
-            case validation_exception::VERTEX_SAME:
-            case validation_exception::PREC_FAIL:
-              PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
-                    << state.failing_token.to_string() << endl;
-              break;
-            default:
-              break;
+              case validation_exception::EDGE_SKIP:
+              case validation_exception::VERTEX_SAME:
+              case validation_exception::PREC_FAIL:
+                PLOGE << "\t[REASON]: OFFENDING TOKEN -> " << state.failing_token.to_string()
+                      << endl;
+                break;
+              default:
+                break;
             }
             PLOGE << "The whole plan is - \n" << p.to_string() << endl;
             stn.destroy();
@@ -431,10 +421,10 @@ int main(int argc, char **argv) {
         }
         stn.destroy();
         permute_counter++;
-      } while (
-          next_permutation(requests_copy.begin(), requests_copy.end(),
-                           [](request a, request b) { return a.id < b.id; }) &&
-          counter < MAX_PERMUTATIONS);
+      } while (next_permutation(requests_copy.begin(),
+                                requests_copy.end(),
+                                [](request a, request b) { return a.id < b.id; }) &&
+               counter < MAX_PERMUTATIONS);
     }
   } else {
     auto start = chrono::steady_clock::now();
@@ -459,23 +449,22 @@ int main(int argc, char **argv) {
       } else {
         PLOGE << "PLAN WAS FOUND BUT VALIDATION FAILED!!\n";
         switch (state.status) {
-        case validation_exception::EDGE_SKIP:
-        case validation_exception::VERTEX_SAME:
-        case validation_exception::MULTI_BLOCK:
-          PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
-          break;
-        default:
-          break;
+          case validation_exception::EDGE_SKIP:
+          case validation_exception::VERTEX_SAME:
+          case validation_exception::MULTI_BLOCK:
+            PLOGE << "\t[REASON]: FAILED DUE TO RAIL BLOCK CONSTRAINTS!\n";
+            break;
+          default:
+            break;
         }
         switch (state.status) {
-        case validation_exception::EDGE_SKIP:
-        case validation_exception::VERTEX_SAME:
-        case validation_exception::PREC_FAIL:
-          PLOGE << "\t[REASON]: OFFENDING TOKEN -> "
-                << state.failing_token.to_string() << endl;
-          break;
-        default:
-          break;
+          case validation_exception::EDGE_SKIP:
+          case validation_exception::VERTEX_SAME:
+          case validation_exception::PREC_FAIL:
+            PLOGE << "\t[REASON]: OFFENDING TOKEN -> " << state.failing_token.to_string() << endl;
+            break;
+          default:
+            break;
         }
         PLOGE << state.to_string() << endl;
         PLOGE << "The whole plan is - \n" << p.to_string() << endl;
@@ -491,45 +480,41 @@ int main(int argc, char **argv) {
 
   if (permute) {
     cout << "\t\tPERMUTATION BENCHMARKING RESULTS\n\n";
-    cout << "Total permutations tested = " << std::to_string(time_values.size())
-         << endl;
+    cout << "Total permutations tested = " << std::to_string(time_values.size()) << endl;
 
     vector<request> time_requests = requests;
     vector<request> metric_requests = requests;
     map<int, double>::iterator t_it =
-        min_element(time_values.begin(), time_values.end(),
-                    [](pair<int, double> a, pair<int, double> b) {
-                      return a.second < b.second;
-                    });
+      min_element(time_values.begin(),
+                  time_values.end(),
+                  [](pair<int, double> a, pair<int, double> b) { return a.second < b.second; });
     int t_pos = t_it->first, counter = 0;
     double t_value = t_it->second;
     do {
       counter++;
-    } while (
-        next_permutation(time_requests.begin(), time_requests.end(),
-                         [](request a, request b) { return a.id < b.id; }) &&
-        counter < t_pos);
-    cout << "Best Ordering based on Time(s) with value = "
-         << std::to_string(t_value) << ": \n";
+    } while (next_permutation(time_requests.begin(),
+                              time_requests.end(),
+                              [](request a, request b) { return a.id < b.id; }) &&
+             counter < t_pos);
+    cout << "Best Ordering based on Time(s) with value = " << std::to_string(t_value) << ": \n";
     for (request r : time_requests) {
       cout << r.id << " ";
     }
     cout << endl;
 
     map<int, double>::iterator m_it =
-        min_element(metric_values.begin(), metric_values.end(),
-                    [](pair<int, double> a, pair<int, double> b) {
-                      return a.second < b.second;
-                    });
+      min_element(metric_values.begin(),
+                  metric_values.end(),
+                  [](pair<int, double> a, pair<int, double> b) { return a.second < b.second; });
     counter = 0;
     int m_pos = m_it->first;
     double m_value = m_it->second;
     do {
       counter++;
-    } while (
-        next_permutation(metric_requests.begin(), metric_requests.end(),
-                         [](request a, request b) { return a.id < b.id; }) &&
-        counter < m_pos);
+    } while (next_permutation(metric_requests.begin(),
+                              metric_requests.end(),
+                              [](request a, request b) { return a.id < b.id; }) &&
+             counter < m_pos);
     cout << "Best Ordering based on metric ";
     if (metric == "actions")
       cout << "Total Actions";
@@ -575,7 +560,6 @@ int main(int argc, char **argv) {
       cout << "Total Actions :\n\tMean = ";
     else
       cout << "Makespan :\n\tMean = ";
-    cout << std::to_string(mean_metric)
-         << "\n\tStd Dev = " << std::to_string(std_metric) << "\n\n";
+    cout << std::to_string(mean_metric) << "\n\tStd Dev = " << std::to_string(std_metric) << "\n\n";
   }
 }
