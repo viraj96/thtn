@@ -9,6 +9,7 @@
 #include <cassert>
 #include <chrono>
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -230,25 +231,30 @@ main(int argc, char** argv)
              encodeDisjunctivePreconditionsInMethods);
 
   map<string, string> block_to_loc;
-  block_to_loc["blockA"] = "[0.5,-1.125,1.03]";
-  block_to_loc["blockB"] = "[0.5,-0.875,1.03]";
-  block_to_loc["blockC"] = "[0.5,-0.625,1.03]";
-  block_to_loc["blockD"] = "[0.5,-0.375,1.03]";
-  block_to_loc["blockE"] = "[0.5,-0.125,1.03]";
-  block_to_loc["blockF"] = "[0.5,0.125,1.03]";
-  block_to_loc["blockG"] = "[0.5,0.375,1.03]";
-  block_to_loc["blockH"] = "[0.5,0.625,1.03]";
-  block_to_loc["blockI"] = "[0.5,0.875,1.03]";
-  block_to_loc["blockJ"] = "[0.5,1.125,1.03]";
+  block_to_loc["blockA"] = "[0.5,-1.375,1.03]";
+  block_to_loc["blockB"] = "[0.5,-1.125,1.03]";
+  block_to_loc["blockC"] = "[0.5,-0.875,1.03]";
+  block_to_loc["blockD"] = "[0.5,-0.625,1.03]";
+  block_to_loc["blockE"] = "[0.5,-0.375,1.03]";
+  block_to_loc["blockF"] = "[0.5,-0.125,1.03]";
+  block_to_loc["blockG"] = "[0.5,0.125,1.03]";
+  block_to_loc["blockH"] = "[0.5,0.375,1.03]";
+  block_to_loc["blockI"] = "[0.5,0.625,1.03]";
+  block_to_loc["blockJ"] = "[0.5,0.875,1.03]";
+  block_to_loc["blockK"] = "[0.5,1.125,1.03]";
+  block_to_loc["blockL"] = "[0.5,1.375,1.03]";
 
   ofstream data_file;
-  data_file.open("../data/10_blocks_5_requests.json", std::ios::out);
-  string constant = "{\n\t\"block_bounds\": { \n\t\t\"blockA\" : [-1.25, -1.0], "
-                    "\n\t\t\"blockB\" : [-1.0, -0.75], \n\t\t\"blockC\" : [-0.75, -0.5], "
-                    "\n\t\t\"blockD\" : [-0.5, -0.25], \n\t\t\"blockE\" : [-0.25, 0.0], "
-                    "\n\t\t\"blockF\" : [0.0, 0.25], \n\t\t\"blockG\" : [0.25, 0.5], "
-                    "\n\t\t\"blockH\" : [0.5, 0.75], \n\t\t\"blockI\" : [0.75, 1.0], "
-                    "\n\t\t\"blockJ\" : [1.0, 1.25] \n\t}, \n\t\"locations\" : { ";
+  filesystem::path data_file_name = filesystem::current_path().parent_path() / "data";
+  data_file_name = data_file_name / filesystem::path("12_blocks_5_requests.json");
+  data_file.open("../data/12_blocks_5_requests.json", std::ios::out);
+  string constant = "{\n\t\"block_bounds\": { \n\t\t\"blockA\" : [-1.5, -1.25], "
+                    "\n\t\t\"blockB\" : [-1.25, -1.0], \n\t\t\"blockC\" : [-1.0, -0.75], "
+                    "\n\t\t\"blockD\" : [-0.75, -0.5], \n\t\t\"blockE\" : [-0.5, -0.25], "
+                    "\n\t\t\"blockF\" : [-0.25, 0.0], \n\t\t\"blockG\" : [0.0, 0.25], "
+                    "\n\t\t\"blockH\" : [0.25, 0.5], \n\t\t\"blockI\" : [0.5, 0.75], "
+                    "\n\t\t\"blockJ\" : [0.75, 1.00], \n\t\t\"blockK\" : [1.00, 1.25], "
+                    "\n\t\t\"blockL\" : [1.25, 1.5] \n\t}, \n\t\"locations\" : { ";
   data_file << constant;
   int c = 0;
   for (int i = 0; i < (int)init.size(); i++) {
