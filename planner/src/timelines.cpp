@@ -19,12 +19,14 @@ Token::to_string() const
                 result += " " + k.second + " ";
 
     result += "\n\t Start Timepoint = " + start_t;
-    tuple<double, double> bounds = stn.get_feasible_values(start_t);
+    tuple<double, double> bounds = stn.get_feasible_values(start);
+    // tuple<double, double> bounds = stn.get_feasible_values(start_t);
     result +=
       " (" + std::to_string(abs(get<0>(bounds))) + ", " + std::to_string(get<1>(bounds)) + ")";
 
     result += "\n\t End Timepoint = " + end_t;
-    bounds = stn.get_feasible_values(end_t);
+    bounds = stn.get_feasible_values(end);
+    // bounds = stn.get_feasible_values(end_t);
     result +=
       " (" + std::to_string(abs(get<0>(bounds))) + ", " + std::to_string(get<1>(bounds)) + ")\n";
 
@@ -87,11 +89,13 @@ Auxiliary_Token::to_string() const
     result += "\n\t Name = " + name;
 
     result += "\n\t Start Timepoint = " + start_t;
-    tuple<double, double> bounds = stn.get_feasible_values(start_t);
+    tuple<double, double> bounds = stn.get_feasible_values(start);
+    // tuple<double, double> bounds = stn.get_feasible_values(start_t);
     result += " (" + std::to_string(get<0>(bounds)) + ", " + std::to_string(get<1>(bounds)) + ")";
 
     result += "\n\t End Timepoint = " + end_t;
-    bounds = stn.get_feasible_values(end_t);
+    bounds = stn.get_feasible_values(end);
+    // bounds = stn.get_feasible_values(end_t);
     result += " (" + std::to_string(get<0>(bounds)) + ", " + std::to_string(get<1>(bounds)) + ")\n";
 
     return result;
@@ -209,6 +213,9 @@ Token::create_timepoints(double duration)
     this->start_t = this->resource + "_" + this->name + "_start" + std::to_string(start_tp);
     this->end_t = this->resource + "_" + this->name + "_end" + std::to_string(end_tp);
 
+    this->start = stn.add_timepoint(this->start_t);
+    this->end = stn.add_timepoint(this->end_t);
+
     if (duration == 0.0)
         duration = zero;
 
@@ -220,7 +227,9 @@ Token::create_timepoints(double duration)
     else
         c = make_tuple(this->start_t, this->end_t, duration, duration);
     string c_name = this->start_t + duration_constraint + this->end_t;
-    bool status = stn.add_constraint(c_name, c);
+    bool status =
+      stn.add_constraint(this->start, this->end, c_name, make_pair(get<2>(c), get<3>(c)));
+    // bool status = stn.add_constraint(c_name, c);
 
     if (!status)
         cout << "Constraint between (" + this->start_t + ", " + this->end_t +
@@ -237,6 +246,9 @@ Token::create_timepoints(STN* stn, double duration)
     this->start_t = this->resource + "_" + this->name + "_start" + std::to_string(start_tp);
     this->end_t = this->resource + "_" + this->name + "_end" + std::to_string(end_tp);
 
+    this->start = stn->add_timepoint(this->start_t);
+    this->end = stn->add_timepoint(this->end_t);
+
     if (duration == 0.0)
         duration = zero;
 
@@ -249,7 +261,9 @@ Token::create_timepoints(STN* stn, double duration)
         c = make_tuple(this->start_t, this->end_t, duration, duration);
 
     string c_name = this->start_t + duration_constraint + this->end_t;
-    bool status = stn->add_constraint(c_name, c);
+    bool status =
+      stn->add_constraint(this->start, this->end, c_name, make_pair(get<2>(c), get<3>(c)));
+    // bool status = stn->add_constraint(c_name, c);
 
     if (!status)
         cout << "Constraint between (" + this->start_t + ", " + this->end_t +
@@ -267,6 +281,20 @@ string
 Token::get_start() const
 {
     return this->start_t;
+}
+
+shared_ptr<Node>
+Token::get_end_timepoint() const
+{
+    assert(this->end != nullptr);
+    return this->end;
+}
+
+shared_ptr<Node>
+Token::get_start_timepoint() const
+{
+    assert(this->start != nullptr);
+    return this->start;
 }
 
 void
@@ -523,7 +551,11 @@ instantiate_timeline(string id, string resource)
 
     string c_name = head.get_end() + sequencing_constraint + tail.get_start();
     constraint c = make_tuple(head.get_end(), tail.get_start(), zero, inf);
-    assert(stn.add_constraint(c_name, c));
+    assert(stn.add_constraint(head.get_end_timepoint(),
+                              tail.get_start_timepoint(),
+                              c_name,
+                              make_pair(get<2>(c), get<3>(c))));
+    // assert(stn.add_constraint(c_name, c));
 
     return t;
 }
@@ -599,7 +631,11 @@ add_sync_constraints(method m, vector<Token> tokens)
                 else
                     sync_name = tk1.get_end() + before_constraint + tk2.get_start();
                 constraint sync = make_tuple(tk1.get_end(), tk2.get_start(), lb, ub);
-                assert(stn.add_constraint(sync_name, sync));
+                assert(stn.add_constraint(tk1.get_end_timepoint(),
+                                          tk2.get_start_timepoint(),
+                                          sync_name,
+                                          make_pair(lb, ub)));
+                // assert(stn.add_constraint(sync_name, sync));
             }
     }
 }
@@ -619,8 +655,17 @@ add_contains_constraints(method m, Token parent, vector<Token> children)
                 constraint contains_st = make_tuple(parent.get_start(), tk.get_start(), zero, inf);
                 string et_name = tk.get_end() + contains_constraint + parent.get_end();
                 constraint contains_et = make_tuple(tk.get_end(), parent.get_end(), zero, inf);
-                assert(stn.add_constraint(st_name, contains_st));
-                assert(stn.add_constraint(et_name, contains_et));
+
+                assert(stn.add_constraint(parent.get_start_timepoint(),
+                                          tk.get_start_timepoint(),
+                                          st_name,
+                                          make_pair(get<2>(contains_st), get<3>(contains_st))));
+                assert(stn.add_constraint(tk.get_end_timepoint(),
+                                          parent.get_end_timepoint(),
+                                          et_name,
+                                          make_pair(get<2>(contains_et), get<3>(contains_et))));
+                // assert(stn.add_constraint(st_name, contains_st));
+                // assert(stn.add_constraint(et_name, contains_et));
             }
         }
 
@@ -652,12 +697,20 @@ add_contains_constraints(method m, Token parent, vector<Token> children)
             if (name.substr(0, name.find("-")) == it0->task) {
                 string st_name = parent.get_start() + contains_constraint + tk.get_start();
                 constraint contains_st = make_tuple(parent.get_start(), tk.get_start(), zero, inf);
-                assert(stn.add_constraint(st_name, contains_st));
+                assert(stn.add_constraint(parent.get_start_timepoint(),
+                                          tk.get_start_timepoint(),
+                                          st_name,
+                                          make_pair(get<2>(contains_st), get<3>(contains_st))));
+                // assert(stn.add_constraint(st_name, contains_st));
 
             } else if (name.substr(0, name.find("-")) == it1->task) {
                 string et_name = tk.get_end() + contains_constraint + parent.get_end();
                 constraint contains_et = make_tuple(tk.get_end(), parent.get_end(), zero, inf);
-                assert(stn.add_constraint(et_name, contains_et));
+                assert(stn.add_constraint(tk.get_end_timepoint(),
+                                          parent.get_end_timepoint(),
+                                          et_name,
+                                          make_pair(get<2>(contains_et), get<3>(contains_et))));
+                // assert(stn.add_constraint(et_name, contains_et));
             }
         }
     }
@@ -912,8 +965,17 @@ instantiate_task_network(search_vertex* root, set<search_vertex> vert, request r
 
             string et_name = "cz" + cz_constraint + tn.adj_list[*v].tk.get_end();
             constraint cz_et = make_tuple("cz", tn.adj_list[*v].tk.get_end(), zero, due_date);
-            assert(stn.add_constraint(st_name, cz_st));
-            assert(stn.add_constraint(et_name, cz_et));
+
+            assert(stn.add_constraint(stn.get_cz(),
+                                      tn.adj_list[*v].tk.get_start_timepoint(),
+                                      st_name,
+                                      make_pair(get<2>(cz_st), get<3>(cz_st))));
+            assert(stn.add_constraint(stn.get_cz(),
+                                      tn.adj_list[*v].tk.get_end_timepoint(),
+                                      et_name,
+                                      make_pair(get<2>(cz_et), get<3>(cz_et))));
+            // assert(stn.add_constraint(st_name, cz_st));
+            // assert(stn.add_constraint(et_name, cz_et));
         }
 
         Token tk = tn.adj_list[*v].tk;

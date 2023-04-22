@@ -672,10 +672,18 @@ add_meets_constraint(Token* first,
     constraint meets = make_tuple(first->get_end(), second->get_start(), zero, zero);
 
     if (submit) {
-        assert(stn->add_constraint(meets_name, meets));
+        assert(stn->add_constraint(first->get_end_timepoint(),
+                                   second->get_start_timepoint(),
+                                   meets_name,
+                                   make_pair(zero, zero)));
+        // assert(stn->add_constraint(meets_name, meets));
         return true;
     } else {
-        bool succ = stn->add_constraint(meets_name, meets, search_history);
+        bool succ = stn->add_constraint(first->get_end_timepoint(),
+                                        second->get_start_timepoint(),
+                                        meets_name,
+                                        make_pair(zero, zero));
+        // bool succ = stn->add_constraint(meets_name, meets, search_history);
         return succ;
     }
 }
@@ -690,18 +698,32 @@ add_contains_constraint(Token* first, Token* second, STN* stn, bool submit)
     constraint contains_et = make_tuple(second->get_end(), first->get_end(), zero, zero);
 
     if (submit) {
-        assert(stn->add_constraint(st_name, contains_st));
-        assert(stn->add_constraint(et_name, contains_et));
+        assert(stn->add_constraint(first->get_start_timepoint(),
+                                   second->get_start_timepoint(),
+                                   st_name,
+                                   make_pair(zero, zero)));
+        assert(stn->add_constraint(
+          second->get_end_timepoint(), first->get_end_timepoint(), et_name, make_pair(zero, zero)));
+        // assert(stn->add_constraint(st_name, contains_st));
+        // assert(stn->add_constraint(et_name, contains_et));
         return true;
 
     } else {
-        bool succ1 = stn->add_constraint(st_name, contains_st);
+        bool succ1 = stn->add_constraint(first->get_start_timepoint(),
+                                         second->get_start_timepoint(),
+                                         st_name,
+                                         make_pair(zero, zero));
+        // bool succ1 = stn->add_constraint(st_name, contains_st);
         if (!succ1)
             return (succ1 && false);
 
-        bool succ2 = stn->add_constraint(et_name, contains_et);
+        bool succ2 = stn->add_constraint(
+          second->get_end_timepoint(), first->get_end_timepoint(), et_name, make_pair(zero, zero));
+        // bool succ2 = stn->add_constraint(et_name, contains_et);
         if (!succ2) {
-            assert(stn->del_constraint(st_name));
+            assert(stn->del_constraint(
+              first->get_start_timepoint(), second->get_start_timepoint(), st_name));
+            // assert(stn->del_constraint(st_name));
             return (succ1 && succ2);
         }
 
@@ -719,7 +741,9 @@ del_and_add_sequencing_constraint(Token* prev,
 {
     string to_del = prev->get_end() + sequencing_constraint + next->get_start();
     constraint del = stn->get_constraint(to_del);
-    bool succ0 = stn->del_constraint(to_del, search_history);
+    bool succ0 =
+      stn->del_constraint(prev->get_end_timepoint(), next->get_start_timepoint(), to_del);
+    // bool succ0 = stn->del_constraint(to_del, search_history);
 
     string c1_name = prev->get_end() + sequencing_constraint + curr->get_start();
     constraint c1 = make_tuple(prev->get_end(), curr->get_start(), zero, inf);
@@ -729,26 +753,46 @@ del_and_add_sequencing_constraint(Token* prev,
 
     if (submit) {
         assert(succ0);
-        assert(stn->add_constraint(c1_name, c1));
-        assert(stn->add_constraint(c2_name, c2));
+        assert(stn->add_constraint(
+          prev->get_end_timepoint(), curr->get_start_timepoint(), c1_name, make_pair(zero, inf)));
+        assert(stn->add_constraint(
+          curr->get_end_timepoint(), next->get_start_timepoint(), c2_name, make_pair(zero, inf)));
+        // assert(stn->add_constraint(c1_name, c1));
+        // assert(stn->add_constraint(c2_name, c2));
         return make_tuple(true, true, true);
 
     } else {
         if (!succ0)
             return make_tuple(succ0, false, false);
 
-        bool succ1 = stn->add_constraint(c1_name, c1, search_history);
+        bool succ1 = stn->add_constraint(
+          prev->get_end_timepoint(), curr->get_start_timepoint(), c1_name, make_pair(zero, inf));
+        // bool succ1 = stn->add_constraint(c1_name, c1, search_history);
         if (!succ1 && get<0>(del) != "" && get<1>(del) != "") {
-            assert(stn->add_constraint(
-              to_del, make_tuple(prev->get_end(), next->get_start(), zero, inf), search_history));
+            assert(stn->add_constraint(prev->get_end_timepoint(),
+                                       next->get_start_timepoint(),
+                                       to_del,
+                                       make_pair(zero, inf)));
+            // assert(stn->add_constraint(
+            //   to_del, make_tuple(prev->get_end(), next->get_start(), zero, inf),
+            //   search_history));
             return make_tuple(succ0, succ1, false);
         }
 
-        bool succ2 = stn->add_constraint(c2_name, c2, search_history);
+        bool succ2 = stn->add_constraint(
+          curr->get_end_timepoint(), next->get_start_timepoint(), c2_name, make_pair(zero, inf));
+        // bool succ2 = stn->add_constraint(c2_name, c2, search_history);
         if (!succ2 && get<0>(del) != "" && get<1>(del) != "") {
-            assert(stn->del_constraint(c1_name, search_history));
-            assert(stn->add_constraint(
-              to_del, make_tuple(prev->get_end(), next->get_start(), zero, inf), search_history));
+            assert(
+              stn->del_constraint(prev->get_end_timepoint(), next->get_start_timepoint(), c1_name));
+            assert(stn->add_constraint(prev->get_end_timepoint(),
+                                       next->get_start_timepoint(),
+                                       to_del,
+                                       make_pair(zero, inf)));
+            // assert(stn->del_constraint(c1_name, search_history));
+            // assert(stn->add_constraint(
+            //   to_del, make_tuple(prev->get_end(), next->get_start(), zero, inf),
+            //   search_history));
             return make_tuple(succ0, succ1, succ2);
         }
 
@@ -831,8 +875,10 @@ satisfy_precondition(literal* precondition,
                 succ1 = add_meets_constraint(prev, &tk, stn, search_history);
             bool succ2 = add_meets_constraint(&tk, failing_tk, stn, search_history);
             if (!succ1 || !succ2) {
-                stn->del_timepoint(tk.get_start(), search_history);
-                stn->del_timepoint(tk.get_end(), search_history);
+                stn->del_timepoint(tk.get_start_timepoint());
+                stn->del_timepoint(tk.get_end_timepoint());
+                // stn->del_timepoint(tk.get_start(), search_history);
+                // stn->del_timepoint(tk.get_end(), search_history);
                 return make_pair(scheduled, vector<slot>());
             }
         }
@@ -843,8 +889,10 @@ satisfy_precondition(literal* precondition,
         vector<slot> new_slots = ret.second;
 
         if (!scheduled) {
-            stn->del_timepoint(tk.get_start(), search_history);
-            stn->del_timepoint(tk.get_end(), search_history);
+            stn->del_timepoint(tk.get_start_timepoint());
+            stn->del_timepoint(tk.get_end_timepoint());
+            // stn->del_timepoint(tk.get_start(), search_history);
+            // stn->del_timepoint(tk.get_end(), search_history);
             return make_pair(scheduled, vector<slot>());
         }
 
@@ -961,8 +1009,10 @@ satisfy_precondition(literal* precondition,
 
                 if (!succ1 || !succ2) {
                     for (Token tk : satisfying_tokens) {
-                        stn->del_timepoint(tk.get_start(), search_history);
-                        stn->del_timepoint(tk.get_end(), search_history);
+                        stn->del_timepoint(tk.get_start_timepoint());
+                        stn->del_timepoint(tk.get_end_timepoint());
+                        // stn->del_timepoint(tk.get_start(), search_history);
+                        // stn->del_timepoint(tk.get_end(), search_history);
                     }
                     return make_pair(false, vector<slot>());
                 }
@@ -978,8 +1028,10 @@ satisfy_precondition(literal* precondition,
                                                  search_history);
                 if (!succ) {
                     for (Token tk : satisfying_tokens) {
-                        stn->del_timepoint(tk.get_start(), search_history);
-                        stn->del_timepoint(tk.get_end(), search_history);
+                        stn->del_timepoint(tk.get_start_timepoint());
+                        stn->del_timepoint(tk.get_end_timepoint());
+                        // stn->del_timepoint(tk.get_start(), search_history);
+                        // stn->del_timepoint(tk.get_end(), search_history);
                     }
                     return make_pair(false, vector<slot>());
                 }
@@ -995,8 +1047,10 @@ satisfy_precondition(literal* precondition,
 
             if (!scheduled) {
                 for (Token tk : satisfying_tokens) {
-                    stn->del_timepoint(tk.get_start(), search_history);
-                    stn->del_timepoint(tk.get_end(), search_history);
+                    stn->del_timepoint(tk.get_start_timepoint());
+                    stn->del_timepoint(tk.get_end_timepoint());
+                    // stn->del_timepoint(tk.get_start(), search_history);
+                    // stn->del_timepoint(tk.get_end(), search_history);
                 }
 
                 return make_pair(scheduled, vector<slot>());
@@ -1016,11 +1070,17 @@ satisfy_precondition(literal* precondition,
 bool
 check_temporal_bounds(slot* to_explore, STN* stn)
 {
-    stn_bounds curr_start_bounds = stn->get_feasible_values(to_explore->tk.get_start());
-    stn_bounds next_start_bounds = stn->get_feasible_values(to_explore->next.get_start());
+    stn_bounds curr_start_bounds = stn->get_feasible_values(to_explore->tk.get_start_timepoint());
+    stn_bounds next_start_bounds = stn->get_feasible_values(to_explore->next.get_start_timepoint());
 
-    stn_bounds curr_end_bounds = stn->get_feasible_values(to_explore->tk.get_end());
-    stn_bounds prev_end_bounds = stn->get_feasible_values(to_explore->prev.get_end());
+    stn_bounds curr_end_bounds = stn->get_feasible_values(to_explore->tk.get_end_timepoint());
+    stn_bounds prev_end_bounds = stn->get_feasible_values(to_explore->prev.get_end_timepoint());
+
+    // stn_bounds curr_start_bounds = stn->get_feasible_values(to_explore->tk.get_start());
+    // stn_bounds next_start_bounds = stn->get_feasible_values(to_explore->next.get_start());
+
+    // stn_bounds curr_end_bounds = stn->get_feasible_values(to_explore->tk.get_end());
+    // stn_bounds prev_end_bounds = stn->get_feasible_values(to_explore->prev.get_end());
 
     // Add a check to rule out slots where a meets constraint exists
     // between the previous and next token.
@@ -1121,7 +1181,10 @@ extract_other_resource_tokens(vector<arg_and_type>* other_resources,
             (*exhausted)[o_r.index()] = true;
             break;
         } else {
-            assert(stn->del_constraint(tk->get_start() + meets_constraint + o_r_tk.get_start()));
+            assert(stn->del_constraint(tk->get_start_timepoint(),
+                                       o_r_tk.get_start_timepoint(),
+                                       tk->get_start() + meets_constraint + o_r_tk.get_start()));
+            // assert(stn->del_constraint(tk->get_start() + meets_constraint + o_r_tk.get_start()));
         }
         vector<Token> o_r_tokens = o_r_tl->get_tokens();
         for (auto itr = o_r_tokens.rbegin(); itr != o_r_tokens.rend(); itr++) {
@@ -1224,8 +1287,10 @@ precondition_check_phase(Token* tk,
         if (satisfied_once) // Some precondition was satisfied but another
                             // precondition failed
             for (slot s : return_slots->second) {
-                stn->del_timepoint(s.tk.get_start(), search_history);
-                stn->del_timepoint(s.tk.get_end(), search_history);
+                stn->del_timepoint(s.tk.get_start_timepoint());
+                stn->del_timepoint(s.tk.get_end_timepoint());
+                // stn->del_timepoint(s.tk.get_start(), search_history);
+                // stn->del_timepoint(s.tk.get_end(), search_history);
             }
         satisfied_once = false;
     } else if (prec_succ && satisfied_once) {
@@ -1277,18 +1342,32 @@ local_stn_check_phase(Timeline* r,
             if (!succ1) {
                 local_check = false;
                 if (get<2>(succ))
-                    assert(stn->del_constraint(
-                      s.tk.get_end() + sequencing_constraint + s.next.get_end(), search_history));
+                    assert(stn->del_constraint(s.tk.get_end_timepoint(),
+                                               s.next.get_start_timepoint(),
+                                               s.tk.get_end() + sequencing_constraint +
+                                                 s.next.get_start()));
+                // assert(stn->del_constraint(
+                //   s.tk.get_end() + sequencing_constraint + s.next.get_end(), search_history));
 
                 if (get<1>(succ))
-                    assert(stn->del_constraint(
-                      s.prev.get_end() + sequencing_constraint + s.tk.get_start(), search_history));
+                    assert(stn->del_constraint(s.prev.get_end_timepoint(),
+                                               s.tk.get_start_timepoint(),
+                                               s.prev.get_end() + sequencing_constraint +
+                                                 s.tk.get_start()));
+                // assert(stn->del_constraint(
+                //   s.prev.get_end() + sequencing_constraint + s.tk.get_start(), search_history));
 
                 if (get<0>(succ))
-                    assert(stn->add_constraint(
-                      s.prev.get_end() + sequencing_constraint + s.next.get_start(),
-                      make_tuple(s.prev.get_end(), s.next.get_start(), zero, inf),
-                      search_history));
+                    assert(stn->add_constraint(s.prev.get_end_timepoint(),
+                                               s.next.get_start_timepoint(),
+                                               s.prev.get_end() + sequencing_constraint +
+                                                 s.next.get_start(),
+                                               make_pair(zero, inf)));
+                // assert(
+                //   stn->add_constraint(s.prev.get_end() + sequencing_constraint +
+                //   s.next.get_start(),
+                //                       make_tuple(s.prev.get_end(), s.next.get_start(), zero,
+                //                       inf), search_history));
                 break;
             }
         }
@@ -1333,8 +1412,12 @@ local_stn_check_phase(Timeline* r,
                                   s.tk.get_end() + meets_constraint + t.get_end();
                                 constraint new_meets =
                                   make_tuple(s.tk.get_end(), t.get_end(), zero, zero);
-                                bool succ =
-                                  stn->add_constraint(new_meets_name, new_meets, search_history);
+                                bool succ = stn->add_constraint(s.tk.get_end_timepoint(),
+                                                                t.get_end_timepoint(),
+                                                                new_meets_name,
+                                                                make_pair(zero, zero));
+                                // bool succ =
+                                //   stn->add_constraint(new_meets_name, new_meets, search_history);
                                 if (!succ)
                                     local_check = false;
 
@@ -1348,8 +1431,10 @@ local_stn_check_phase(Timeline* r,
     if (!local_check) {
         if (satisfied_once)
             for (slot s : return_slots->second) {
-                stn->del_timepoint(s.tk.get_start(), search_history);
-                stn->del_timepoint(s.tk.get_end(), search_history);
+                stn->del_timepoint(s.tk.get_start_timepoint());
+                stn->del_timepoint(s.tk.get_end_timepoint());
+                // stn->del_timepoint(s.tk.get_start(), search_history);
+                // stn->del_timepoint(s.tk.get_end(), search_history);
             }
     }
 
@@ -1410,13 +1495,22 @@ rewiring_check_phase(slot* to_explore,
                     // same dependent token's end timepoint to
                     // the current token's end timepoint.
 
-                    assert(stn->del_constraint(dep_meets_name, search_history));
+                    assert(stn->del_constraint(
+                      to_explore->prev.get_end_timepoint(), t.get_end_timepoint(), dep_meets_name));
+                    // assert(stn->del_constraint(dep_meets_name, search_history));
                     string c_name = tk->get_end() + dependent_meets_constraint + t.get_end();
                     constraint c = make_tuple(tk->get_end(), t.get_end(), zero, inf);
-                    bool succ = stn->add_constraint(c_name, c, search_history);
+                    bool succ = stn->add_constraint(
+                      tk->get_end_timepoint(), t.get_end_timepoint(), c_name, make_pair(zero, inf));
+                    // bool succ = stn->add_constraint(c_name, c, search_history);
                     if (!succ) {
                         rewiring_check = false;
-                        assert(stn->add_constraint(dep_meets_name, dep_meets, search_history));
+                        assert(
+                          stn->add_constraint(to_explore->prev.get_end_timepoint(),
+                                              t.get_end_timepoint(),
+                                              dep_meets_name,
+                                              make_pair(get<2>(dep_meets), get<3>(dep_meets))));
+                        // assert(stn->add_constraint(dep_meets_name, dep_meets, search_history));
                     }
                     break;
                 }
@@ -1456,7 +1550,9 @@ rewiring_check_phase(slot* to_explore,
                     // timepoint.
                     string c_name = tk->get_end() + dependent_meets_constraint + t.get_end();
                     constraint c = make_tuple(tk->get_end(), t.get_end(), zero, inf);
-                    bool succ = stn->add_constraint(c_name, c, search_history);
+                    bool succ = stn->add_constraint(
+                      tk->get_end_timepoint(), t.get_end_timepoint(), c_name, make_pair(zero, inf));
+                    // bool succ = stn->add_constraint(c_name, c, search_history);
                     if (!succ)
                         rewiring_check = false;
                     break;
@@ -1474,15 +1570,24 @@ rewiring_check_phase(slot* to_explore,
                     // meets constraint in its place from the
                     // same dependent token's end timepoint to
                     // the current token's end timepoint.
-                    //
-                    assert(stn->del_constraint(second_meets_name, search_history));
+
+                    assert(stn->del_constraint(
+                      updated_prev.get_end_timepoint(), t.get_end_timepoint(), second_meets_name));
+                    // assert(stn->del_constraint(second_meets_name, search_history));
                     string c_name = tk->get_end() + dependent_meets_constraint + t.get_end();
                     constraint c = make_tuple(tk->get_end(), t.get_end(), zero, inf);
-                    bool succ = stn->add_constraint(c_name, c, search_history);
+                    bool succ = stn->add_constraint(
+                      tk->get_end_timepoint(), t.get_end_timepoint(), c_name, make_pair(zero, inf));
+                    // bool succ = stn->add_constraint(c_name, c, search_history);
                     if (!succ) {
                         rewiring_check = false;
-                        assert(
-                          stn->add_constraint(second_meets_name, second_meets, search_history));
+                        assert(stn->add_constraint(
+                          updated_prev.get_end_timepoint(),
+                          t.get_end_timepoint(),
+                          second_meets_name,
+                          make_pair(get<2>(second_meets), get<3>(second_meets))));
+                        // assert(
+                        //   stn->add_constraint(second_meets_name, second_meets, search_history));
                     }
                     break;
                 }
@@ -1501,8 +1606,10 @@ rewiring_check_phase(slot* to_explore,
                     }
             }
             for (slot s : return_slots->second) {
-                stn->del_timepoint(s.tk.get_start(), search_history);
-                stn->del_timepoint(s.tk.get_end(), search_history);
+                stn->del_timepoint(s.tk.get_start_timepoint());
+                stn->del_timepoint(s.tk.get_end_timepoint());
+                // stn->del_timepoint(s.tk.get_start(), search_history);
+                // stn->del_timepoint(s.tk.get_end(), search_history);
             }
         }
 
@@ -1576,7 +1683,7 @@ schedule_token(Token* tk,
             vector<int> other_resource_pos = vector<int>(other_resources.size(), 0);
             while (!scheduled) {
 
-                map<string, constraint> pre_stn_constraints = stn->get_constraints();
+                unordered_map<string, constraint> pre_stn_constraints = stn->get_constraints();
                 world_state current_state_copy = current_state;
 
                 extract_other_resource_tokens(&other_resources,
@@ -1597,7 +1704,9 @@ schedule_token(Token* tk,
                 for (slot s : local_set) {
                     if (s.prev.get_name() == "head" || s.prev.get_name() == "tail")
                         continue;
-                    stn_bounds prev_end_bounds = stn->get_feasible_values(s.prev.get_end());
+                    stn_bounds prev_end_bounds =
+                      stn->get_feasible_values(s.prev.get_end_timepoint());
+                    // stn_bounds prev_end_bounds = stn->get_feasible_values(s.prev.get_end());
                     if (eft <= abs(get<0>(prev_end_bounds)))
                         eft = abs(get<0>(prev_end_bounds));
                 }
@@ -1609,8 +1718,13 @@ schedule_token(Token* tk,
                             if (o_robot_tk.get_name() == "head")
                                 continue;
                             stn_bounds o_robot_start =
-                              stn->get_feasible_values(o_robot_tk.get_start());
-                            stn_bounds o_robot_end = stn->get_feasible_values(o_robot_tk.get_end());
+                              stn->get_feasible_values(o_robot_tk.get_start_timepoint());
+                            stn_bounds o_robot_end =
+                              stn->get_feasible_values(o_robot_tk.get_end_timepoint());
+                            // stn_bounds o_robot_start =
+                            //   stn->get_feasible_values(o_robot_tk.get_start());
+                            // stn_bounds o_robot_end =
+                            // stn->get_feasible_values(o_robot_tk.get_end());
                             if (get<1>(o_robot_end) > eft && abs(get<0>(o_robot_start)) > eft)
                                 break;
                             update_object_state(&ws.second, &o_robot_tk);
@@ -1700,7 +1814,7 @@ schedule_token(Token* tk,
                 }
 
                 if (!scheduled) {
-                    map<string, constraint> post_stn_constraints = stn->get_constraints();
+                    unordered_map<string, constraint> post_stn_constraints = stn->get_constraints();
 
                     for (pair<string, constraint> post : post_stn_constraints)
                         if (pre_stn_constraints.find(post.first) == pre_stn_constraints.end()) {
@@ -1722,8 +1836,10 @@ schedule_token(Token* tk,
         if (!scheduled) {
             if (other_resource_tokens.size() != 0)
                 for (Token tk : other_resource_tokens) {
-                    stn->del_timepoint(tk.get_start(), search_history);
-                    stn->del_timepoint(tk.get_end(), search_history);
+                    stn->del_timepoint(tk.get_start_timepoint());
+                    stn->del_timepoint(tk.get_end_timepoint());
+                    // stn->del_timepoint(tk.get_start(), search_history);
+                    // stn->del_timepoint(tk.get_end(), search_history);
                 }
         }
     }
@@ -1761,8 +1877,10 @@ schedule_leafs(vector<task_vertex> leafs,
                 for (slot s : (*solution)[i].token_slots) {
                     if (s.tk.get_start() == leafs[i].tk.get_start())
                         continue;
-                    stn.del_timepoint(s.tk.get_start(), &leaf_sol.search_constraints);
-                    stn.del_timepoint(s.tk.get_end(), &leaf_sol.search_constraints);
+                    stn.del_timepoint(s.tk.get_start_timepoint());
+                    stn.del_timepoint(s.tk.get_end_timepoint());
+                    // stn.del_timepoint(s.tk.get_start(), &leaf_sol.search_constraints);
+                    // stn.del_timepoint(s.tk.get_end(), &leaf_sol.search_constraints);
                 }
             *value = std::numeric_limits<double>::infinity();
 
@@ -1780,7 +1898,7 @@ schedule_leafs(vector<task_vertex> leafs,
             else
                 dependents.push_back(make_tuple(i, j, (*solution)[i].token_slots[j]));
 
-    map<string, constraint> post_stn_constraints = stn.get_constraints();
+    unordered_map<string, constraint> post_stn_constraints = stn.get_constraints();
     for (tuple<int, int, slot> os : main) {
         string dep_meets_substr = get<2>(os).tk.get_end() + dependent_meets_constraint;
         for (pair<string, constraint> post_stn_c : post_stn_constraints)
@@ -1873,10 +1991,15 @@ commit_slots(Plan* p, pq* solution)
                 constraint dur = make_tuple(s.tk.get_start(), s.tk.get_end(), main_dur, main_dur);
                 cout << get<0>(dur) << ", " << get<1>(dur) << ", " << get<2>(dur) << ", "
                      << get<3>(dur) << endl;
-                assert(stn.add_constraint(dur_name, dur));
+                assert(stn.add_constraint(s.tk.get_start_timepoint(),
+                                          s.tk.get_end_timepoint(),
+                                          dur_name,
+                                          make_pair(main_dur, main_dur)));
+                // assert(stn.add_constraint(dur_name, dur));
 
                 for (string dep_meets : s.dependent_ends) {
-                    map<string, constraint> current_stn_constraints = stn.get_constraints();
+                    unordered_map<string, constraint> current_stn_constraints =
+                      stn.get_constraints();
                     string match_target = dependent_meets_constraint + dep_meets;
                     for (pair<string, constraint> curr : current_stn_constraints)
                         if (strstr(curr.first.c_str(), match_target.c_str()))
@@ -1903,7 +2026,11 @@ commit_slots(Plan* p, pq* solution)
 
                 cout << get<0>(dur) << ", " << get<1>(dur) << ", " << get<2>(dur) << ", "
                      << get<3>(dur) << endl;
-                assert(stn.add_constraint(dur_name, dur));
+                assert(stn.add_constraint(s.tk.get_start_timepoint(),
+                                          s.tk.get_end_timepoint(),
+                                          dur_name,
+                                          make_pair(zero, inf)));
+                // assert(stn.add_constraint(dur_name, dur));
                 cout << main_tk.get_end() << ", " << s.tk.get_start() << ", " << zero << ", "
                      << zero << endl;
                 assert(add_meets_constraint(&main_tk, &s.tk, &stn));
@@ -2236,7 +2363,7 @@ find_feasible_slots(task_network tree, Plan p, string robot_assignment, int atte
         sol.request_id = tree.id;
         sol.robot_assignment = robot_assignment;
         vector<primitive_solution> solution = vector<primitive_solution>();
-        map<string, constraint> pre_stn_constraints = stn.get_constraints();
+        unordered_map<string, constraint> pre_stn_constraints = stn.get_constraints();
 
         bool success = schedule_leafs(leafs, &solution, p, &explored_slots, &value, metric);
 
@@ -2246,8 +2373,10 @@ find_feasible_slots(task_network tree, Plan p, string robot_assignment, int atte
                 for (slot s : solution[i].token_slots) {
                     if (s.tk.get_start() == solution[i].primitive_token.get_start())
                         continue;
-                    stn.del_timepoint(s.tk.get_start());
-                    stn.del_timepoint(s.tk.get_end());
+                    stn.del_timepoint(s.tk.get_start_timepoint());
+                    stn.del_timepoint(s.tk.get_end_timepoint());
+                    // stn.del_timepoint(s.tk.get_start());
+                    // stn.del_timepoint(s.tk.get_end());
                 }
 
             sol.solution = solution;
@@ -2255,7 +2384,7 @@ find_feasible_slots(task_network tree, Plan p, string robot_assignment, int atte
             ret.push(sol);
         }
 
-        map<string, constraint> post_stn_constraints = stn.get_constraints();
+        unordered_map<string, constraint> post_stn_constraints = stn.get_constraints();
         for (pair<string, constraint> post : post_stn_constraints)
             if (pre_stn_constraints.find(post.first) == pre_stn_constraints.end())
                 assert(stn.del_constraint(post.first));

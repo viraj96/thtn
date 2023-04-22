@@ -28,6 +28,7 @@ class Token
   protected:
     bool external;
     string start_t, end_t;
+    shared_ptr<Node> start, end;
     string name, resource, request_id;
 
   public:
@@ -35,6 +36,8 @@ class Token
       : external(false)
       , start_t("")
       , end_t("")
+      , start(nullptr)
+      , end(nullptr)
       , name("")
       , resource("")
       , request_id("")
@@ -42,8 +45,10 @@ class Token
 
     void set_external();
     string get_end() const;
+    shared_ptr<Node> get_end_timepoint() const;
     string get_name() const;
     string get_start() const;
+    shared_ptr<Node> get_start_timepoint() const;
     string to_string() const;
     bool is_external() const;
     string get_resource() const;

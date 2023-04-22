@@ -10,10 +10,17 @@ STN::num_points()
     return n;
 }
 
-map<string, constraint>
+unordered_map<string, constraint>
 STN::get_constraints()
 {
     return constraints;
+}
+
+shared_ptr<Node>
+STN::get_cz()
+{
+    assert(this->cz != nullptr);
+    return this->cz;
 }
 
 void
@@ -156,6 +163,9 @@ STN::add_edge(int x, int y, double weight, string s)
         cout << "\tAdding edge: " << s << "\n";
     shared_ptr<Node> u = graph[x];
     shared_ptr<Node> v = graph[y];
+
+    assert(u != nullptr);
+    assert(v != nullptr);
 
     shared_ptr<Edge> euv = make_shared<Edge>();
     euv->id = y;
@@ -430,7 +440,7 @@ STN::propagation(int x, int y, deque<int>* q)
     return true;
 }
 
-void
+shared_ptr<Node>
 STN::insert_new_node(int i, string s)
 {
     if (verbose_2)
@@ -468,12 +478,14 @@ STN::insert_new_node(int i, string s)
         graph.push_back(x);
     else
         graph[i] = x;
+
+    return x;
 }
 
 int
 STN::get_tp_id(string x)
 {
-    map<string, int>::iterator i = map<string, int>::iterator();
+    unordered_map<string, int>::iterator i = unordered_map<string, int>::iterator();
 
     i = timepoints.find(x);
     if (i == timepoints.end())
@@ -485,7 +497,7 @@ STN::get_tp_id(string x)
 constraint
 STN::get_constraint(string s)
 {
-    map<string, constraint>::iterator i = map<string, constraint>::iterator();
+    unordered_map<string, constraint>::iterator i = unordered_map<string, constraint>::iterator();
     i = constraints.find(s);
     if (i == constraints.end())
         return make_tuple("", "", 0.0, 0.0);
@@ -501,12 +513,12 @@ STN::init()
     n = 1;
     id = "global_stn";
     graph = vector<shared_ptr<Node>>(n, nullptr);
-    insert_new_node(0, "cz");
+    this->cz = insert_new_node(0, "cz");
     graph[0]->lb_data->dist = 0;
     graph[0]->ub_data->dist = 0;
-    timepoints = map<string, int>();
+    timepoints = unordered_map<string, int>();
     timepoints["cz"] = 0;
-    constraints = map<string, constraint>();
+    constraints = unordered_map<string, constraint>();
 }
 
 tuple<double, double>
@@ -514,7 +526,7 @@ STN::get_feasible_values(string s)
 {
     if (verbose_1)
         cout << "Getting feasible values\n";
-    map<string, int>::iterator i = timepoints.find(s);
+    unordered_map<string, int>::iterator i = timepoints.find(s);
     if (i == timepoints.end()) {
         if (verbose_1)
             cout << "No such timepoint";
@@ -526,12 +538,23 @@ STN::get_feasible_values(string s)
     }
 }
 
-void
+tuple<double, double>
+STN::get_feasible_values(shared_ptr<Node> x)
+{
+    if (verbose_1)
+        cout << "Getting feasible values\n";
+
+    // should not be finding feasible values for nodes that do not exist in the STN
+    assert(x != nullptr);
+    return make_tuple(x->lb_data->dist, x->ub_data->dist);
+}
+
+shared_ptr<Node>
 STN::add_timepoint(string x)
 {
     if (verbose_1)
         cout << "Adding timepoint: " << x << endl;
-    map<string, int>::iterator i = map<string, int>::iterator();
+    unordered_map<string, int>::iterator i = unordered_map<string, int>::iterator();
 
     i = timepoints.find(x);
     if (i == timepoints.end()) {
@@ -540,17 +563,20 @@ STN::add_timepoint(string x)
         int idx = n;
         n++;
 
-        insert_new_node(idx, x);
+        shared_ptr<Node> node = insert_new_node(idx, x);
         timepoints[x] = idx;
+        return node;
 
     } else if (verbose_1)
         cout << "Timepoint " << x << " already in STN\n";
+
+    return nullptr;
 }
 
 void
 STN::cleanup()
 {
-    map<string, int> tps_copy = timepoints;
+    unordered_map<string, int> tps_copy = timepoints;
     for (pair<string, int> tps : tps_copy) {
         shared_ptr<Node> x = graph[tps.second];
         if (x != nullptr) {
@@ -568,7 +594,7 @@ STN::del_timepoint(string x, stack<constraint>* search_history)
 {
     if (verbose_1)
         cout << "Deleting timepoint: " << x << endl;
-    map<string, int>::iterator i = timepoints.find(x);
+    unordered_map<string, int>::iterator i = timepoints.find(x);
 
     if (i == timepoints.end()) {
         if (verbose_1)
@@ -638,6 +664,85 @@ STN::del_timepoint(string x, stack<constraint>* search_history)
 
     graph[i->second] = nullptr;
     timepoints.erase(i->first);
+
+    propagation(-1, -1, &q);
+
+    return;
+}
+
+void
+STN::del_timepoint(shared_ptr<Node> x_node)
+{
+
+    // should not be deleting a timpoint that does not exist in the STN
+    assert(x_node != nullptr);
+
+    if (verbose_1)
+        cout << "Deleting timepoint: " << x_node->timepoint_id << endl;
+
+    shared_ptr<Node> y_node = nullptr;
+    shared_ptr<Edge> e = nullptr, p = nullptr;
+
+    if (verbose_1 && verbose_3)
+        cout << "\t\tInvalidating nodes dependent on Node[" << x_node->id << ": "
+             << x_node->timepoint_id << endl;
+
+    set<int> invalidated_nodes = set<int>();
+    deque<int> q = deque<int>();
+
+    invalidate_ub(invalidated_nodes, x_node->id);
+    invalidate_lb(invalidated_nodes, x_node->id);
+
+    shared_ptr<Node> temp_1 = nullptr, temp_2 = nullptr;
+    for (set<int>::iterator i = invalidated_nodes.begin(); i != invalidated_nodes.end(); i++) {
+        temp_1 = graph[*i];
+        e = temp_1->edges_in;
+        while (e != nullptr) {
+            temp_2 = graph[e->id];
+            if (verbose_1 && verbose_3)
+                cout << "\t\tV: " << temp_2->timepoint_id << "\n";
+            if (!temp_2->in_queue && temp_2->id != x_node->id) {
+                temp_2->in_queue = true;
+                temp_2->ub_data->prop = true;
+                temp_2->lb_data->prop = true;
+                q.push_back(temp_2->id);
+            }
+            e = e->next;
+        }
+    }
+
+    if (verbose_1 && verbose_3)
+        cout << "\t\tDeleting all edges to/from Node[" << x_node->id
+             << "]: " << x_node->timepoint_id << endl;
+
+    e = x_node->edges_out;
+    p = nullptr;
+
+    while (e != nullptr) {
+        y_node = graph[e->id];
+        y_node->edges_in = del_all_edges(y_node->edges_in, x_node->id, true);
+        p = e->next;
+        e = p;
+    }
+
+    e = x_node->edges_in;
+    p = nullptr;
+
+    while (e != nullptr) {
+        y_node = graph[e->id];
+        y_node->edges_out = del_all_edges(y_node->edges_out, x_node->id, true);
+        p = e->next;
+        e = p;
+    }
+
+    if (verbose_1 && verbose_3)
+        cout << "\t\tDeleting node from memory\n";
+
+    x_node->edges_out = nullptr;
+    x_node->edges_in = nullptr;
+
+    graph[x_node->id] = nullptr;
+    timepoints.erase(x_node->timepoint_id);
 
     propagation(-1, -1, &q);
 
@@ -722,6 +827,53 @@ STN::add_constraint(string s, constraint c, stack<constraint>* search_history)
                  << get<3>(c) << endl;
             search_history->pop();
         }
+    }
+
+    return f;
+}
+
+bool
+STN::add_constraint(shared_ptr<Node> u, shared_ptr<Node> v, string s, pair<double, double> bounds)
+{
+    if (verbose_1)
+        cout << "Adding constraint " << s << endl;
+
+    // u and v should always exist in the STN before we add constraint between them
+    assert(u != nullptr);
+    assert(v != nullptr);
+
+    double lb = bounds.first, ub = bounds.second;
+
+    constraint temp = get_constraint(s);
+    if (get<0>(temp) != "") {
+        if (verbose_1)
+            cout << "Constraint with that name already exists\n";
+        return true;
+
+    } else
+        constraints[s] = make_tuple(u->timepoint_id, v->timepoint_id, lb, ub);
+
+    int x_id = u->id, y_id = v->id;
+    add_edge(x_id, y_id, ub, s);
+    add_edge(y_id, x_id, -lb, s);
+
+    deque<int> q = deque<int>();
+    q.push_back(x_id);
+    q.push_back(y_id);
+
+    u->in_queue = true;
+    v->in_queue = true;
+    u->lb_data->prop = true;
+    u->ub_data->prop = true;
+    v->lb_data->prop = true;
+    v->ub_data->prop = true;
+
+    bool f = propagation(x_id, y_id, &q);
+
+    if (!f) {
+        del_edge(x_id, y_id, s);
+        del_edge(y_id, x_id, s);
+        constraints.erase(s);
     }
 
     return f;
@@ -875,7 +1027,7 @@ STN::del_constraint(string s, stack<constraint>* search_history)
     string x = "", y = "";
     constraint c = constraint();
 
-    map<string, constraint>::iterator i = constraints.find(s);
+    unordered_map<string, constraint>::iterator i = constraints.find(s);
 
     if (i == constraints.end()) {
         if (verbose_1)
@@ -925,6 +1077,38 @@ STN::del_constraint(string s, stack<constraint>* search_history)
         search_history->pop();
     }
 
+    return f;
+}
+
+bool
+STN::del_constraint(shared_ptr<Node> u, shared_ptr<Node> v, string s)
+{
+    if (verbose_1)
+        cout << "Deleting constraint: " << s << endl;
+
+    // cannot delete a constraint between timepoints which do not exist in the stn
+    assert(u != nullptr);
+    assert(v != nullptr);
+
+    constraint c = constraint();
+    unordered_map<string, constraint>::iterator i = constraints.find(s);
+
+    if (i == constraints.end()) {
+        if (verbose_1)
+            cout << "No matching constraint for name: " << s << endl;
+        return true;
+
+    } else {
+        c = i->second;
+    }
+
+    int x_id = u->id, y_id = v->id;
+    del_edge(x_id, y_id, s);
+    del_edge(y_id, x_id, s);
+    deque<int> q = invalidate_nodes(x_id, y_id);
+
+    bool f = propagation(-1, -1, &q);
+    constraints.erase(s);
     return f;
 }
 

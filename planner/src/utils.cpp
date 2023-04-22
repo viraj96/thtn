@@ -25,7 +25,8 @@ compute_makespan(Plan* p)
             vector<Token> tks = tl.get_tokens();
             Token last = tks.end()[-2];
             if (last.get_name() != "head" && last.get_name() != "tail") {
-                tuple<double, double> last_end_bounds = stn.get_feasible_values(last.get_end());
+                tuple<double, double> last_end_bounds =
+                  stn.get_feasible_values(last.get_end_timepoint());
                 if (abs(get<0>(last_end_bounds)) >= makespan)
                     makespan = abs(get<0>(last_end_bounds));
             }
@@ -111,7 +112,7 @@ plan_validator(Plan* p)
                 for (Token tk : tks) {
                     if (tk.get_name() == "head" || tk.get_name() == "tail")
                         continue;
-                    stn_bounds tk_end_bounds = stn.get_feasible_values(tk.get_end());
+                    stn_bounds tk_end_bounds = stn.get_feasible_values(tk.get_end_timepoint());
 
                     // If the EFT of the token is same as the current time then we need to update
                     // the world state of the robot by applying the effects of this token
@@ -189,8 +190,8 @@ plan_validator(Plan* p)
                     if (tk.get_name() == "head" || tk.get_name() == "tail")
                         continue;
 
-                    stn_bounds tk_start_bounds = stn.get_feasible_values(tk.get_start());
-                    stn_bounds tk_end_bounds = stn.get_feasible_values(tk.get_end());
+                    stn_bounds tk_start_bounds = stn.get_feasible_values(tk.get_start_timepoint());
+                    stn_bounds tk_end_bounds = stn.get_feasible_values(tk.get_end_timepoint());
 
                     // If the EFT of the token is same as the current time then we need to update
                     // the world state of the robot by applying the effects of this token

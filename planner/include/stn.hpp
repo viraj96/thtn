@@ -9,6 +9,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <stack>
 #include <tuple>
 #include <vector>
 
@@ -80,13 +81,14 @@ class STN
   private:
     int n;
     string id;
+    shared_ptr<Node> cz;
     vector<shared_ptr<Node>> graph;
-    map<string, int> timepoints;
-    map<string, constraint> constraints;
+    unordered_map<string, int> timepoints;
+    unordered_map<string, constraint> constraints;
 
     void print_queue();
     int get_tp_id(string x);
-    void insert_new_node(int i, string s);
+    shared_ptr<Node> insert_new_node(int i, string s);
     void del_edge(int x, int y, string s);
     bool propagation(int x, int y, deque<int>* q);
     deque<int> invalidate_nodes(int x_id, int y_id);
@@ -104,9 +106,10 @@ class STN
     {
         n = 0;
         id = "";
-        timepoints = map<string, int>();
+        cz = nullptr;
+        timepoints = unordered_map<string, int>();
         graph = vector<shared_ptr<Node>>();
-        constraints = map<string, constraint>();
+        constraints = unordered_map<string, constraint>();
     }
 
     ~STN() { destroy(); }
@@ -117,16 +120,24 @@ class STN
     int num_points();
     void print_graph();
     void print_sp_tree();
-    void add_timepoint(string x);
+    shared_ptr<Node> get_cz();
+    shared_ptr<Node> add_timepoint(string x);
     void gen_dot_file(string file_name);
     constraint get_constraint(string s);
-    map<string, constraint> get_constraints();
+    unordered_map<string, constraint> get_constraints();
     bool del_all_constraints(string x, string y);
     bool modify_constraint(string s, constraint c);
     tuple<double, double> get_feasible_values(string s);
+    tuple<double, double> get_feasible_values(shared_ptr<Node> x);
     void del_timepoint(string x, stack<constraint>* search_history = nullptr);
+    void del_timepoint(shared_ptr<Node> x_node);
     bool del_constraint(string s, stack<constraint>* search_history = nullptr);
+    bool del_constraint(shared_ptr<Node> u, shared_ptr<Node> v, string s);
     bool add_constraint(string s, constraint c, stack<constraint>* search_history = nullptr);
+    bool add_constraint(shared_ptr<Node> u,
+                        shared_ptr<Node> v,
+                        string s,
+                        pair<double, double> bounds);
 };
 
 #endif
