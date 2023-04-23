@@ -20,6 +20,14 @@ typedef tuple<string, string, double, double> constraint;
 
 const double inf = numeric_limits<double>::infinity();
 
+enum STN_operation_type
+{
+    ADD_TIMEPOINT,
+    DEL_TIMEPOINT,
+    ADD_CONSTRAINT,
+    DEL_CONSTRAINT
+};
+
 struct SP_Data
 {
     int pred;

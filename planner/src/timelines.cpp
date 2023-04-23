@@ -238,7 +238,10 @@ Token::create_timepoints(double duration)
 }
 
 bool
-Token::create_timepoints(STN* stn, double duration)
+Token::create_timepoints(
+  STN* stn,
+  double duration,
+  stack<tuple<STN_operation_type, constraint, string>>* search_operation_history)
 {
     int start_tp = 0, end_tp = 0;
     start_tp = stn->num_points() + 1;
@@ -248,6 +251,13 @@ Token::create_timepoints(STN* stn, double duration)
 
     this->start = stn->add_timepoint(this->start_t);
     this->end = stn->add_timepoint(this->end_t);
+
+    if (search_operation_history != nullptr) {
+        search_operation_history->push(
+          make_tuple(STN_operation_type::ADD_TIMEPOINT, constraint(), this->start_t));
+        search_operation_history->push(
+          make_tuple(STN_operation_type::ADD_TIMEPOINT, constraint(), this->end_t));
+    }
 
     if (duration == 0.0)
         duration = zero;
@@ -268,6 +278,12 @@ Token::create_timepoints(STN* stn, double duration)
     if (!status)
         cout << "Constraint between (" + this->start_t + ", " + this->end_t +
                   ") was not created successfully!\n";
+    else {
+        if (search_operation_history != nullptr)
+            search_operation_history->push(
+              make_tuple(STN_operation_type::ADD_CONSTRAINT, c, c_name));
+    }
+
     return status;
 }
 
@@ -511,7 +527,12 @@ instantiate_token(string name, string resource, string request_id, double durati
 }
 
 Token
-instantiate_token(string name, string resource, STN* stn, string request_id, double duration)
+instantiate_token(string name,
+                  string resource,
+                  STN* stn,
+                  string request_id,
+                  double duration,
+                  stack<tuple<STN_operation_type, constraint, string>>* search_operation_history)
 {
     if (name == "head" || name == "tail") {
         Auxiliary_Token atk(name);
@@ -524,7 +545,7 @@ instantiate_token(string name, string resource, STN* stn, string request_id, dou
         tk.set_name(name);
         tk.set_resource(resource);
         tk.set_request_id(request_id);
-        tk.create_timepoints(stn, duration);
+        tk.create_timepoints(stn, duration, search_operation_history);
         return tk;
     }
 }

@@ -70,7 +70,10 @@ class Token
     void add_preconditions(vector<literal> prec);
     void add_arguments(vector<arg_and_type> args);
     void add_knowns(vector<arg_and_type> assignments);
-    bool create_timepoints(STN* stn, double duration = 0);
+    bool create_timepoints(
+      STN* stn,
+      double duration = 0,
+      stack<tuple<STN_operation_type, constraint, string>>* search_operation_history = nullptr);
 };
 
 bool
@@ -219,11 +222,13 @@ Token
 instantiate_token(string name, string resource, string request_id = "", double duration = 0);
 
 Token
-instantiate_token(string name,
-                  string resource,
-                  STN* stn,
-                  string request_id = "",
-                  double duration = 0);
+instantiate_token(
+  string name,
+  string resource,
+  STN* stn,
+  string request_id = "",
+  double duration = 0,
+  stack<tuple<STN_operation_type, constraint, string>>* search_history_operation = nullptr);
 
 task_network
 assign_open_variables(map<string, arg_and_type> var_assign_map, task_network r_tree);
