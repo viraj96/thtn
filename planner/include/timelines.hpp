@@ -46,9 +46,11 @@ class Token
     void set_external();
     string get_end() const;
     shared_ptr<Node> get_end_timepoint() const;
+    void set_end_timepoint(shared_ptr<Node> end);
     string get_name() const;
     string get_start() const;
     shared_ptr<Node> get_start_timepoint() const;
+    void set_start_timepoint(shared_ptr<Node> start);
     string to_string() const;
     bool is_external() const;
     string get_resource() const;
@@ -70,10 +72,9 @@ class Token
     void add_preconditions(vector<literal> prec);
     void add_arguments(vector<arg_and_type> args);
     void add_knowns(vector<arg_and_type> assignments);
-    bool create_timepoints(
-      STN* stn,
-      double duration = 0,
-      stack<tuple<STN_operation_type, constraint, string>>* search_operation_history = nullptr);
+    bool create_timepoints(STN* stn,
+                           double duration = 0,
+                           stack<STN_operation>* search_operation_history = nullptr);
 };
 
 bool
@@ -222,13 +223,12 @@ Token
 instantiate_token(string name, string resource, string request_id = "", double duration = 0);
 
 Token
-instantiate_token(
-  string name,
-  string resource,
-  STN* stn,
-  string request_id = "",
-  double duration = 0,
-  stack<tuple<STN_operation_type, constraint, string>>* search_history_operation = nullptr);
+instantiate_token(string name,
+                  string resource,
+                  STN* stn,
+                  string request_id = "",
+                  double duration = 0,
+                  stack<STN_operation>* search_history_operation = nullptr);
 
 task_network
 assign_open_variables(map<string, arg_and_type> var_assign_map, task_network r_tree);

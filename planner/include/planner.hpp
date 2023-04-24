@@ -50,13 +50,13 @@ struct primitive_solution
 {
     Token primitive_token;
     vector<slot> token_slots;
-    stack<tuple<STN_operation_type, constraint, string>> search_operations;
+    stack<STN_operation> search_operations;
 
     primitive_solution()
     {
         primitive_token = Token();
         token_slots = vector<slot>();
-        search_operations = stack<tuple<STN_operation_type, constraint, string>>();
+        search_operations = stack<STN_operation>();
     }
 
     string to_string() const;
@@ -127,16 +127,15 @@ check_temporal_bounds(slot* to_explore, STN* stn);
 void
 update_object_state(object_state* obj, Token* prev);
 bool
-add_meets_constraint(
-  Token* first,
-  Token* second,
-  STN* stn,
-  stack<tuple<STN_operation_type, constraint, string>>* search_operation_history = nullptr,
-  bool submit = false);
+add_meets_constraint(Token* first,
+                     Token* second,
+                     STN* stn,
+                     stack<STN_operation>* search_operation_history = nullptr,
+                     bool submit = false);
 Token
 gen_token(arg_and_type argument,
           Token* causal_token,
-          stack<tuple<STN_operation_type, constraint, string>>* search_operation_history,
+          stack<STN_operation>* search_operation_history,
           STN* stn);
 
 set<string>
@@ -145,7 +144,7 @@ pair<bool, vector<slot>>
 schedule_token(Token* tk,
                vector<slot>* explored,
                Plan* p,
-               stack<tuple<STN_operation_type, constraint, string>>* search_operation_history,
+               stack<STN_operation>* search_operation_history,
                STN* stn,
                int depth = 0);
 
@@ -185,13 +184,12 @@ find_feasible_slots(task_network tree,
                     string metric = "makespan");
 
 tuple<bool, bool, bool>
-del_and_add_sequencing_constraint(
-  Token* prev,
-  Token* curr,
-  Token* next,
-  STN* stn,
-  stack<tuple<STN_operation_type, constraint, string>>* search_operation_history = nullptr,
-  bool submit = false);
+del_and_add_sequencing_constraint(Token* prev,
+                                  Token* curr,
+                                  Token* next,
+                                  STN* stn,
+                                  stack<STN_operation>* search_operation_history = nullptr,
+                                  bool submit = false);
 
 bool
 check_init(literal* precondition,
@@ -214,15 +212,14 @@ check_precondition(literal* precondition,
                    vector<ground_literal>* init);
 
 bool
-local_stn_check_phase(
-  Timeline* r,
-  vector<slot>* local_set,
-  world_state* current_state,
-  bool satisfied_once,
-  pair<bool, vector<slot>>* return_slots,
-  Plan* p,
-  stack<tuple<STN_operation_type, constraint, string>>* search_operation_history,
-  STN* stn);
+local_stn_check_phase(Timeline* r,
+                      vector<slot>* local_set,
+                      world_state* current_state,
+                      bool satisfied_once,
+                      pair<bool, vector<slot>>* return_slots,
+                      Plan* p,
+                      stack<STN_operation>* search_operation_history,
+                      STN* stn);
 
 bool
 schedule_leafs(vector<task_vertex> leafs,
@@ -249,7 +246,7 @@ rewiring_check_phase(slot* to_explore,
                      world_state* current_state,
                      pair<bool, vector<slot>>* return_slots,
                      Plan* p,
-                     stack<tuple<STN_operation_type, constraint, string>>* search_operation_history,
+                     stack<STN_operation>* search_operation_history,
                      STN* stn);
 
 pair<bool, vector<slot>>
@@ -258,7 +255,7 @@ satisfy_precondition(literal* precondition,
                      Token* prev,
                      world_state* current_state,
                      Plan* p,
-                     stack<tuple<STN_operation_type, constraint, string>>* search_operation_history,
+                     stack<STN_operation>* search_operation_history,
                      STN* stn,
                      vector<slot>* explored,
                      int depth = 0);
@@ -283,16 +280,15 @@ extract_other_resource_tokens(vector<arg_and_type>* other_resources,
                               STN* stn);
 
 pair<bool, bool>
-precondition_check_phase(
-  Token* tk,
-  Timeline* r,
-  world_state* current_state,
-  vector<slot>* local_set,
-  vector<slot>* explored,
-  pair<bool, vector<slot>>* return_slots,
-  Plan p,
-  stack<tuple<STN_operation_type, constraint, string>>* search_operation_history,
-  STN* stn);
+precondition_check_phase(Token* tk,
+                         Timeline* r,
+                         world_state* current_state,
+                         vector<slot>* local_set,
+                         vector<slot>* explored,
+                         pair<bool, vector<slot>>* return_slots,
+                         Plan p,
+                         stack<STN_operation>* search_operation_history,
+                         STN* stn);
 
 // Functional Predicates
 bool

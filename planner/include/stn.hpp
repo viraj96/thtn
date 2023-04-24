@@ -17,6 +17,7 @@ using namespace std;
 
 typedef tuple<double, double> stn_bounds;
 typedef tuple<string, string, double, double> constraint;
+typedef tuple<shared_ptr<Node>, shared_ptr<Node>, double, double> constraint_ref;
 
 const double inf = numeric_limits<double>::infinity();
 
@@ -26,6 +27,49 @@ enum STN_operation_type
     DEL_TIMEPOINT,
     ADD_CONSTRAINT,
     DEL_CONSTRAINT
+};
+
+enum STN_constraint_type
+{
+    CZ,
+    MEETS,
+    BEFORE,
+    SEQUENCE,
+    CONTAINS,
+    DURATION,
+    DEPENDENT_MEETS,
+    TIMEPOINT // When we are creating or deleting a timepoint then we do not have any constraint
+              // type
+};
+
+struct STN_operation
+{
+    string tp1, tp2;
+    STN_operation_type op_type;
+    STN_constraint_type c_type;
+    pair<double, double> bounds;
+
+    STN_operation()
+    {
+        tp1 = string();
+        tp2 = string();
+        op_type = STN_operation_type::ADD_TIMEPOINT;
+        c_type = STN_constraint_type::TIMEPOINT;
+        bounds = make_pair(0, 0);
+    }
+
+    STN_operation(string _tp1,
+                  string _tp2,
+                  STN_operation_type _op_type,
+                  STN_constraint_type _c_type,
+                  pair<double, double> _bounds)
+    {
+        tp1 = _tp1;
+        tp2 = _tp2;
+        op_type = _op_type;
+        c_type = _c_type;
+        bounds = _bounds;
+    }
 };
 
 struct SP_Data

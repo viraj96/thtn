@@ -238,10 +238,7 @@ Token::create_timepoints(double duration)
 }
 
 bool
-Token::create_timepoints(
-  STN* stn,
-  double duration,
-  stack<tuple<STN_operation_type, constraint, string>>* search_operation_history)
+Token::create_timepoints(STN* stn, double duration, stack<STN_operation>* search_operation_history)
 {
     int start_tp = 0, end_tp = 0;
     start_tp = stn->num_points() + 1;
@@ -253,10 +250,16 @@ Token::create_timepoints(
     this->end = stn->add_timepoint(this->end_t);
 
     if (search_operation_history != nullptr) {
-        search_operation_history->push(
-          make_tuple(STN_operation_type::ADD_TIMEPOINT, constraint(), this->start_t));
-        search_operation_history->push(
-          make_tuple(STN_operation_type::ADD_TIMEPOINT, constraint(), this->end_t));
+        search_operation_history->push(STN_operation(this->start_t,
+                                                     string(),
+                                                     STN_operation_type::ADD_TIMEPOINT,
+                                                     STN_constraint_type::TIMEPOINT,
+                                                     make_pair(0, 0)));
+        search_operation_history->push(STN_operation(this->end_t,
+                                                     string(),
+                                                     STN_operation_type::ADD_TIMEPOINT,
+                                                     STN_constraint_type::TIMEPOINT,
+                                                     make_pair(0, 0)));
     }
 
     if (duration == 0.0)
@@ -280,8 +283,11 @@ Token::create_timepoints(
                   ") was not created successfully!\n";
     else {
         if (search_operation_history != nullptr)
-            search_operation_history->push(
-              make_tuple(STN_operation_type::ADD_CONSTRAINT, c, c_name));
+            search_operation_history->push(STN_operation(this->start_t,
+                                                         this->end_t,
+                                                         STN_operation_type::ADD_CONSTRAINT,
+                                                         STN_constraint_type::DURATION,
+                                                         make_pair(get<2>(c), get<3>(c))));
     }
 
     return status;
@@ -306,11 +312,25 @@ Token::get_end_timepoint() const
     return this->end;
 }
 
+void
+Token::set_end_timepoint(shared_ptr<Node> end)
+{
+    assert(end != nullptr);
+    this->end = end;
+}
+
 shared_ptr<Node>
 Token::get_start_timepoint() const
 {
     assert(this->start != nullptr);
     return this->start;
+}
+
+void
+Token::set_start_timepoint(shared_ptr<Node> start)
+{
+    assert(start != nullptr);
+    this->start = start;
 }
 
 void
@@ -532,7 +552,7 @@ instantiate_token(string name,
                   STN* stn,
                   string request_id,
                   double duration,
-                  stack<tuple<STN_operation_type, constraint, string>>* search_operation_history)
+                  stack<STN_operation>* search_operation_history)
 {
     if (name == "head" || name == "tail") {
         Auxiliary_Token atk(name);
