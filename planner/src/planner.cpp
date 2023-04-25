@@ -679,12 +679,11 @@ add_meets_constraint(Token* first,
         // assert(stn->add_constraint(meets_name, meets));
         return true;
     } else {
-        assert(search_operation_history != nullptr);
         bool succ = stn->add_constraint(first->get_end_timepoint(),
                                         second->get_start_timepoint(),
                                         meets_name,
                                         make_pair(zero, zero));
-        if (succ)
+        if (succ && search_operation_history != nullptr)
             search_operation_history->push(STN_operation(first->get_end(),
                                                          second->get_start(),
                                                          STN_operation_type::ADD_CONSTRAINT,
@@ -733,13 +732,12 @@ del_and_add_sequencing_constraint(Token* prev,
         return make_tuple(true, true, true);
 
     } else {
-        assert(search_operation_history != nullptr);
         if (!succ0)
             return make_tuple(succ0, false, false);
 
         bool succ1 = stn->add_constraint(
           prev->get_end_timepoint(), curr->get_start_timepoint(), c1_name, make_pair(zero, inf));
-        if (succ1)
+        if (succ1 && search_operation_history != nullptr)
             search_operation_history->push(STN_operation(prev->get_end(),
                                                          curr->get_start(),
                                                          STN_operation_type::ADD_CONSTRAINT,
@@ -747,7 +745,8 @@ del_and_add_sequencing_constraint(Token* prev,
                                                          make_pair(get<2>(c1), get<3>(c1))));
 
         // bool succ1 = stn->add_constraint(c1_name, c1, search_history);
-        if (!succ1 && get<0>(del) != "" && get<1>(del) != "") {
+        if (!succ1 && get<0>(del) != "" && get<1>(del) != "" &&
+            search_operation_history != nullptr) {
             assert(stn->add_constraint(prev->get_end_timepoint(),
                                        next->get_start_timepoint(),
                                        to_del,
@@ -765,7 +764,7 @@ del_and_add_sequencing_constraint(Token* prev,
 
         bool succ2 = stn->add_constraint(
           curr->get_end_timepoint(), next->get_start_timepoint(), c2_name, make_pair(zero, inf));
-        if (succ2)
+        if (succ2 && search_operation_history != nullptr)
             search_operation_history->push(STN_operation(curr->get_end(),
                                                          next->get_start(),
                                                          STN_operation_type::ADD_CONSTRAINT,
@@ -775,7 +774,8 @@ del_and_add_sequencing_constraint(Token* prev,
         // c2_name));
 
         // bool succ2 = stn->add_constraint(c2_name, c2, search_history);
-        if (!succ2 && get<0>(del) != "" && get<1>(del) != "") {
+        if (!succ2 && get<0>(del) != "" && get<1>(del) != "" &&
+            search_operation_history != nullptr) {
             assert(
               stn->del_constraint(prev->get_end_timepoint(), curr->get_start_timepoint(), c1_name));
             search_operation_history->push(STN_operation(prev->get_end(),
@@ -2154,32 +2154,165 @@ schedule_leafs(vector<task_vertex> leafs,
 
 void
 commit_stn_operations(vector<slot>* leaf_slots,
-                      stack<tuple<STN_operation_type, constraint, string>>* commit_operations,
-                      STN* stn)
+                      stack<STN_operation>* commit_operations,
+                      STN* stn,
+                      vector<shared_ptr<Node>>* newly_added_tps)
 {
+
     while (!commit_operations->empty()) {
-        tuple<STN_operation_type, constraint, string> operation = commit_operations->top();
-        if (get<0>(operation) == STN_operation_type::ADD_TIMEPOINT) {
-            string tp_name = get<2>(operation);
-            shared_ptr<Node> tp = stn->add_timepoint(tp_name);
+        STN_operation operation = commit_operations->top();
+        string tp1 = operation.tp1, tp2 = operation.tp2;
+        STN_operation_type op_type = operation.op_type;
+        STN_constraint_type c_type = operation.c_type;
+        pair<double, double> bounds = operation.bounds;
+        if (op_type == STN_operation_type::ADD_TIMEPOINT) {
+            PLOGD << "Performing ADD_TIMEPOINT operation: " << tp1 << endl;
+            shared_ptr<Node> tp = stn->add_timepoint(tp1);
             assert(tp != nullptr);
             bool stop = false;
-            for (slot s : *leaf_slots) {
-                if (s.tk.get_start() == tp_name) {
-                    s.tk.set_start_timepoint(tp);
+            for (auto it = leaf_slots->begin(); it != leaf_slots->end(); it++) {
+                if (it->tk.get_start() == tp1) {
+                    it->tk.set_start_timepoint(tp);
                     stop = true;
-                } else if (s.tk.get_end() == tp_name) {
-                    s.tk.set_end_timepoint(tp);
+                } else if (it->tk.get_end() == tp1) {
+                    it->tk.set_end_timepoint(tp);
                     stop = true;
                 }
                 if (stop)
                     break;
             }
-        } else if (get<0>(operation) == STN_operation_type::ADD_CONSTRAINT) {
-            constraint c = get<1>(operation);
-            string c_name = get<2>(operation);
-            assert(stn->add_constraint())
+            newly_added_tps->push_back(tp);
+        } else if (op_type == STN_operation_type::ADD_CONSTRAINT) {
+
+            string c_name = string();
+            if (c_type == STN_constraint_type::BEFORE)
+                c_name = tp1 + before_constraint + tp2;
+            else if (c_type == STN_constraint_type::CONTAINS)
+                c_name = tp1 + contains_constraint + tp2;
+            else if (c_type == STN_constraint_type::DURATION)
+                c_name = tp1 + duration_constraint + tp2;
+            else if (c_type == STN_constraint_type::MEETS)
+                c_name = tp1 + meets_constraint + tp2;
+            else if (c_type == STN_constraint_type::SEQUENCE)
+                c_name = tp1 + sequencing_constraint + tp2;
+            else if (c_type == STN_constraint_type::DEPENDENT_MEETS)
+                c_name = tp1 + dependent_meets_constraint + tp2;
+
+            assert(c_name != string());
+
+            PLOGD << "Performing ADD_CONSTRAINT operation: " << tp1 << ", " << tp2 << ", " << c_name
+                  << endl;
+
+            shared_ptr<Node> tp1_node = nullptr, tp2_node = nullptr;
+            for (slot s : *leaf_slots) {
+                if (s.tk.get_start() == tp1)
+                    tp1_node = s.tk.get_start_timepoint();
+                else if (s.tk.get_end() == tp1)
+                    tp1_node = s.tk.get_end_timepoint();
+                else if (s.prev.get_start() == tp1)
+                    tp1_node = s.prev.get_start_timepoint();
+                else if (s.prev.get_end() == tp1)
+                    tp1_node = s.prev.get_end_timepoint();
+                else if (s.next.get_start() == tp1)
+                    tp1_node = s.next.get_start_timepoint();
+                else if (s.next.get_end() == tp1)
+                    tp1_node = s.next.get_end_timepoint();
+
+                if (s.tk.get_start() == tp2)
+                    tp2_node = s.tk.get_start_timepoint();
+                else if (s.tk.get_end() == tp2)
+                    tp2_node = s.tk.get_end_timepoint();
+                else if (s.prev.get_start() == tp2)
+                    tp2_node = s.prev.get_start_timepoint();
+                else if (s.prev.get_end() == tp2)
+                    tp2_node = s.prev.get_end_timepoint();
+                else if (s.next.get_start() == tp2)
+                    tp2_node = s.next.get_start_timepoint();
+                else if (s.next.get_end() == tp2)
+                    tp2_node = s.next.get_end_timepoint();
+            }
+            for (shared_ptr<Node> tps : *newly_added_tps) {
+                if (tps != nullptr && tps->timepoint_id == tp1)
+                    tp1_node = tps;
+                else if (tps != nullptr && tps->timepoint_id == tp2)
+                    tp2_node = tps;
+            }
+
+            assert(tp1_node != nullptr);
+            assert(tp2_node != nullptr);
+            assert(stn->add_constraint(tp1_node, tp2_node, c_name, bounds));
+        } else if (op_type == STN_operation_type::DEL_TIMEPOINT) {
+            PLOGD << "Performing DEL_TIMEPOINT operation: " << tp1 << endl;
+            shared_ptr<Node> del_node = nullptr;
+            for (auto it = newly_added_tps->begin(); it != newly_added_tps->end(); it++)
+                if ((*it)->timepoint_id == tp1) {
+                    del_node = *it;
+                    *it = nullptr;
+                    break;
+                }
+            assert(del_node != nullptr);
+            stn->del_timepoint(del_node);
+        } else if (op_type == STN_operation_type::DEL_CONSTRAINT) {
+
+            string c_name = string();
+            if (c_type == STN_constraint_type::BEFORE)
+                c_name = tp1 + before_constraint + tp2;
+            else if (c_type == STN_constraint_type::CONTAINS)
+                c_name = tp1 + contains_constraint + tp2;
+            else if (c_type == STN_constraint_type::DURATION)
+                c_name = tp1 + duration_constraint + tp2;
+            else if (c_type == STN_constraint_type::MEETS)
+                c_name = tp1 + meets_constraint + tp2;
+            else if (c_type == STN_constraint_type::SEQUENCE)
+                c_name = tp1 + sequencing_constraint + tp2;
+            else if (c_type == STN_constraint_type::DEPENDENT_MEETS)
+                c_name = tp1 + dependent_meets_constraint + tp2;
+
+            assert(c_name != string());
+
+            PLOGD << "Performing DEL_CONSTRAINT operation: " << tp1 << ", " << tp2 << ", " << c_name
+                  << endl;
+
+            shared_ptr<Node> tp1_node = nullptr, tp2_node = nullptr;
+            for (slot s : *leaf_slots) {
+                if (s.tk.get_start() == tp1)
+                    tp1_node = s.tk.get_start_timepoint();
+                else if (s.tk.get_end() == tp1)
+                    tp1_node = s.tk.get_end_timepoint();
+                else if (s.prev.get_start() == tp1)
+                    tp1_node = s.prev.get_start_timepoint();
+                else if (s.prev.get_end() == tp1)
+                    tp1_node = s.prev.get_end_timepoint();
+                else if (s.next.get_start() == tp1)
+                    tp1_node = s.next.get_start_timepoint();
+                else if (s.next.get_end() == tp1)
+                    tp1_node = s.next.get_end_timepoint();
+
+                if (s.tk.get_start() == tp2)
+                    tp2_node = s.tk.get_start_timepoint();
+                else if (s.tk.get_end() == tp2)
+                    tp2_node = s.tk.get_end_timepoint();
+                else if (s.prev.get_start() == tp2)
+                    tp2_node = s.prev.get_start_timepoint();
+                else if (s.prev.get_end() == tp2)
+                    tp2_node = s.prev.get_end_timepoint();
+                else if (s.next.get_start() == tp2)
+                    tp2_node = s.next.get_start_timepoint();
+                else if (s.next.get_end() == tp2)
+                    tp2_node = s.next.get_end_timepoint();
+            }
+            for (shared_ptr<Node> tps : *newly_added_tps) {
+                if (tps != nullptr && tps->timepoint_id == tp1)
+                    tp1_node = tps;
+                else if (tps != nullptr && tps->timepoint_id == tp2)
+                    tp2_node = tps;
+            }
+
+            assert(tp1_node != nullptr);
+            assert(tp2_node != nullptr);
+            assert(stn->del_constraint(tp1_node, tp2_node, c_name));
         }
+        commit_operations->pop();
     }
 }
 
@@ -2193,6 +2326,8 @@ commit_slots(Plan* p, pq* solution)
     request_solutions.insert(make_pair(slot_to_commit.request_id, slot_to_commit));
     p->num_tasks_robot[slot_to_commit.robot_assignment]++;
 
+    vector<shared_ptr<Node>> newly_added_tps;
+
     int counter = 0;
     for (int i = 0; i < (int)slot_to_commit.solution.size(); i++) {
         primitive_solution leaf_solution = slot_to_commit.solution[i];
@@ -2203,6 +2338,16 @@ commit_slots(Plan* p, pq* solution)
         stack<STN_operation> commit_operations;
         while (!search_operations.empty()) {
             STN_operation top = search_operations.top();
+            if (top.op_type == STN_operation_type::ADD_TIMEPOINT)
+                cout << "ADD_TIMEPOINT: " << top.tp1 << endl;
+            else if (top.op_type == STN_operation_type::DEL_TIMEPOINT)
+                cout << "DEL_TIMEPOINT: " << top.tp1 << endl;
+            else if (top.op_type == STN_operation_type::ADD_CONSTRAINT)
+                cout << "ADD_CONSTRAINT: " << top.tp1 << ", " << top.tp2 << ", " << top.c_type
+                     << endl;
+            else if (top.op_type == STN_operation_type::DEL_CONSTRAINT)
+                cout << "DEL_CONSTRAINT: " << top.tp1 << ", " << top.tp2 << ", " << top.c_type
+                     << endl;
             search_operations.pop();
             commit_operations.push(top);
         }
@@ -2210,6 +2355,8 @@ commit_slots(Plan* p, pq* solution)
         string main_tl = "";
         double main_dur = 0.0;
         Token main_tk = Token();
+
+        commit_stn_operations(&leaf_slots, &commit_operations, &stn, &newly_added_tps);
 
         PLOGD << "Regular constraints in order\n";
         for (slot s : leaf_slots) {
