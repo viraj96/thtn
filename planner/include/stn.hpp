@@ -17,7 +17,6 @@ using namespace std;
 
 typedef tuple<double, double> stn_bounds;
 typedef tuple<string, string, double, double> constraint;
-typedef tuple<shared_ptr<Node>, shared_ptr<Node>, double, double> constraint_ref;
 
 const double inf = numeric_limits<double>::infinity();
 
