@@ -21,14 +21,14 @@ Token::to_string() const
     result += "\n\t Start Timepoint = " + start_t;
     tuple<double, double> bounds = stn.get_feasible_values(start);
     // tuple<double, double> bounds = stn.get_feasible_values(start_t);
-    result +=
-      " (" + std::to_string(abs(get<0>(bounds))) + ", " + std::to_string(get<1>(bounds)) + ")";
+    result += " (" + std::to_string(start->id) + ":" + std::to_string(abs(get<0>(bounds))) + ", " +
+              std::to_string(start->id) + ":" + std::to_string(get<1>(bounds)) + ")";
 
     result += "\n\t End Timepoint = " + end_t;
     bounds = stn.get_feasible_values(end);
     // bounds = stn.get_feasible_values(end_t);
-    result +=
-      " (" + std::to_string(abs(get<0>(bounds))) + ", " + std::to_string(get<1>(bounds)) + ")\n";
+    result += " (" + std::to_string(end->id) + ":" + std::to_string(abs(get<0>(bounds))) + ", " +
+              std::to_string(end->id) + ":" + std::to_string(get<1>(bounds)) + ")\n";
 
     return result;
 }

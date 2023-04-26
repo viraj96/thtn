@@ -1590,6 +1590,11 @@ local_stn_check_phase(Timeline* r,
     return local_check;
 }
 
+// TODO: Fix the rewiring check so that item timelines are also modified properly. Currently I just
+// check for affecting resources and the previous token but if the affecting resource is not an item
+// for some token then later down the line if another affecting resource becomes an item then
+// checking just previous wont work so need to iterate backwards till the current request tokens to
+// see if there were any existing dependent meets constraints
 bool
 rewiring_check_phase(slot* to_explore,
                      Token* tk,
