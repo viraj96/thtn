@@ -686,6 +686,8 @@ add_meets_constraint(Token* first,
         if (succ && search_operation_history != nullptr)
             search_operation_history->push(STN_operation(first->get_end(),
                                                          second->get_start(),
+                                                         first->get_end_timepoint(),
+                                                         second->get_start_timepoint(),
                                                          STN_operation_type::ADD_CONSTRAINT,
                                                          STN_constraint_type::MEETS,
                                                          make_pair(zero, zero)));
@@ -710,6 +712,8 @@ del_and_add_sequencing_constraint(Token* prev,
     if (succ0)
         search_operation_history->push(STN_operation(prev->get_end(),
                                                      next->get_start(),
+                                                     prev->get_end_timepoint(),
+                                                     next->get_start_timepoint(),
                                                      STN_operation_type::DEL_CONSTRAINT,
                                                      STN_constraint_type::SEQUENCE,
                                                      make_pair(get<2>(del), get<3>(del))));
@@ -740,6 +744,8 @@ del_and_add_sequencing_constraint(Token* prev,
         if (succ1 && search_operation_history != nullptr)
             search_operation_history->push(STN_operation(prev->get_end(),
                                                          curr->get_start(),
+                                                         prev->get_end_timepoint(),
+                                                         curr->get_start_timepoint(),
                                                          STN_operation_type::ADD_CONSTRAINT,
                                                          STN_constraint_type::SEQUENCE,
                                                          make_pair(get<2>(c1), get<3>(c1))));
@@ -753,6 +759,8 @@ del_and_add_sequencing_constraint(Token* prev,
                                        make_pair(zero, inf)));
             search_operation_history->push(STN_operation(prev->get_end(),
                                                          next->get_start(),
+                                                         prev->get_end_timepoint(),
+                                                         next->get_start_timepoint(),
                                                          STN_operation_type::ADD_CONSTRAINT,
                                                          STN_constraint_type::SEQUENCE,
                                                          make_pair(get<2>(del), get<3>(del))));
@@ -767,6 +775,8 @@ del_and_add_sequencing_constraint(Token* prev,
         if (succ2 && search_operation_history != nullptr)
             search_operation_history->push(STN_operation(curr->get_end(),
                                                          next->get_start(),
+                                                         curr->get_end_timepoint(),
+                                                         next->get_start_timepoint(),
                                                          STN_operation_type::ADD_CONSTRAINT,
                                                          STN_constraint_type::SEQUENCE,
                                                          make_pair(get<2>(c2), get<3>(c2))));
@@ -780,6 +790,8 @@ del_and_add_sequencing_constraint(Token* prev,
               stn->del_constraint(prev->get_end_timepoint(), curr->get_start_timepoint(), c1_name));
             search_operation_history->push(STN_operation(prev->get_end(),
                                                          curr->get_start(),
+                                                         prev->get_end_timepoint(),
+                                                         curr->get_start_timepoint(),
                                                          STN_operation_type::DEL_CONSTRAINT,
                                                          STN_constraint_type::SEQUENCE,
                                                          make_pair(get<2>(c1), get<3>(c1))));
@@ -789,6 +801,8 @@ del_and_add_sequencing_constraint(Token* prev,
                                        make_pair(zero, inf)));
             search_operation_history->push(STN_operation(prev->get_end(),
                                                          next->get_start(),
+                                                         prev->get_end_timepoint(),
+                                                         next->get_start_timepoint(),
                                                          STN_operation_type::ADD_CONSTRAINT,
                                                          STN_constraint_type::SEQUENCE,
                                                          make_pair(get<2>(del), get<3>(del))));
@@ -878,12 +892,16 @@ satisfy_precondition(literal* precondition,
                 stn->del_timepoint(tk.get_start_timepoint());
                 search_operation_history->push(STN_operation(tk.get_start(),
                                                              string(),
+                                                             tk.get_start_timepoint(),
+                                                             nullptr,
                                                              STN_operation_type::DEL_TIMEPOINT,
                                                              STN_constraint_type::TIMEPOINT,
                                                              make_pair(0, 0)));
                 stn->del_timepoint(tk.get_end_timepoint());
                 search_operation_history->push(STN_operation(tk.get_end(),
                                                              string(),
+                                                             tk.get_end_timepoint(),
+                                                             nullptr,
                                                              STN_operation_type::DEL_TIMEPOINT,
                                                              STN_constraint_type::TIMEPOINT,
                                                              make_pair(0, 0)));
@@ -902,12 +920,16 @@ satisfy_precondition(literal* precondition,
             stn->del_timepoint(tk.get_start_timepoint());
             search_operation_history->push(STN_operation(tk.get_start(),
                                                          string(),
+                                                         tk.get_start_timepoint(),
+                                                         nullptr,
                                                          STN_operation_type::DEL_TIMEPOINT,
                                                          STN_constraint_type::TIMEPOINT,
                                                          make_pair(0, 0)));
             stn->del_timepoint(tk.get_end_timepoint());
             search_operation_history->push(STN_operation(tk.get_end(),
                                                          string(),
+                                                         tk.get_end_timepoint(),
+                                                         nullptr,
                                                          STN_operation_type::DEL_TIMEPOINT,
                                                          STN_constraint_type::TIMEPOINT,
                                                          make_pair(0, 0)));
@@ -1029,6 +1051,8 @@ satisfy_precondition(literal* precondition,
                         search_operation_history->push(
                           STN_operation(tk.get_start(),
                                         string(),
+                                        tk.get_start_timepoint(),
+                                        nullptr,
                                         STN_operation_type::DEL_TIMEPOINT,
                                         STN_constraint_type::TIMEPOINT,
                                         make_pair(0, 0)));
@@ -1036,6 +1060,8 @@ satisfy_precondition(literal* precondition,
                         search_operation_history->push(
                           STN_operation(tk.get_end(),
                                         string(),
+                                        tk.get_end_timepoint(),
+                                        nullptr,
                                         STN_operation_type::DEL_TIMEPOINT,
                                         STN_constraint_type::TIMEPOINT,
                                         make_pair(0, 0)));
@@ -1060,6 +1086,8 @@ satisfy_precondition(literal* precondition,
                         search_operation_history->push(
                           STN_operation(tk.get_start(),
                                         string(),
+                                        tk.get_start_timepoint(),
+                                        nullptr,
                                         STN_operation_type::DEL_TIMEPOINT,
                                         STN_constraint_type::TIMEPOINT,
                                         make_pair(0, 0)));
@@ -1067,6 +1095,8 @@ satisfy_precondition(literal* precondition,
                         search_operation_history->push(
                           STN_operation(tk.get_end(),
                                         string(),
+                                        tk.get_end_timepoint(),
+                                        nullptr,
                                         STN_operation_type::DEL_TIMEPOINT,
                                         STN_constraint_type::TIMEPOINT,
                                         make_pair(0, 0)));
@@ -1090,12 +1120,16 @@ satisfy_precondition(literal* precondition,
                     stn->del_timepoint(tk.get_start_timepoint());
                     search_operation_history->push(STN_operation(tk.get_start(),
                                                                  string(),
+                                                                 tk.get_start_timepoint(),
+                                                                 nullptr,
                                                                  STN_operation_type::DEL_TIMEPOINT,
                                                                  STN_constraint_type::TIMEPOINT,
                                                                  make_pair(0, 0)));
                     stn->del_timepoint(tk.get_end_timepoint());
                     search_operation_history->push(STN_operation(tk.get_end(),
                                                                  string(),
+                                                                 tk.get_end_timepoint(),
+                                                                 nullptr,
                                                                  STN_operation_type::DEL_TIMEPOINT,
                                                                  STN_constraint_type::TIMEPOINT,
                                                                  make_pair(0, 0)));
@@ -1340,12 +1374,16 @@ precondition_check_phase(Token* tk,
                 stn->del_timepoint(s.tk.get_start_timepoint());
                 search_operation_history->push(STN_operation(s.tk.get_start(),
                                                              string(),
+                                                             s.tk.get_start_timepoint(),
+                                                             nullptr,
                                                              STN_operation_type::DEL_TIMEPOINT,
                                                              STN_constraint_type::TIMEPOINT,
                                                              make_pair(0, 0)));
                 stn->del_timepoint(s.tk.get_end_timepoint());
                 search_operation_history->push(STN_operation(s.tk.get_end(),
                                                              string(),
+                                                             s.tk.get_end_timepoint(),
+                                                             nullptr,
                                                              STN_operation_type::DEL_TIMEPOINT,
                                                              STN_constraint_type::TIMEPOINT,
                                                              make_pair(0, 0)));
@@ -1409,6 +1447,8 @@ local_stn_check_phase(Timeline* r,
                     search_operation_history->push(
                       STN_operation(s.tk.get_end(),
                                     s.next.get_start(),
+                                    s.tk.get_end_timepoint(),
+                                    s.next.get_start_timepoint(),
                                     STN_operation_type::DEL_CONSTRAINT,
                                     STN_constraint_type::SEQUENCE,
                                     make_pair(get<2>(del), get<3>(del))));
@@ -1424,6 +1464,8 @@ local_stn_check_phase(Timeline* r,
                     search_operation_history->push(
                       STN_operation(s.prev.get_end(),
                                     s.tk.get_start(),
+                                    s.prev.get_end_timepoint(),
+                                    s.tk.get_start_timepoint(),
                                     STN_operation_type::DEL_CONSTRAINT,
                                     STN_constraint_type::SEQUENCE,
                                     make_pair(get<2>(del), get<3>(del))));
@@ -1441,6 +1483,8 @@ local_stn_check_phase(Timeline* r,
                     search_operation_history->push(
                       STN_operation(s.prev.get_end(),
                                     s.next.get_start(),
+                                    s.prev.get_end_timepoint(),
+                                    s.next.get_start_timepoint(),
                                     STN_operation_type::ADD_CONSTRAINT,
                                     STN_constraint_type::SEQUENCE,
                                     make_pair(get<2>(add), get<3>(add))));
@@ -1506,6 +1550,8 @@ local_stn_check_phase(Timeline* r,
                                     search_operation_history->push(STN_operation(
                                       s.tk.get_end(),
                                       t.get_end(),
+                                      s.tk.get_end_timepoint(),
+                                      t.get_end_timepoint(),
                                       STN_operation_type::ADD_CONSTRAINT,
                                       STN_constraint_type::MEETS,
                                       make_pair(get<2>(new_meets), get<3>(new_meets))));
@@ -1523,12 +1569,16 @@ local_stn_check_phase(Timeline* r,
                 stn->del_timepoint(s.tk.get_start_timepoint());
                 search_operation_history->push(STN_operation(s.tk.get_start(),
                                                              string(),
+                                                             s.tk.get_start_timepoint(),
+                                                             nullptr,
                                                              STN_operation_type::DEL_TIMEPOINT,
                                                              STN_constraint_type::TIMEPOINT,
                                                              make_pair(0, 0)));
                 stn->del_timepoint(s.tk.get_end_timepoint());
                 search_operation_history->push(STN_operation(s.tk.get_end(),
                                                              string(),
+                                                             s.tk.get_end_timepoint(),
+                                                             nullptr,
                                                              STN_operation_type::DEL_TIMEPOINT,
                                                              STN_constraint_type::TIMEPOINT,
                                                              make_pair(0, 0)));
@@ -1600,6 +1650,8 @@ rewiring_check_phase(slot* to_explore,
                     search_operation_history->push(
                       STN_operation(to_explore->prev.get_end(),
                                     t.get_end(),
+                                    to_explore->prev.get_end_timepoint(),
+                                    t.get_end_timepoint(),
                                     STN_operation_type::DEL_CONSTRAINT,
                                     STN_constraint_type::DEPENDENT_MEETS,
                                     make_pair(get<2>(dep_meets), get<3>(dep_meets))));
@@ -1619,6 +1671,8 @@ rewiring_check_phase(slot* to_explore,
                         search_operation_history->push(
                           STN_operation(to_explore->prev.get_end(),
                                         t.get_end(),
+                                        to_explore->prev.get_end_timepoint(),
+                                        t.get_end_timepoint(),
                                         STN_operation_type::ADD_CONSTRAINT,
                                         STN_constraint_type::DEPENDENT_MEETS,
                                         make_pair(get<2>(dep_meets), get<3>(dep_meets))));
@@ -1627,6 +1681,8 @@ rewiring_check_phase(slot* to_explore,
                         search_operation_history->push(
                           STN_operation(tk->get_end(),
                                         t.get_end(),
+                                        tk->get_end_timepoint(),
+                                        t.get_end_timepoint(),
                                         STN_operation_type::ADD_CONSTRAINT,
                                         STN_constraint_type::DEPENDENT_MEETS,
                                         make_pair(get<2>(c), get<3>(c))));
@@ -1677,6 +1733,8 @@ rewiring_check_phase(slot* to_explore,
                         search_operation_history->push(
                           STN_operation(tk->get_end(),
                                         t.get_end(),
+                                        tk->get_end_timepoint(),
+                                        t.get_end_timepoint(),
                                         STN_operation_type::ADD_CONSTRAINT,
                                         STN_constraint_type::DEPENDENT_MEETS,
                                         make_pair(get<2>(c), get<3>(c))));
@@ -1701,6 +1759,8 @@ rewiring_check_phase(slot* to_explore,
                     search_operation_history->push(
                       STN_operation(updated_prev.get_end(),
                                     t.get_end(),
+                                    updated_prev.get_end_timepoint(),
+                                    t.get_end_timepoint(),
                                     STN_operation_type::DEL_CONSTRAINT,
                                     STN_constraint_type::DEPENDENT_MEETS,
                                     make_pair(get<2>(second_meets), get<3>(second_meets))));
@@ -1720,6 +1780,8 @@ rewiring_check_phase(slot* to_explore,
                         search_operation_history->push(
                           STN_operation(updated_prev.get_end(),
                                         t.get_end(),
+                                        updated_prev.get_end_timepoint(),
+                                        t.get_end_timepoint(),
                                         STN_operation_type::ADD_CONSTRAINT,
                                         STN_constraint_type::DEPENDENT_MEETS,
                                         make_pair(get<2>(second_meets), get<3>(second_meets))));
@@ -1729,6 +1791,8 @@ rewiring_check_phase(slot* to_explore,
                         search_operation_history->push(
                           STN_operation(tk->get_end(),
                                         t.get_end(),
+                                        tk->get_end_timepoint(),
+                                        t.get_end_timepoint(),
                                         STN_operation_type::ADD_CONSTRAINT,
                                         STN_constraint_type::DEPENDENT_MEETS,
                                         make_pair(get<2>(c), get<3>(c))));
@@ -1753,12 +1817,16 @@ rewiring_check_phase(slot* to_explore,
                 stn->del_timepoint(s.tk.get_start_timepoint());
                 search_operation_history->push(STN_operation(s.tk.get_start(),
                                                              string(),
+                                                             s.tk.get_start_timepoint(),
+                                                             nullptr,
                                                              STN_operation_type::DEL_TIMEPOINT,
                                                              STN_constraint_type::TIMEPOINT,
                                                              make_pair(0, 0)));
                 stn->del_timepoint(s.tk.get_end_timepoint());
                 search_operation_history->push(STN_operation(s.tk.get_end(),
                                                              string(),
+                                                             s.tk.get_end_timepoint(),
+                                                             nullptr,
                                                              STN_operation_type::DEL_TIMEPOINT,
                                                              STN_constraint_type::TIMEPOINT,
                                                              make_pair(0, 0)));
@@ -1993,6 +2061,8 @@ schedule_token(Token* tk,
                             search_operation_history->push(
                               STN_operation(get<0>(post.second),
                                             get<1>(post.second),
+                                            nullptr,
+                                            nullptr,
                                             STN_operation_type::DEL_CONSTRAINT,
                                             c_type,
                                             make_pair(get<2>(post.second), get<3>(post.second))));
@@ -2020,6 +2090,8 @@ schedule_token(Token* tk,
                             search_operation_history->push(
                               STN_operation(get<0>(pre.second),
                                             get<1>(pre.second),
+                                            nullptr,
+                                            nullptr,
                                             STN_operation_type::ADD_CONSTRAINT,
                                             c_type,
                                             make_pair(get<2>(pre.second), get<3>(pre.second))));
@@ -2039,12 +2111,16 @@ schedule_token(Token* tk,
                     stn->del_timepoint(tk.get_start_timepoint());
                     search_operation_history->push(STN_operation(tk.get_start(),
                                                                  string(),
+                                                                 tk.get_start_timepoint(),
+                                                                 nullptr,
                                                                  STN_operation_type::DEL_TIMEPOINT,
                                                                  STN_constraint_type::TIMEPOINT,
                                                                  make_pair(0, 0)));
                     stn->del_timepoint(tk.get_end_timepoint());
                     search_operation_history->push(STN_operation(tk.get_end(),
                                                                  string(),
+                                                                 tk.get_end_timepoint(),
+                                                                 nullptr,
                                                                  STN_operation_type::DEL_TIMEPOINT,
                                                                  STN_constraint_type::TIMEPOINT,
                                                                  make_pair(0, 0)));
@@ -2091,11 +2167,15 @@ schedule_leafs(vector<task_vertex> leafs,
                     stn.del_timepoint(s.tk.get_end_timepoint());
                     leaf_sol.search_operations.push(STN_operation(s.tk.get_start(),
                                                                   string(),
+                                                                  s.tk.get_start_timepoint(),
+                                                                  nullptr,
                                                                   STN_operation_type::DEL_TIMEPOINT,
                                                                   STN_constraint_type::TIMEPOINT,
                                                                   make_pair(0, 0)));
                     leaf_sol.search_operations.push(STN_operation(s.tk.get_end(),
                                                                   string(),
+                                                                  s.tk.get_end_timepoint(),
+                                                                  nullptr,
                                                                   STN_operation_type::DEL_TIMEPOINT,
                                                                   STN_constraint_type::TIMEPOINT,
                                                                   make_pair(0, 0)));
@@ -2162,6 +2242,7 @@ commit_stn_operations(vector<slot>* leaf_slots,
     while (!commit_operations->empty()) {
         STN_operation operation = commit_operations->top();
         string tp1 = operation.tp1, tp2 = operation.tp2;
+        shared_ptr<Node> tp1_node = operation.tp1_node, tp2_node = operation.tp2_node;
         STN_operation_type op_type = operation.op_type;
         STN_constraint_type c_type = operation.c_type;
         pair<double, double> bounds = operation.bounds;
@@ -2203,39 +2284,43 @@ commit_stn_operations(vector<slot>* leaf_slots,
             PLOGD << "Performing ADD_CONSTRAINT operation: " << tp1 << ", " << tp2 << ", " << c_name
                   << endl;
 
-            shared_ptr<Node> tp1_node = nullptr, tp2_node = nullptr;
-            for (slot s : *leaf_slots) {
-                if (s.tk.get_start() == tp1)
-                    tp1_node = s.tk.get_start_timepoint();
-                else if (s.tk.get_end() == tp1)
-                    tp1_node = s.tk.get_end_timepoint();
-                else if (s.prev.get_start() == tp1)
-                    tp1_node = s.prev.get_start_timepoint();
-                else if (s.prev.get_end() == tp1)
-                    tp1_node = s.prev.get_end_timepoint();
-                else if (s.next.get_start() == tp1)
-                    tp1_node = s.next.get_start_timepoint();
-                else if (s.next.get_end() == tp1)
-                    tp1_node = s.next.get_end_timepoint();
-
-                if (s.tk.get_start() == tp2)
-                    tp2_node = s.tk.get_start_timepoint();
-                else if (s.tk.get_end() == tp2)
-                    tp2_node = s.tk.get_end_timepoint();
-                else if (s.prev.get_start() == tp2)
-                    tp2_node = s.prev.get_start_timepoint();
-                else if (s.prev.get_end() == tp2)
-                    tp2_node = s.prev.get_end_timepoint();
-                else if (s.next.get_start() == tp2)
-                    tp2_node = s.next.get_start_timepoint();
-                else if (s.next.get_end() == tp2)
-                    tp2_node = s.next.get_end_timepoint();
-            }
             for (shared_ptr<Node> tps : *newly_added_tps) {
                 if (tps != nullptr && tps->timepoint_id == tp1)
                     tp1_node = tps;
-                else if (tps != nullptr && tps->timepoint_id == tp2)
+                if (tps != nullptr && tps->timepoint_id == tp2)
                     tp2_node = tps;
+            }
+
+            for (slot s : *leaf_slots) {
+                if (tp1_node == nullptr) {
+                    if (s.tk.get_start() == tp1)
+                        tp1_node = s.tk.get_start_timepoint();
+                    else if (s.tk.get_end() == tp1)
+                        tp1_node = s.tk.get_end_timepoint();
+                    else if (s.prev.get_start() == tp1)
+                        tp1_node = s.prev.get_start_timepoint();
+                    else if (s.prev.get_end() == tp1)
+                        tp1_node = s.prev.get_end_timepoint();
+                    else if (s.next.get_start() == tp1)
+                        tp1_node = s.next.get_start_timepoint();
+                    else if (s.next.get_end() == tp1)
+                        tp1_node = s.next.get_end_timepoint();
+                }
+
+                if (tp2_node == nullptr) {
+                    if (s.tk.get_start() == tp2)
+                        tp2_node = s.tk.get_start_timepoint();
+                    else if (s.tk.get_end() == tp2)
+                        tp2_node = s.tk.get_end_timepoint();
+                    else if (s.prev.get_start() == tp2)
+                        tp2_node = s.prev.get_start_timepoint();
+                    else if (s.prev.get_end() == tp2)
+                        tp2_node = s.prev.get_end_timepoint();
+                    else if (s.next.get_start() == tp2)
+                        tp2_node = s.next.get_start_timepoint();
+                    else if (s.next.get_end() == tp2)
+                        tp2_node = s.next.get_end_timepoint();
+                }
             }
 
             assert(tp1_node != nullptr);
@@ -2243,15 +2328,16 @@ commit_stn_operations(vector<slot>* leaf_slots,
             assert(stn->add_constraint(tp1_node, tp2_node, c_name, bounds));
         } else if (op_type == STN_operation_type::DEL_TIMEPOINT) {
             PLOGD << "Performing DEL_TIMEPOINT operation: " << tp1 << endl;
-            shared_ptr<Node> del_node = nullptr;
-            for (auto it = newly_added_tps->begin(); it != newly_added_tps->end(); it++)
-                if ((*it)->timepoint_id == tp1) {
-                    del_node = *it;
-                    *it = nullptr;
-                    break;
-                }
-            assert(del_node != nullptr);
-            stn->del_timepoint(del_node);
+            // shared_ptr<Node> del_node = nullptr;
+            // for (auto it = newly_added_tps->begin(); it != newly_added_tps->end(); it++)
+            //     if ((*it)->timepoint_id == tp1) {
+            //         del_node = *it;
+            //         *it = nullptr;
+            //         break;
+            //     }
+            // assert(del_node != nullptr);
+            assert(tp1_node != nullptr);
+            stn->del_timepoint(tp1_node);
         } else if (op_type == STN_operation_type::DEL_CONSTRAINT) {
 
             string c_name = string();
@@ -2273,39 +2359,43 @@ commit_stn_operations(vector<slot>* leaf_slots,
             PLOGD << "Performing DEL_CONSTRAINT operation: " << tp1 << ", " << tp2 << ", " << c_name
                   << endl;
 
-            shared_ptr<Node> tp1_node = nullptr, tp2_node = nullptr;
-            for (slot s : *leaf_slots) {
-                if (s.tk.get_start() == tp1)
-                    tp1_node = s.tk.get_start_timepoint();
-                else if (s.tk.get_end() == tp1)
-                    tp1_node = s.tk.get_end_timepoint();
-                else if (s.prev.get_start() == tp1)
-                    tp1_node = s.prev.get_start_timepoint();
-                else if (s.prev.get_end() == tp1)
-                    tp1_node = s.prev.get_end_timepoint();
-                else if (s.next.get_start() == tp1)
-                    tp1_node = s.next.get_start_timepoint();
-                else if (s.next.get_end() == tp1)
-                    tp1_node = s.next.get_end_timepoint();
-
-                if (s.tk.get_start() == tp2)
-                    tp2_node = s.tk.get_start_timepoint();
-                else if (s.tk.get_end() == tp2)
-                    tp2_node = s.tk.get_end_timepoint();
-                else if (s.prev.get_start() == tp2)
-                    tp2_node = s.prev.get_start_timepoint();
-                else if (s.prev.get_end() == tp2)
-                    tp2_node = s.prev.get_end_timepoint();
-                else if (s.next.get_start() == tp2)
-                    tp2_node = s.next.get_start_timepoint();
-                else if (s.next.get_end() == tp2)
-                    tp2_node = s.next.get_end_timepoint();
-            }
             for (shared_ptr<Node> tps : *newly_added_tps) {
                 if (tps != nullptr && tps->timepoint_id == tp1)
                     tp1_node = tps;
-                else if (tps != nullptr && tps->timepoint_id == tp2)
+                if (tps != nullptr && tps->timepoint_id == tp2)
                     tp2_node = tps;
+            }
+
+            for (slot s : *leaf_slots) {
+                if (tp1_node == nullptr) {
+                    if (s.tk.get_start() == tp1)
+                        tp1_node = s.tk.get_start_timepoint();
+                    else if (s.tk.get_end() == tp1)
+                        tp1_node = s.tk.get_end_timepoint();
+                    else if (s.prev.get_start() == tp1)
+                        tp1_node = s.prev.get_start_timepoint();
+                    else if (s.prev.get_end() == tp1)
+                        tp1_node = s.prev.get_end_timepoint();
+                    else if (s.next.get_start() == tp1)
+                        tp1_node = s.next.get_start_timepoint();
+                    else if (s.next.get_end() == tp1)
+                        tp1_node = s.next.get_end_timepoint();
+                }
+
+                if (tp2_node == nullptr) {
+                    if (s.tk.get_start() == tp2)
+                        tp2_node = s.tk.get_start_timepoint();
+                    else if (s.tk.get_end() == tp2)
+                        tp2_node = s.tk.get_end_timepoint();
+                    else if (s.prev.get_start() == tp2)
+                        tp2_node = s.prev.get_start_timepoint();
+                    else if (s.prev.get_end() == tp2)
+                        tp2_node = s.prev.get_end_timepoint();
+                    else if (s.next.get_start() == tp2)
+                        tp2_node = s.next.get_start_timepoint();
+                    else if (s.next.get_end() == tp2)
+                        tp2_node = s.next.get_end_timepoint();
+                }
             }
 
             assert(tp1_node != nullptr);

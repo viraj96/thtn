@@ -41,36 +41,6 @@ enum STN_constraint_type
               // type
 };
 
-struct STN_operation
-{
-    string tp1, tp2;
-    STN_operation_type op_type;
-    STN_constraint_type c_type;
-    pair<double, double> bounds;
-
-    STN_operation()
-    {
-        tp1 = string();
-        tp2 = string();
-        op_type = STN_operation_type::ADD_TIMEPOINT;
-        c_type = STN_constraint_type::TIMEPOINT;
-        bounds = make_pair(0, 0);
-    }
-
-    STN_operation(string _tp1,
-                  string _tp2,
-                  STN_operation_type _op_type,
-                  STN_constraint_type _c_type,
-                  pair<double, double> _bounds)
-    {
-        tp1 = _tp1;
-        tp2 = _tp2;
-        op_type = _op_type;
-        c_type = _c_type;
-        bounds = _bounds;
-    }
-};
-
 struct SP_Data
 {
     int pred;
@@ -124,6 +94,43 @@ struct Node
 
         edges_in = nullptr;
         edges_out = nullptr;
+    }
+};
+
+struct STN_operation
+{
+    string tp1, tp2;
+    STN_operation_type op_type;
+    STN_constraint_type c_type;
+    pair<double, double> bounds;
+    shared_ptr<Node> tp1_node, tp2_node;
+
+    STN_operation()
+    {
+        tp1 = string();
+        tp2 = string();
+        op_type = STN_operation_type::ADD_TIMEPOINT;
+        c_type = STN_constraint_type::TIMEPOINT;
+        bounds = make_pair(0, 0);
+        tp1_node = nullptr;
+        tp2_node = nullptr;
+    }
+
+    STN_operation(string _tp1,
+                  string _tp2,
+                  shared_ptr<Node> _tp1_node,
+                  shared_ptr<Node> _tp2_node,
+                  STN_operation_type _op_type,
+                  STN_constraint_type _c_type,
+                  pair<double, double> _bounds)
+    {
+        tp1 = _tp1;
+        tp2 = _tp2;
+        tp1_node = _tp1_node;
+        tp2_node = _tp2_node;
+        op_type = _op_type;
+        c_type = _c_type;
+        bounds = _bounds;
     }
 };
 

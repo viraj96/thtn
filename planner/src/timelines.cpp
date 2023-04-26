@@ -252,11 +252,15 @@ Token::create_timepoints(STN* stn, double duration, stack<STN_operation>* search
     if (search_operation_history != nullptr) {
         search_operation_history->push(STN_operation(this->start_t,
                                                      string(),
+                                                     this->start,
+                                                     nullptr,
                                                      STN_operation_type::ADD_TIMEPOINT,
                                                      STN_constraint_type::TIMEPOINT,
                                                      make_pair(0, 0)));
         search_operation_history->push(STN_operation(this->end_t,
                                                      string(),
+                                                     this->end,
+                                                     nullptr,
                                                      STN_operation_type::ADD_TIMEPOINT,
                                                      STN_constraint_type::TIMEPOINT,
                                                      make_pair(0, 0)));
@@ -285,6 +289,8 @@ Token::create_timepoints(STN* stn, double duration, stack<STN_operation>* search
         if (search_operation_history != nullptr)
             search_operation_history->push(STN_operation(this->start_t,
                                                          this->end_t,
+                                                         this->start,
+                                                         this->end,
                                                          STN_operation_type::ADD_CONSTRAINT,
                                                          STN_constraint_type::DURATION,
                                                          make_pair(get<2>(c), get<3>(c))));
