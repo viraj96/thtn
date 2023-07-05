@@ -1,4 +1,6 @@
 build/
 .vscode/
+.cache/
+.trunk/
 parser/build/
 planner/build/
