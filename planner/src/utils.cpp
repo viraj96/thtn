@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include "planner.hpp"
 
 string
 validation_state::to_string() const

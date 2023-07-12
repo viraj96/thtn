@@ -2423,7 +2423,7 @@ commit_slots(Plan* p, pq* solution)
 
     vector<shared_ptr<Node>> newly_added_tps;
 
-    int counter = 0;
+    // int counter = 0;
     for (int i = 0; i < (int)slot_to_commit.solution.size(); i++) {
         primitive_solution leaf_solution = slot_to_commit.solution[i];
         vector<slot> leaf_slots = leaf_solution.token_slots;
@@ -2448,7 +2448,7 @@ commit_slots(Plan* p, pq* solution)
         }
 
         string main_tl = "";
-        double main_dur = 0.0;
+        // double main_dur = 0.0;
         Token main_tk = Token();
 
         commit_stn_operations(&leaf_slots, &commit_operations, &stn, &newly_added_tps);

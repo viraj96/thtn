@@ -1,4 +1,5 @@
 #include "timelines.hpp"
+#include "parsetree.hpp"
 
 string
 Token::to_string() const
@@ -540,7 +541,7 @@ instantiate_token(string name, string resource, string request_id, double durati
         Auxiliary_Token atk(name);
         atk.set_resource(resource);
         atk.create_timepoints();
-        return move(atk);
+        return std::move(atk);
 
     } else {
         Token tk = Token();
@@ -564,7 +565,7 @@ instantiate_token(string name,
         Auxiliary_Token atk(name);
         atk.set_resource(resource);
         atk.create_timepoints();
-        return move(atk);
+        return std::move(atk);
 
     } else {
         Token tk = Token();

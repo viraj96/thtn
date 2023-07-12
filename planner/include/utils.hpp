@@ -7,7 +7,6 @@
 struct validation_state; // forward declaration of this struct
 
 #include "domain.hpp"
-#include "planner.hpp"
 #include "timelines.hpp"
 
 extern int globalMinDuration;

@@ -6,13 +6,8 @@
 #include <nlohmann/json.hpp>
 #include <plog/Log.h>
 #include <queue>
-#include <variant>
 
 #include "cwa.hpp"
-#include "domain.hpp"
-#include "graph.hpp"
-#include "parsetree.hpp"
-#include "timelines.hpp"
 #include "utils.hpp"
 
 using namespace std;

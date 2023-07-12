@@ -1,4 +1,7 @@
 #include "stn.hpp"
+#include <cassert>
+#include <iostream>
+#include <fstream>
 
 bool verbose_1 = false; // Public Functions (high level checks)
 bool verbose_2 = false; // Private Functions (high level checks)

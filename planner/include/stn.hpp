@@ -3,15 +3,13 @@
 #define __STN
 
 #include <deque>
-#include <fstream>
-#include <iostream>
 #include <limits>
-#include <map>
 #include <memory>
 #include <set>
 #include <stack>
 #include <tuple>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 

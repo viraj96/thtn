@@ -1,4 +1,7 @@
 #include "parser.hpp"
+#include "cwa.hpp"
+#include "parsetree.hpp"
+#include "properties.hpp"
 
 void
 run_parser(FILE* domain_file,

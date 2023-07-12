@@ -1,4 +1,5 @@
 #include "search.hpp"
+#include <numeric>
 
 string
 search_vertex::to_string() const
