@@ -69,8 +69,10 @@ find_plan_for_request(request r, Plan* p, bool* plan_found, string metric)
 
         search_vertex root = search_vertex();
         for (search_vertex s : candidate) {
-            if (s.parent == nullptr || (s.parent->or_node && s.parent->parent == nullptr))
+            if (s.parent == nullptr || (s.parent->or_node && s.parent->parent == nullptr)) {
                 root = s;
+                break;
+            }
         }
 
         pair<task_network, vector<arg_and_type>> ret =

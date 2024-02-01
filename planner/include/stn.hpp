@@ -7,6 +7,7 @@
 #include <memory>
 #include <set>
 #include <stack>
+#include <string>
 #include <tuple>
 #include <vector>
 #include <unordered_map>
@@ -52,6 +53,7 @@ struct SP_Data
         prop = false;
     }
 };
+
 
 struct Edge
 {

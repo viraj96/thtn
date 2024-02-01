@@ -3119,7 +3119,7 @@ reachable_location(vector<string> arguments, world_state* current_state)
     string nv = std::to_string(num_vertices(rail_network.adj_list));
     string nr = std::to_string(requests.size());
 
-    filesystem::path json_file = filesystem::current_path().parent_path() / "data";
+    filesystem::path json_file = filesystem::current_path().parent_path().parent_path() / "data";
     string target_file = nv + "_blocks_" + nr + "_requests.json";
     json_file = json_file / filesystem::path(target_file);
     ifstream i(json_file.string());
